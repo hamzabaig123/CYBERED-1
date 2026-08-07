@@ -1,0 +1,163 @@
+# CyberEd — Project Plan
+
+A learning-purpose full-stack platform: a dashboard organized as
+Class → Subject → Chapter → Section, where sections hold MCQs (with
+reference to board/coaching papers), notes, past papers, or anything
+custom. Nothing is ever deleted — only archived.
+
+This plan covers five phases, from where the project stands today
+through to a real deployment. Each phase lists goals, concrete tasks,
+and a "done when" checklist so you know when to move to the next one.
+
+---
+
+## Phase 1 — Foundation (done)
+
+**Goal:** a working, tested skeleton — auth, database, and the core
+content hierarchy — that runs locally.
+
+Delivered:
+- FastAPI backend with PostgreSQL, SQLAlchemy models for Class →
+  Subject → Chapter → Section → MCQ / ContentBlock
+- JWT access tokens + rotating refresh tokens, bcrypt password hashing,
+  account lockout, rate limiting, security headers, audit log
+- No hard-delete anywhere — every table uses `is_archived`
+- React + Vite + Tailwind + Framer Motion frontend: animated terminal
+  login, directory-tree sidebar, MCQ upload form with reference fields
+- Docker Compose for local Postgres, full README
+
+**Done when:** ✅ you can register, log in, build out a class → subject →
+chapter → section tree, and add MCQs to it. (This is where you are now.)
+
+---
+
+## Phase 2 — Core curriculum UI
+
+**Goal:** make day-to-day content entry fast, since this is the part
+you'll use most — you're the one populating years of past-paper MCQs.
+
+Tasks:
+1. **Bulk MCQ import** — paste a block of text (e.g. copied from a PDF)
+   or upload a `.docx`/`.csv`, and have the app parse it into multiple
+   MCQ drafts you review before saving, instead of one form per
+   question.
+2. **Drag-to-reorder** chapters and sections (the `order_index` field
+   already exists in the database — this phase wires it up in the UI).
+3. **Edit and re-archive flows** — right now you can create and
+   archive, but not edit a typo in a saved MCQ. Add an edit form that
+   writes a *new* version and archives the old one, so history is kept
+   rather than overwritten.
+4. **Class/subject/chapter templates** — since your curriculum
+   (Sindh Board, Class 9/10, standard subject list) repeats every year,
+   let one class be "cloned" as a starting point for the next.
+5. **Rich text for notes/past-paper sections** — swap the plain
+   `<textarea>` for a lightweight rich-text editor (bold, lists,
+   images) so notes sections don't stay flat text forever.
+
+**Done when:** you can import a real past paper's worth of MCQs in
+minutes, not one-by-one; every level of the tree can be reordered and
+edited without losing history.
+
+---
+
+## Phase 3 — Security hardening
+
+**Goal:** close the gaps that are fine for local learning but matter
+before this touches a real server or other people's accounts. This is
+also where "cyber security" as a *subject* and as a *practice* meet —
+you'll be implementing the exact concepts you're studying.
+
+Tasks:
+1. **Move refresh tokens to httpOnly cookies.** Right now the refresh
+   token lives in browser memory (safe from casual inspection, but
+   weaker against XSS than it could be). Switching to an httpOnly,
+   Secure, SameSite cookie means client-side JavaScript can never read
+   it at all.
+2. **Add CSRF protection** once cookies are in play (double-submit
+   token or `SameSite=Strict` is usually enough for this app's shape).
+3. **Real role management UI** — an admin screen to promote/demote
+   users between viewer/editor/admin, instead of hand-editing the
+   database.
+4. **Two-factor login (TOTP)** — optional authenticator-app codes on
+   top of password login. Good scope for practicing real auth code,
+   and a natural "cyber security" feature for a cyber security-themed
+   app.
+5. **HTTPS everywhere** — put the backend behind a reverse proxy
+   (Caddy or Nginx) with a real TLS certificate (Let's Encrypt is free).
+6. **Dependency and secret scanning** — add `pip-audit` / `npm audit`
+   to a simple CI check, and make sure `.env` is git-ignored (it
+   already is via `.env.example`, but worth double-checking before any
+   public repo).
+7. **Alembic migrations** — replace `Base.metadata.create_all` with
+   proper versioned migrations, so schema changes don't risk data loss.
+
+**Done when:** refresh tokens never touch client-side JS, an admin can
+manage roles from the UI, the site only runs over HTTPS, and schema
+changes go through migrations instead of blind recreation.
+
+---
+
+## Phase 4 — Practice and search
+
+**Goal:** turn the archive from a place you *put* things into a place
+you *use* things — this is where it becomes genuinely useful for exam
+prep, not just data entry.
+
+Tasks:
+1. **Quiz/practice mode** — pick a section (or a whole chapter), get
+   its MCQs one at a time, pick an answer, see right/wrong with the
+   explanation, get a score at the end.
+2. **Full-text search** — a search bar that finds any MCQ or note by
+   keyword, filterable by class, subject, reference year, or reference
+   type (board paper / coaching paper). Postgres's built-in
+   `tsvector` search is enough at this scale — no need for a separate
+   search engine.
+3. **"Weak topics" tracking** — log quiz attempts per MCQ, and surface
+   which chapters you're getting wrong most often.
+4. **Export** — turn a section's MCQs into a printable PDF (useful for
+   offline revision, and a nice pairing with the `pdf` skill if you
+   want Claude's help building that export).
+
+**Done when:** you can search the whole archive by keyword/year/type,
+and take a real practice quiz from any chapter with a score at the end.
+
+---
+
+## Phase 5 — Deploy and scale
+
+**Goal:** get it running somewhere other than your laptop, reliably.
+
+Tasks:
+1. **Pick a host** — a small VPS (DigitalOcean/Hetzner droplet) is
+   plenty for a personal learning archive; Docker Compose from Phase 1
+   already deploys there almost as-is.
+2. **Backups** — scheduled `pg_dump` snapshots (daily is enough at
+   this scale), stored somewhere other than the same disk. "Data is
+   never deleted" only holds if the disk itself is protected.
+3. **Monitoring** — basic uptime check + error logging (something like
+   Sentry's free tier, or even just log rotation with alerts on
+   5xx spikes).
+4. **CI/CD** — GitHub Actions to run tests and deploy on push to main,
+   so updates don't require manually SSH-ing in each time.
+5. **Domain + HTTPS** — point a domain at the server, reuse the
+   reverse-proxy TLS setup from Phase 3.
+
+**Done when:** the site is reachable at a real domain over HTTPS, with
+backups running on a schedule and basic alerting if it goes down.
+
+---
+
+## Suggested order of attack
+
+If you want a single next step: **Phase 2, item 1 (bulk MCQ import)**
+is the highest-leverage piece — it directly speeds up the thing you'll
+be doing constantly (populating past papers), and Phase 3's security
+work is more valuable once there's real data worth protecting.
+
+## Notes on scope
+
+This plan is intentionally sequenced so each phase produces something
+usable on its own — you don't have to finish Phase 5 for Phases 1–4 to
+be worth using daily. Treat the phase order as a default, not a rule:
+if something in Phase 4 or 5 becomes more useful sooner (e.g. you want
+the quiz mode before bulk import), just reorder.

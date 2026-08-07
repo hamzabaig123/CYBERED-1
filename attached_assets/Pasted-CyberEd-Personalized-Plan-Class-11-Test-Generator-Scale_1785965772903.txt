@@ -1,0 +1,78 @@
+CyberEd — Personalized Plan (Class 11, Test Generator, Scale)
+
+This builds on the general five-phase plan already delivered (cybered-project-plan.md). It adapts three things to how you're actually going to use the site:
+
+Three real question types instead of one generic "MCQ" type — MCQ, short question, long question — each carrying the same reference tag (year, board/coaching source).
+A test generator: pick criteria, get a ready-made paper pulled from whatever's already stored.
+The data model and UI need to comfortably hold ~1000 MCQs in a single chapter without becoming slow or unwieldy.
+1. Class 11 quick-start
+
+Your Class 11 has seven subjects: Mathematics, Chemistry, Physics, English, Urdu, Sindhi, Computer Science. In Phase 1's data model this is just:
+
+Class 11
+ ├─ Mathematics
+ ├─ Chemistry
+ ├─ Physics
+ ├─ English
+ ├─ Urdu
+ ├─ Sindhi
+ └─ Computer Science
+     └─ (your chapters, per subject, matching your actual syllabus)
+
+Nothing new needed here structurally — this is Phase 2's "class template" feature, just applied once to seed Class 11 with all seven subjects in one step instead of adding them one at a time.
+
+2. Question types: MCQ, short, long
+
+Right now the data model has one structured type (MCQ) and one freeform type (ContentBlock, used for notes/past papers/custom). For a real test bank, short and long questions need their own structure too — not just a paragraph of text — because the test generator needs to know "this is a 2-mark short question" vs "this is a 5-mark long question" to build a balanced paper.
+
+New question types, alongside the existing MCQ:
+
+Field	MCQ (existing)	Short question (new)	Long question (new)
+question text	✅	✅	✅
+options A–D + correct	✅	—	—
+model answer	via explanation	✅ required	✅ required
+marks	— (implicit: 1)	✅ e.g. 2 or 3	✅ e.g. 5 or 8
+reference_source / year / type / note	✅	✅	✅
+
+A section's section_type gains two more options: short_questions and long_questions, sitting next to the existing mcqs / notes / past_papers / custom. Same archive-forever rule applies — nothing here gets hard-deleted either.
+
+Why not just use the existing ContentBlock for these? Because the test generator (next section) needs to query by marks and by type ("give me four 3-mark short questions from Chemistry ch. 4") — that only works if short/long questions are structured rows, not freeform text blobs.
+
+3. Test generator
+
+This is the feature that makes the archive worth building — instead of hunting through chapters yourself, you describe the test you want and it's assembled from what's stored.
+
+How it works:
+
+Pick scope — one chapter, several chapters, or a whole subject.
+Pick the mix — e.g. "10 MCQs + 5 short questions (3 marks each) + 2 long questions (8 marks each)."
+Optional filters — restrict to a reference year range (e.g. only 2019–2024 board papers) or reference type (only past papers, or only coaching-paper questions).
+Generate — the app randomly samples matching questions (never reusing a question within the same generated test), lays them out as a paper with clear sections (Section A: MCQs, Section B: Short Questions, Section C: Long Questions), and totals the marks.
+Two modes:
+Practice mode — interactive in-browser: click through questions, submit answers, get instant right/wrong on MCQs and a model-answer reveal for short/long questions, with a timer if you want exam conditions.
+Print/export mode — clean PDF with question paper on one side, answer key separate, formatted like an actual board exam paper (this pairs naturally with the pdf skill).
+Every generated test is itself saved (not deleted) — so you build up a history of past tests you've taken, useful for the "weak topics" tracking from the general plan's Phase 4.
+
+Interactivity across the whole flow, since you asked for that specifically: the criteria picker is a live form (counts update as you adjust marks/question mix), the practice-mode test has a progress bar, per-question timer, and instant feedback — this isn't a static generated document, it's a page you interact with start to finish.
+
+4. Handling ~1000 MCQs per chapter
+
+A chapter with a thousand-plus stored MCQs changes a few things from the original plan, mostly around not loading everything at once:
+
+Paginated lists. The MCQ list endpoint (GET /sections/{id}/mcqs) needs a ?page= / ?limit= instead of returning all 1000 rows in one response — both for the browse view and to keep the sidebar snappy.
+Bulk import has to be efficient. Pasting or uploading a thousand questions at once should insert them as one batch transaction, not a thousand separate API calls — this was already planned in Phase 2 ("bulk MCQ import"); at this scale it's not optional, it's the only realistic way to populate a chapter.
+Search/filter indexing. Once a chapter has hundreds of MCQs, browsing by scrolling stops being useful — you'll want to filter by reference year or search by keyword within that chapter specifically (a scoped version of Phase 4's full-text search).
+Test generator sampling stays fast. Randomly picking 10 MCQs out of 1000 is a cheap database query (ORDER BY random() LIMIT 10 or better, an indexed sampling approach) — this is fine at this scale, just worth confirming once real data is loaded rather than assuming.
+
+None of this requires new infrastructure — Postgres handles a few thousand rows per chapter without breaking a sweat. It just means Phase 2's pagination and bulk-import work aren't nice-to-haves, they're required before you start loading real volume in.
+
+5. Updated priority order
+
+Given this is for your own exam prep, I'd reorder the original five phases slightly:
+
+Add short/long question types + Class 11 seed — small, unblocks everything else, needed before you can store real content beyond MCQs.
+Bulk import + pagination — required once you're entering hundreds of questions per subject, not optional at your target scale.
+Test generator (practice mode first, print/export second) — this is the actual payoff feature.
+Everything else from the original plan (security hardening, search, deploy) — still valuable, but lower urgency for a personal-use tool than for something other people log into.
+
+Done when: you can seed Class 11 with all seven subjects in one step, store MCQs/short/long questions with references at real volume (hundreds+ per chapter) without the UI slowing down, and generate an interactive practice test or a printable paper from any chapter or subject on demand

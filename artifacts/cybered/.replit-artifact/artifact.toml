@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "CyberEd"
+description = "CyberEd is a secure learning console for Class 11 students. Organized as Class → Subject → Chapter → Section, it stores MCQs, short questions, and long questions with board/coaching paper references. Includes a test generator that builds practice papers from stored content, bulk import, paginated question lists, and an admin dashboard. Data is never deleted — only archived."
+version = "1.0.0"
+id = "artifacts/cybered"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21101
+
+[services.development]
+run = "pnpm --filter @workspace/cybered run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/cybered", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/cybered/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21101"
+BASE_PATH = "/"

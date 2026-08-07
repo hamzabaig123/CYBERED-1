@@ -1,0 +1,1779 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: CyberEd API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: classes
+    description: Class operations
+  - name: subjects
+    description: Subject operations
+  - name: chapters
+    description: Chapter operations
+  - name: sections
+    description: Section operations
+  - name: questions
+    description: Question operations
+  - name: tests
+    description: Test generation operations
+  - name: dashboard
+    description: Dashboard summary operations
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ──── Auth ────────────────────────────────────────────────────────────────
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Bad request
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "204":
+          description: No content
+
+  /auth/password/forgot:
+    post:
+      operationId: forgotPassword
+      tags: [auth]
+      summary: Request password reset email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordInput"
+      responses:
+        "204":
+          description: OK
+
+  /auth/password/reset:
+    post:
+      operationId: resetPassword
+      tags: [auth]
+      summary: Reset password using token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordInput"
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Bad request
+
+  /auth/email/verify-request:
+    post:
+      operationId: requestEmailVerification
+      tags: [auth]
+      summary: Request email verification link
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: OK
+        "401":
+          description: Unauthorized
+
+  /auth/email/verify:
+    post:
+      operationId: verifyEmail
+      tags: [auth]
+      summary: Verify email using token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyEmailInput"
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: Bad request
+
+  /auth/2fa/enroll:
+    post:
+      operationId: enroll2fa
+      tags: [auth]
+      summary: Begin 2FA enrollment — returns provisioning URI and QR code
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TotpEnrollResponse"
+        "401":
+          description: Unauthorized
+
+  /auth/2fa/confirm:
+    post:
+      operationId: confirm2fa
+      tags: [auth]
+      summary: Confirm 2FA enrollment using first TOTP code
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TotpCodeInput"
+      responses:
+        "200":
+          description: OK — returns backup codes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TotpConfirmResponse"
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+
+  /auth/2fa/verify:
+    post:
+      operationId: verify2fa
+      tags: [auth]
+      summary: Verify TOTP code during login (step 2)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TotpVerifyInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized
+
+  /auth/2fa/disable:
+    post:
+      operationId: disable2fa
+      tags: [auth]
+      summary: Disable 2FA
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TotpCodeInput"
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+
+  /auth/refresh:
+    post:
+      operationId: refreshSession
+      tags: [auth]
+      summary: Refresh access token using refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized
+
+  /auth/sessions:
+    get:
+      operationId: listSessions
+      tags: [auth]
+      summary: List active sessions for current user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Session"
+        "401":
+          description: Unauthorized
+
+  /auth/sessions/revoke-all:
+    post:
+      operationId: revokeAllSessions
+      tags: [auth]
+      summary: Revoke all other sessions
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+
+  /auth/sessions/{sessionId}:
+    delete:
+      operationId: revokeSession
+      tags: [auth]
+      summary: Revoke a specific session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: No content
+        "401":
+          description: Unauthorized
+
+  /auth/users:
+    get:
+      operationId: listUsers
+      tags: [auth]
+      summary: List all users (admin only)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /auth/users/{userId}/role:
+    patch:
+      operationId: updateUserRole
+      tags: [auth]
+      summary: Update user role (admin only)
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRoleUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # ──── Dashboard ───────────────────────────────────────────────────────────
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard statistics
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/recent-questions:
+    get:
+      operationId: getRecentQuestions
+      tags: [dashboard]
+      summary: Get recently added questions
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecentQuestion"
+
+  # ──── Classes ─────────────────────────────────────────────────────────────
+  /classes:
+    get:
+      operationId: listClasses
+      tags: [classes]
+      summary: List all classes
+      parameters:
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Class"
+    post:
+      operationId: createClass
+      tags: [classes]
+      summary: Create a class
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClassInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Class"
+
+  /classes/{classId}:
+    get:
+      operationId: getClass
+      tags: [classes]
+      summary: Get a class
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Class"
+    patch:
+      operationId: updateClass
+      tags: [classes]
+      summary: Update a class
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClassUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Class"
+
+  /classes/{classId}/archive:
+    patch:
+      operationId: archiveClass
+      tags: [classes]
+      summary: Archive a class
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Class"
+
+  # ──── Subjects ────────────────────────────────────────────────────────────
+  # List uses flat path (query-only) to avoid Orval *Params name collision
+  /subjects:
+    get:
+      operationId: listSubjects
+      tags: [subjects]
+      summary: List subjects for a class
+      parameters:
+        - name: classId
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Subject"
+
+  # Create stays nested so the parent ID is in the path
+  /classes/{classId}/subjects:
+    post:
+      operationId: createSubject
+      tags: [subjects]
+      summary: Create a subject
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubjectInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+
+  /subjects/{subjectId}:
+    get:
+      operationId: getSubject
+      tags: [subjects]
+      summary: Get a subject
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+    patch:
+      operationId: updateSubject
+      tags: [subjects]
+      summary: Update a subject
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubjectUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+
+  /subjects/{subjectId}/archive:
+    patch:
+      operationId: archiveSubject
+      tags: [subjects]
+      summary: Archive a subject
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subject"
+
+  # ──── Chapters ────────────────────────────────────────────────────────────
+  /chapters:
+    get:
+      operationId: listChapters
+      tags: [chapters]
+      summary: List chapters for a subject
+      parameters:
+        - name: subjectId
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Chapter"
+
+  /subjects/{subjectId}/chapters:
+    post:
+      operationId: createChapter
+      tags: [chapters]
+      summary: Create a chapter
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChapterInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chapter"
+
+  /chapters/{chapterId}:
+    get:
+      operationId: getChapter
+      tags: [chapters]
+      summary: Get a chapter
+      parameters:
+        - name: chapterId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chapter"
+    patch:
+      operationId: updateChapter
+      tags: [chapters]
+      summary: Update a chapter
+      parameters:
+        - name: chapterId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChapterUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chapter"
+
+  /chapters/{chapterId}/archive:
+    patch:
+      operationId: archiveChapter
+      tags: [chapters]
+      summary: Archive a chapter
+      parameters:
+        - name: chapterId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chapter"
+
+  # ──── Sections ────────────────────────────────────────────────────────────
+  /sections:
+    get:
+      operationId: listSections
+      tags: [sections]
+      summary: List sections for a chapter
+      parameters:
+        - name: chapterId
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Section"
+
+  /chapters/{chapterId}/sections:
+    post:
+      operationId: createSection
+      tags: [sections]
+      summary: Create a section
+      parameters:
+        - name: chapterId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SectionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Section"
+
+  /sections/{sectionId}:
+    get:
+      operationId: getSection
+      tags: [sections]
+      summary: Get a section
+      parameters:
+        - name: sectionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Section"
+    patch:
+      operationId: updateSection
+      tags: [sections]
+      summary: Update a section
+      parameters:
+        - name: sectionId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SectionUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Section"
+
+  /sections/{sectionId}/archive:
+    patch:
+      operationId: archiveSection
+      tags: [sections]
+      summary: Archive a section
+      parameters:
+        - name: sectionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Section"
+
+  # ──── Questions ───────────────────────────────────────────────────────────
+  # List uses flat path (query-only) to avoid Orval *Params name collision
+  /questions:
+    get:
+      operationId: listQuestions
+      tags: [questions]
+      summary: List questions in a section (paginated)
+      parameters:
+        - name: sectionId
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: page
+          in: query
+          schema:
+            type: number
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: referenceYear
+          in: query
+          schema:
+            type: number
+        - name: referenceType
+          in: query
+          schema:
+            type: string
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionPage"
+
+  /sections/{sectionId}/questions:
+    post:
+      operationId: createQuestion
+      tags: [questions]
+      summary: Create a question
+      parameters:
+        - name: sectionId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+
+  /sections/{sectionId}/questions/bulk:
+    post:
+      operationId: bulkCreateQuestions
+      tags: [questions]
+      summary: Bulk create questions in a section
+      parameters:
+        - name: sectionId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkQuestionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Question"
+
+  # Search must come before /questions/{questionId} to avoid routing ambiguity
+  /questions/search:
+    get:
+      operationId: searchQuestions
+      tags: [questions]
+      summary: Full-text search across all questions
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: classId
+          in: query
+          schema:
+            type: number
+        - name: subjectId
+          in: query
+          schema:
+            type: number
+        - name: questionType
+          in: query
+          schema:
+            type: string
+        - name: referenceType
+          in: query
+          schema:
+            type: string
+        - name: referenceYearFrom
+          in: query
+          schema:
+            type: number
+        - name: referenceYearTo
+          in: query
+          schema:
+            type: number
+        - name: page
+          in: query
+          schema:
+            type: number
+        - name: limit
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionPage"
+
+  /questions/{questionId}:
+    get:
+      operationId: getQuestion
+      tags: [questions]
+      summary: Get a question
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+    patch:
+      operationId: updateQuestion
+      tags: [questions]
+      summary: Update a question (creates new version, archives old)
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+
+  /questions/{questionId}/archive:
+    patch:
+      operationId: archiveQuestion
+      tags: [questions]
+      summary: Archive a question
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+
+  # ──── Tests ───────────────────────────────────────────────────────────────
+  /tests:
+    get:
+      operationId: listTests
+      tags: [tests]
+      summary: List generated tests
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TestSummary"
+    post:
+      operationId: generateTest
+      tags: [tests]
+      summary: Generate a test from stored questions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestConfig"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Test"
+
+  /tests/{testId}:
+    get:
+      operationId: getTest
+      tags: [tests]
+      summary: Get a test with its questions
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Test"
+
+  /tests/{testId}/submit:
+    post:
+      operationId: submitTest
+      tags: [tests]
+      summary: Submit test answers and get results
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestSubmission"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestResult"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    # ── Auth ────────────────────────────────────────────────────────────────
+    RegisterInput:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+          minLength: 3
+        email:
+          type: string
+        password:
+          type: string
+          minLength: 8
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    ForgotPasswordInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+
+    ResetPasswordInput:
+      type: object
+      required: [token, newPassword]
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          minLength: 8
+
+    VerifyEmailInput:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user]
+      properties:
+        token:
+          type: string
+          nullable: true
+        refreshToken:
+          type: string
+          nullable: true
+        totpRequired:
+          type: boolean
+        totpChallenge:
+          type: string
+          description: Temporary token to complete 2FA step
+          nullable: true
+        user:
+          $ref: "#/components/schemas/User"
+
+    TotpEnrollResponse:
+      type: object
+      required: [provisioningUri, qrCode, secret]
+      properties:
+        provisioningUri:
+          type: string
+        qrCode:
+          type: string
+          description: base64-encoded QR code image
+        secret:
+          type: string
+          description: Manual entry secret
+
+    TotpCodeInput:
+      type: object
+      required: [code]
+      properties:
+        code:
+          type: string
+
+    TotpConfirmResponse:
+      type: object
+      required: [backupCodes]
+      properties:
+        backupCodes:
+          type: array
+          items:
+            type: string
+
+    TotpVerifyInput:
+      type: object
+      required: [totpChallenge, code]
+      properties:
+        totpChallenge:
+          type: string
+        code:
+          type: string
+
+    RefreshInput:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken:
+          type: string
+
+    Session:
+      type: object
+      required: [id, userAgent, ipAddress, createdAt, current]
+      properties:
+        id:
+          type: number
+        userAgent:
+          type: string
+          nullable: true
+        ipAddress:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        current:
+          type: boolean
+
+    User:
+      type: object
+      required: [id, username, email, role, createdAt]
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, editor, viewer]
+        createdAt:
+          type: string
+          format: date-time
+        emailVerifiedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    UserRoleUpdate:
+      type: object
+      required: [role]
+      properties:
+        role:
+          type: string
+          enum: [admin, editor, viewer]
+
+    # ── Dashboard ───────────────────────────────────────────────────────────
+    DashboardStats:
+      type: object
+      required:
+        - totalClasses
+        - totalSubjects
+        - totalChapters
+        - totalSections
+        - totalQuestions
+        - totalMcqs
+        - totalShortQuestions
+        - totalLongQuestions
+        - totalTests
+      properties:
+        totalClasses:
+          type: number
+        totalSubjects:
+          type: number
+        totalChapters:
+          type: number
+        totalSections:
+          type: number
+        totalQuestions:
+          type: number
+        totalMcqs:
+          type: number
+        totalShortQuestions:
+          type: number
+        totalLongQuestions:
+          type: number
+        totalTests:
+          type: number
+
+    RecentQuestion:
+      type: object
+      required: [id, questionText, questionType, chapterName, subjectName, className, createdAt]
+      properties:
+        id:
+          type: number
+        questionText:
+          type: string
+        questionType:
+          type: string
+        chapterName:
+          type: string
+        subjectName:
+          type: string
+        className:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    # ── Classes ─────────────────────────────────────────────────────────────
+    Class:
+      type: object
+      required: [id, name, orderIndex, isArchived, createdAt]
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        orderIndex:
+          type: number
+        isArchived:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    ClassInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        orderIndex:
+          type: number
+
+    ClassUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        orderIndex:
+          type: number
+
+    # ── Subjects ────────────────────────────────────────────────────────────
+    Subject:
+      type: object
+      required: [id, classId, name, orderIndex, isArchived, createdAt]
+      properties:
+        id:
+          type: number
+        classId:
+          type: number
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        orderIndex:
+          type: number
+        isArchived:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    SubjectInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        orderIndex:
+          type: number
+
+    SubjectUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        orderIndex:
+          type: number
+
+    # ── Chapters ────────────────────────────────────────────────────────────
+    Chapter:
+      type: object
+      required: [id, subjectId, name, orderIndex, isArchived, createdAt]
+      properties:
+        id:
+          type: number
+        subjectId:
+          type: number
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        orderIndex:
+          type: number
+        isArchived:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    ChapterInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        orderIndex:
+          type: number
+
+    ChapterUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        orderIndex:
+          type: number
+
+    # ── Sections ────────────────────────────────────────────────────────────
+    Section:
+      type: object
+      required: [id, chapterId, name, sectionType, orderIndex, isArchived, createdAt]
+      properties:
+        id:
+          type: number
+        chapterId:
+          type: number
+        name:
+          type: string
+        sectionType:
+          type: string
+          enum: [mcqs, short_questions, long_questions, notes, past_papers, custom]
+        orderIndex:
+          type: number
+        isArchived:
+          type: boolean
+        questionCount:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    SectionInput:
+      type: object
+      required: [name, sectionType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        sectionType:
+          type: string
+          enum: [mcqs, short_questions, long_questions, notes, past_papers, custom]
+        orderIndex:
+          type: number
+
+    SectionUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        orderIndex:
+          type: number
+
+    # ── Questions ───────────────────────────────────────────────────────────
+    Question:
+      type: object
+      required: [id, sectionId, questionType, questionText, isArchived, createdAt]
+      properties:
+        id:
+          type: number
+        sectionId:
+          type: number
+        questionType:
+          type: string
+          enum: [mcq, short, long]
+        questionText:
+          type: string
+        optionA:
+          type: ["string", "null"]
+        optionB:
+          type: ["string", "null"]
+        optionC:
+          type: ["string", "null"]
+        optionD:
+          type: ["string", "null"]
+        correctOption:
+          type: ["string", "null"]
+        explanation:
+          type: ["string", "null"]
+        modelAnswer:
+          type: ["string", "null"]
+        marks:
+          type: ["number", "null"]
+        referenceSource:
+          type: ["string", "null"]
+        referenceYear:
+          type: ["number", "null"]
+        referenceType:
+          type: ["string", "null"]
+        referenceNote:
+          type: ["string", "null"]
+        isArchived:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    QuestionInput:
+      type: object
+      required: [questionType, questionText]
+      properties:
+        questionType:
+          type: string
+          enum: [mcq, short, long]
+        questionText:
+          type: string
+          minLength: 1
+        optionA:
+          type: string
+        optionB:
+          type: string
+        optionC:
+          type: string
+        optionD:
+          type: string
+        correctOption:
+          type: string
+          enum: [A, B, C, D]
+        explanation:
+          type: string
+        modelAnswer:
+          type: string
+        marks:
+          type: number
+        referenceSource:
+          type: string
+        referenceYear:
+          type: number
+        referenceType:
+          type: string
+          enum: [board_paper, coaching_paper, other]
+        referenceNote:
+          type: string
+
+    QuestionUpdate:
+      type: object
+      properties:
+        questionText:
+          type: string
+          minLength: 1
+        optionA:
+          type: string
+        optionB:
+          type: string
+        optionC:
+          type: string
+        optionD:
+          type: string
+        correctOption:
+          type: string
+          enum: [A, B, C, D]
+        explanation:
+          type: string
+        modelAnswer:
+          type: string
+        marks:
+          type: number
+        referenceSource:
+          type: string
+        referenceYear:
+          type: number
+        referenceType:
+          type: string
+          enum: [board_paper, coaching_paper, other]
+        referenceNote:
+          type: string
+
+    BulkQuestionInput:
+      type: object
+      required: [questions]
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionInput"
+
+    QuestionPage:
+      type: object
+      required: [questions, total, page, limit]
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Question"
+        total:
+          type: number
+        page:
+          type: number
+        limit:
+          type: number
+
+    # ── Tests ───────────────────────────────────────────────────────────────
+    TestScope:
+      type: object
+      properties:
+        classId:
+          type: ["number", "null"]
+        subjectId:
+          type: ["number", "null"]
+        chapterId:
+          type: ["number", "null"]
+        sectionIds:
+          type: array
+          items:
+            type: number
+
+    TestConfig:
+      type: object
+      required: [title, scope]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        scope:
+          $ref: "#/components/schemas/TestScope"
+        mcqCount:
+          type: number
+        shortQuestionCount:
+          type: number
+        longQuestionCount:
+          type: number
+        shortQuestionMarks:
+          type: number
+        longQuestionMarks:
+          type: number
+        referenceYearFrom:
+          type: ["number", "null"]
+        referenceYearTo:
+          type: ["number", "null"]
+        referenceType:
+          type: ["string", "null"]
+
+    TestSummary:
+      type: object
+      required: [id, title, totalMarks, questionCount, createdAt]
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        totalMarks:
+          type: number
+        questionCount:
+          type: number
+        mcqCount:
+          type: number
+        shortCount:
+          type: number
+        longCount:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+
+    Test:
+      type: object
+      required: [id, title, totalMarks, questions, createdAt]
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        totalMarks:
+          type: number
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Question"
+        createdAt:
+          type: string
+          format: date-time
+
+    TestSubmission:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/TestAnswer"
+
+    TestAnswer:
+      type: object
+      required: [questionId]
+      properties:
+        questionId:
+          type: number
+        selectedOption:
+          type: ["string", "null"]
+        writtenAnswer:
+          type: ["string", "null"]
+
+    TestResult:
+      type: object
+      required: [testId, score, totalMarks, mcqScore, results]
+      properties:
+        testId:
+          type: number
+        score:
+          type: number
+        totalMarks:
+          type: number
+        mcqScore:
+          type: number
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionResult"
+
+    QuestionResult:
+      type: object
+      required: [questionId, isCorrect]
+      properties:
+        questionId:
+          type: number
+        isCorrect:
+          type: boolean
+        correctOption:
+          type: ["string", "null"]
+        modelAnswer:
+          type: ["string", "null"]
+        explanation:
+          type: ["string", "null"]

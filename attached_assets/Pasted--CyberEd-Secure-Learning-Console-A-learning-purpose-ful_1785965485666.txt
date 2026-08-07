@@ -1,0 +1,158 @@
+# CyberEd — Secure Learning Console
+
+A learning-purpose full-stack app: a dashboard where content is organized as
+**Class → Subject → Chapter → Section**, sections can be MCQs (with
+reference to board/coaching papers and year), Notes, Past Papers, or a fully
+custom type. Data is never hard-deleted — records are only "archived", so
+your archive keeps growing instead of shrinking.
+
+- **Backend:** FastAPI + PostgreSQL + SQLAlchemy, JWT access tokens +
+  rotating refresh tokens, bcrypt password hashing, account lockout after
+  repeated failed logins, per-endpoint rate limiting, security headers,
+  append-only audit log.
+- **Frontend:** React + Vite + Tailwind + Framer Motion. Animated
+  terminal-styled login, a directory-tree sidebar, fully responsive.
+
+This is a solid *foundation*, not a finished production system — see
+**Security notes** below for what to harden before this ever goes public.
+
+---
+
+## 1. Run the backend
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+
+cp .env.example .env
+# generate a real secret:
+python -c "import secrets; print(secrets.token_hex(64))"
+# paste it into .env as JWT_SECRET_KEY
+```
+
+### Option A — Postgres via Docker (recommended)
+```bash
+cd ..                # project root
+docker compose up -d db
+```
+This starts Postgres on `localhost:5432` with the credentials already set
+in `docker-compose.yml` / `.env.example`. Then, back in `backend/`:
+```bash
+uvicorn app.main:app --reload
+```
+
+### Option B — Postgres you already have
+Edit `DATABASE_URL` in `backend/.env` to point at your own instance, then
+run `uvicorn app.main:app --reload`.
+
+Tables are created automatically on first run. API docs live at
+`http://localhost:8000/docs`.
+
+**The first account you register becomes an admin automatically.** Everyone
+after that registers as a `viewer`; promote people to `editor`/`admin`
+directly in the database (`role` column on `users`) until you build an
+admin-management screen for it.
+
+---
+
+## 2. Run the frontend
+
+```bash
+cd frontend
+npm install
+cp .env.example .env       # points at http://localhost:8000 by default
+npm run dev
+```
+
+Open `http://localhost:5173`. The first screen is the animated login/boot
+sequence; register there, then sign in.
+
+---
+
+## 3. How the content model works
+
+```
+Class (e.g. "Class 10")
+ └─ Subject (e.g. "Physics")
+     └─ Chapter (e.g. "SHM")
+         └─ Section — choose a type when you create it:
+             ├─ mcqs         → structured MCQ form with reference_source /
+             │                 reference_year / reference_type (board paper,
+             │                 coaching paper, other) / reference_note
+             ├─ notes        → freeform content blocks (title + body + file link)
+             ├─ past_papers  → same freeform block editor
+             └─ custom       → same freeform block editor, name it anything
+```
+Add as many classes, subjects, chapters, and sections as you like — the
+tree has no depth or count limits baked in.
+
+---
+
+## 4. Security notes (read before deploying anywhere real)
+
+What's already in place:
+- Passwords hashed with bcrypt; strong-password rule enforced at signup.
+- Access tokens are short-lived JWTs (15 min); refresh tokens are random,
+  stored server-side only as a SHA-256 hash, and **rotate** on every use —
+  a stolen refresh token that gets reused after the legitimate client
+  already refreshed will be rejected.
+- Account lockout after repeated failed logins (`MAX_LOGIN_ATTEMPTS` /
+  `LOCKOUT_MINUTES` in `.env`).
+- Rate limiting on `/auth/login` and `/auth/register`.
+- Security response headers (`X-Frame-Options`, `X-Content-Type-Options`,
+  etc.) and a locked-down CORS policy (only your frontend origin, no
+  `DELETE` verb exposed anywhere).
+- An append-only `audit_logs` table records logins, failures, lockouts, and
+  content edits.
+- Every table has `is_archived` instead of a delete path — nothing is ever
+  physically removed by the API.
+
+What you should still do before this is public-facing:
+- Put it behind HTTPS (a reverse proxy like Caddy/Nginx with a real cert).
+- Move refresh-token storage from JS memory to an **httpOnly, Secure,
+  SameSite cookie** — this build keeps it in memory for simplicity, which
+  is fine for local learning but weaker against XSS in a real deployment.
+- Add CSRF protection once you introduce cookies.
+- Add real role-management UI instead of hand-editing the `role` column.
+- Add file-upload virus/type scanning if you let people attach real files
+  instead of just linking a `file_url`.
+- Set up automated Postgres backups (data being "permanent" only matters if
+  the disk is too).
+- Swap `Base.metadata.create_all` for **Alembic migrations** once the
+  schema is stable.
+
+---
+
+## 5. Project layout
+
+```
+cybered-platform/
+├── backend/
+│   ├── app/
+│   │   ├── main.py          FastAPI app, middleware, security headers
+│   │   ├── config.py        env-based settings
+│   │   ├── database.py      SQLAlchemy engine/session
+│   │   ├── models.py        User, RefreshToken, AuditLog, Class..MCQ
+│   │   ├── schemas.py       Pydantic request/response models
+│   │   ├── security.py      hashing, JWT, lockout, current-user dependency
+│   │   ├── audit.py         audit-log helper
+│   │   ├── limiter.py       shared slowapi limiter
+│   │   └── routers/
+│   │       ├── auth.py      register / login / refresh / logout / me
+│   │       └── curriculum.py classes/subjects/chapters/sections/mcqs/blocks
+│   ├── requirements.txt
+│   ├── Dockerfile
+│   └── .env.example
+├── frontend/
+│   └── src/
+│       ├── pages/Login.jsx       animated terminal-style auth screen
+│       ├── pages/Dashboard.jsx   header + sidebar + section view
+│       ├── components/Sidebar.jsx    directory-tree nav (lazy-loaded)
+│       ├── components/SectionView.jsx  MCQ form/list or freeform content
+│       ├── components/BootSequence.jsx  login boot animation
+│       ├── context/AuthContext.jsx
+│       └── lib/api.js        axios client with silent token refresh
+└── docker-compose.yml
+```
