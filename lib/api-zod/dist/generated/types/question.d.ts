@@ -5,6 +5,7 @@
  * CyberEd API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { QuestionDifficulty } from './questionDifficulty';
 import type { QuestionQuestionType } from './questionQuestionType';
 export interface Question {
     id: number;
@@ -35,6 +36,17 @@ export interface Question {
     referenceType?: string | null;
     /** @nullable */
     referenceNote?: string | null;
+    tags?: string[];
+    /** @nullable */
+    difficulty?: QuestionDifficulty;
+    /** @nullable */
+    bookPage?: number | null;
+    /** @nullable */
+    bookExplanation?: string | null;
+    /** @nullable */
+    aiExplanation?: string | null;
+    /** @nullable */
+    imageUrl?: string | null;
     isArchived: boolean;
     createdAt: Date;
 }

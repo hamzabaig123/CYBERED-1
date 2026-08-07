@@ -180,6 +180,14 @@ export declare const SectionSectionType: {
     readonly long_questions: "long_questions";
     readonly notes: "notes";
     readonly past_papers: "past_papers";
+    readonly essays: "essays";
+    readonly practical_questions: "practical_questions";
+    readonly viva_questions: "viva_questions";
+    readonly programming_questions: "programming_questions";
+    readonly flashcards: "flashcards";
+    readonly mind_maps: "mind_maps";
+    readonly formula_sheets: "formula_sheets";
+    readonly cheat_sheets: "cheat_sheets";
     readonly custom: "custom";
 };
 export interface Section {
@@ -200,6 +208,14 @@ export declare const SectionInputSectionType: {
     readonly long_questions: "long_questions";
     readonly notes: "notes";
     readonly past_papers: "past_papers";
+    readonly essays: "essays";
+    readonly practical_questions: "practical_questions";
+    readonly viva_questions: "viva_questions";
+    readonly programming_questions: "programming_questions";
+    readonly flashcards: "flashcards";
+    readonly mind_maps: "mind_maps";
+    readonly formula_sheets: "formula_sheets";
+    readonly cheat_sheets: "cheat_sheets";
     readonly custom: "custom";
 };
 export interface SectionInput {
@@ -218,6 +234,15 @@ export declare const QuestionQuestionType: {
     readonly mcq: "mcq";
     readonly short: "short";
     readonly long: "long";
+};
+/**
+ * @nullable
+ */
+export type QuestionDifficulty = typeof QuestionDifficulty[keyof typeof QuestionDifficulty] | null;
+export declare const QuestionDifficulty: {
+    readonly easy: "easy";
+    readonly medium: "medium";
+    readonly hard: "hard";
 };
 export interface Question {
     id: number;
@@ -248,6 +273,17 @@ export interface Question {
     referenceType?: string | null;
     /** @nullable */
     referenceNote?: string | null;
+    tags?: string[];
+    /** @nullable */
+    difficulty?: QuestionDifficulty;
+    /** @nullable */
+    bookPage?: number | null;
+    /** @nullable */
+    bookExplanation?: string | null;
+    /** @nullable */
+    aiExplanation?: string | null;
+    /** @nullable */
+    imageUrl?: string | null;
     isArchived: boolean;
     createdAt: string;
 }
@@ -270,6 +306,12 @@ export declare const QuestionInputReferenceType: {
     readonly coaching_paper: "coaching_paper";
     readonly other: "other";
 };
+export type QuestionInputDifficulty = typeof QuestionInputDifficulty[keyof typeof QuestionInputDifficulty];
+export declare const QuestionInputDifficulty: {
+    readonly easy: "easy";
+    readonly medium: "medium";
+    readonly hard: "hard";
+};
 export interface QuestionInput {
     questionType: QuestionInputQuestionType;
     /** @minLength 1 */
@@ -286,6 +328,12 @@ export interface QuestionInput {
     referenceYear?: number;
     referenceType?: QuestionInputReferenceType;
     referenceNote?: string;
+    tags?: string[];
+    difficulty?: QuestionInputDifficulty;
+    bookPage?: number;
+    bookExplanation?: string;
+    aiExplanation?: string;
+    imageUrl?: string;
 }
 export type QuestionUpdateCorrectOption = typeof QuestionUpdateCorrectOption[keyof typeof QuestionUpdateCorrectOption];
 export declare const QuestionUpdateCorrectOption: {
@@ -299,6 +347,12 @@ export declare const QuestionUpdateReferenceType: {
     readonly board_paper: "board_paper";
     readonly coaching_paper: "coaching_paper";
     readonly other: "other";
+};
+export type QuestionUpdateDifficulty = typeof QuestionUpdateDifficulty[keyof typeof QuestionUpdateDifficulty];
+export declare const QuestionUpdateDifficulty: {
+    readonly easy: "easy";
+    readonly medium: "medium";
+    readonly hard: "hard";
 };
 export interface QuestionUpdate {
     /** @minLength 1 */
@@ -315,6 +369,12 @@ export interface QuestionUpdate {
     referenceYear?: number;
     referenceType?: QuestionUpdateReferenceType;
     referenceNote?: string;
+    tags?: string[];
+    difficulty?: QuestionUpdateDifficulty;
+    bookPage?: number;
+    bookExplanation?: string;
+    aiExplanation?: string;
+    imageUrl?: string;
 }
 export interface BulkQuestionInput {
     questions: QuestionInput[];
@@ -325,6 +385,101 @@ export interface QuestionPage {
     page: number;
     limit: number;
 }
+export interface ExplorerResult {
+    questions: Question[];
+    /** @nullable */
+    nextCursor: number | null;
+    hasMore: boolean;
+}
+/**
+ * @nullable
+ */
+export type QuestionStateStatus = typeof QuestionStateStatus[keyof typeof QuestionStateStatus] | null;
+export declare const QuestionStateStatus: {
+    readonly solved: "solved";
+    readonly wrong: "wrong";
+    readonly bookmarked: "bookmarked";
+};
+export interface QuestionState {
+    id?: number;
+    questionId?: number;
+    questionType?: string;
+    /** @nullable */
+    status?: QuestionStateStatus;
+    /** @nullable */
+    lastAttemptedAt?: string | null;
+}
+/**
+ * @nullable
+ */
+export type QuestionStateInputStatus = typeof QuestionStateInputStatus[keyof typeof QuestionStateInputStatus] | null;
+export declare const QuestionStateInputStatus: {
+    readonly solved: "solved";
+    readonly wrong: "wrong";
+    readonly bookmarked: "bookmarked";
+    readonly '': "";
+};
+export interface QuestionStateInput {
+    questionType?: string;
+    /** @nullable */
+    status: QuestionStateInputStatus;
+}
+export interface Flashcard {
+    id: number;
+    sectionId: number;
+    front: string;
+    back: string;
+    /** @nullable */
+    referenceSource?: string | null;
+    /** @nullable */
+    referenceYear?: number | null;
+    isArchived: boolean;
+    createdAt: string;
+}
+export interface FlashcardInput {
+    /** @minLength 1 */
+    front: string;
+    /** @minLength 1 */
+    back: string;
+    referenceSource?: string;
+    referenceYear?: number;
+}
+export interface FlashcardUpdate {
+    /** @minLength 1 */
+    front?: string;
+    /** @minLength 1 */
+    back?: string;
+    referenceSource?: string;
+    referenceYear?: number;
+}
+export interface BulkFlashcardInput {
+    flashcards: FlashcardInput[];
+}
+export interface FlashcardPage {
+    flashcards: Flashcard[];
+    total: number;
+    page: number;
+    limit: number;
+}
+export type SecuritySummaryRecentActivityItem = {
+    id?: number;
+    action?: string;
+    /** @nullable */
+    detail?: string | null;
+    /** @nullable */
+    ipAddress?: string | null;
+    /** @nullable */
+    userAgent?: string | null;
+    createdAt?: string;
+};
+export interface SecuritySummary {
+    emailVerified?: boolean;
+    twoFactorEnabled?: boolean;
+    /** @nullable */
+    lastPasswordChangeAt?: string | null;
+    activeSessionCount?: number;
+    recentActivity?: SecuritySummaryRecentActivityItem[];
+}
 export interface TestScope {
     /** @nullable */
     classId?: number | null;
@@ -334,10 +489,19 @@ export interface TestScope {
     chapterId?: number | null;
     sectionIds?: number[];
 }
+export type TestConfigMode = typeof TestConfigMode[keyof typeof TestConfigMode];
+export declare const TestConfigMode: {
+    readonly practice: "practice";
+    readonly exam: "exam";
+};
 export interface TestConfig {
     /** @minLength 1 */
     title: string;
     scope: TestScope;
+    mode?: TestConfigMode;
+    /** @nullable */
+    timeLimitMinutes?: number | null;
+    weakTopicsOnly?: boolean;
     mcqCount?: number;
     shortQuestionCount?: number;
     longQuestionCount?: number;
@@ -353,6 +517,9 @@ export interface TestConfig {
 export interface TestSummary {
     id: number;
     title: string;
+    mode?: string;
+    /** @nullable */
+    timeLimitMinutes?: number | null;
     totalMarks: number;
     questionCount: number;
     mcqCount?: number;
@@ -360,11 +527,59 @@ export interface TestSummary {
     longCount?: number;
     createdAt: string;
 }
+export type TestQuestionItemQuestionType = typeof TestQuestionItemQuestionType[keyof typeof TestQuestionItemQuestionType];
+export declare const TestQuestionItemQuestionType: {
+    readonly mcq: "mcq";
+    readonly short: "short";
+    readonly long: "long";
+};
+export interface TestQuestionItem {
+    questionId: number;
+    questionType: TestQuestionItemQuestionType;
+    questionText: string;
+    /** @nullable */
+    optionA?: string | null;
+    /** @nullable */
+    optionB?: string | null;
+    /** @nullable */
+    optionC?: string | null;
+    /** @nullable */
+    optionD?: string | null;
+    /** @nullable */
+    correctOption?: string | null;
+    /** @nullable */
+    explanation?: string | null;
+    /** @nullable */
+    modelAnswer?: string | null;
+    /** @nullable */
+    marks?: number | null;
+    tags?: string[];
+    /** @nullable */
+    difficulty?: string | null;
+}
+export interface AttemptSummary {
+    id: number;
+    score: number;
+    totalMarks: number;
+    mcqScore?: number;
+    shortScore?: number;
+    longScore?: number;
+    status: string;
+    autoSubmitted?: boolean;
+    startedAt?: string;
+    /** @nullable */
+    submittedAt?: string | null;
+    createdAt: string;
+}
 export interface Test {
     id: number;
     title: string;
+    mode?: string;
+    /** @nullable */
+    timeLimitMinutes?: number | null;
     totalMarks: number;
-    questions: Question[];
+    questions: TestQuestionItem[];
+    attempts?: AttemptSummary[];
     createdAt: string;
 }
 export interface TestAnswer {
@@ -374,25 +589,627 @@ export interface TestAnswer {
     /** @nullable */
     writtenAnswer?: string | null;
 }
-export interface TestSubmission {
+export interface TestDraftInput {
+    /** @nullable */
+    attemptId?: number | null;
     answers: TestAnswer[];
 }
-export interface QuestionResult {
+export interface TestDraftResponse {
+    attemptId: number;
+    startedAt: string;
+}
+export interface TestSubmission {
+    answers: TestAnswer[];
+    /** @nullable */
+    draftId?: number | null;
+}
+export interface QuestionResultItem {
     questionId: number;
-    isCorrect: boolean;
+    questionType: string;
+    /** @nullable */
+    isCorrect?: boolean | null;
+    marksAwarded?: number;
+    marksPossible?: number;
+    gradedBy?: string;
+    needsGrading?: boolean;
     /** @nullable */
     correctOption?: string | null;
     /** @nullable */
     modelAnswer?: string | null;
     /** @nullable */
     explanation?: string | null;
+    keywordMatch?: number;
+    keywordTotal?: number;
+    /** @nullable */
+    selectedOption?: string | null;
+    /** @nullable */
+    writtenAnswer?: string | null;
 }
 export interface TestResult {
     testId: number;
+    attemptId: number;
+    mode?: string;
     score: number;
     totalMarks: number;
-    mcqScore: number;
-    results: QuestionResult[];
+    mcqScore?: number;
+    shortScore?: number;
+    longScore?: number;
+    writtenScore?: number;
+    autoSubmitted?: boolean;
+    results: QuestionResultItem[];
+}
+export type SelfGradeInputAnswersItem = {
+    questionId: number;
+    marksAwarded: number;
+};
+export interface SelfGradeInput {
+    answers: SelfGradeInputAnswersItem[];
+}
+export interface SelfGradeResult {
+    attemptId: number;
+    score: number;
+    totalMarks: number;
+    mcqScore?: number;
+    shortScore?: number;
+    longScore?: number;
+    writtenScore?: number;
+    results: QuestionResultItem[];
+}
+export interface RevisionDue {
+    id: number;
+    questionId: number;
+    questionType?: string;
+    /** @nullable */
+    questionText?: string | null;
+    /** @nullable */
+    sectionName?: string | null;
+    dueAt: string;
+    intervalDays?: number;
+    repetitions?: number;
+    easeFactor?: number;
+}
+export interface ScheduleRevisionInput {
+    questionIds: number[];
+}
+export type CompleteRevisionInputGrade = typeof CompleteRevisionInputGrade[keyof typeof CompleteRevisionInputGrade];
+export declare const CompleteRevisionInputGrade: {
+    readonly again: "again";
+    readonly hard: "hard";
+    readonly good: "good";
+    readonly easy: "easy";
+};
+export interface CompleteRevisionInput {
+    grade: CompleteRevisionInputGrade;
+}
+export interface RevisionUpdate {
+    id: number;
+    questionId: number;
+    dueAt: string;
+    intervalDays?: number;
+    repetitions?: number;
+    easeFactor?: number;
+}
+export interface Goal {
+    id: number;
+    goalDate: string;
+    questionsTarget?: number;
+    minutesTarget?: number;
+    testsTarget?: number;
+}
+export interface SetTodayGoalInput {
+    questionsTarget?: number;
+    minutesTarget?: number;
+    testsTarget?: number;
+}
+/**
+ * @nullable
+ */
+export type CalendarDayGoal = {
+    id?: number;
+    goalDate?: string;
+    questionsTarget?: number;
+    minutesTarget?: number;
+    testsTarget?: number;
+} | null;
+export interface CalendarDay {
+    date: string;
+    minutes?: number;
+    questionsSolved?: number;
+    questionsAdded?: number;
+    testsTaken?: number;
+    flashcardsReviewed?: number;
+    revisionsCompleted?: number;
+    events: number;
+    /** @nullable */
+    goal?: CalendarDayGoal;
+    /** @nullable */
+    goalMet?: boolean | null;
+}
+export interface CalendarResponse {
+    year: number;
+    month: number;
+    currentStreak?: number;
+    bestStreak?: number;
+    days: CalendarDay[];
+}
+export interface TimelineEvent {
+    id: number;
+    type: string;
+    count?: number;
+    minutes?: number;
+    activityDate: string;
+    createdAt: string;
+    /** @nullable */
+    questionText?: string | null;
+    /** @nullable */
+    testTitle?: string | null;
+}
+export interface HeatmapDay {
+    date: string;
+    events: number;
+    minutes?: number;
+    questionsSolved?: number;
+}
+export interface HeatmapResponse {
+    year: number;
+    days: HeatmapDay[];
+}
+export interface StreakResponse {
+    currentStreak: number;
+    bestStreak: number;
+}
+export type ReportResponseTotals = {
+    minutes?: number;
+    questionsSolved?: number;
+    questionsAdded?: number;
+    testsTaken?: number;
+    flashcardsReviewed?: number;
+    revisionsCompleted?: number;
+    events?: number;
+};
+export type ReportResponseTestsItem = {
+    testId?: number;
+    title?: string;
+    score?: number;
+    totalMarks?: number;
+    /** @nullable */
+    submittedAt?: string | null;
+};
+export type TopicStatLabel = typeof TopicStatLabel[keyof typeof TopicStatLabel];
+export declare const TopicStatLabel: {
+    readonly weak: "weak";
+    readonly strong: "strong";
+    readonly neutral: "neutral";
+};
+export interface TopicStat {
+    sectionId: number;
+    sectionName: string;
+    chapterName?: string;
+    subjectName?: string;
+    className?: string;
+    attempts: number;
+    correct?: number;
+    accuracy: number;
+    /** @nullable */
+    lastAttemptDaysAgo?: number | null;
+    mastery: number;
+    label: TopicStatLabel;
+}
+export interface ReportResponse {
+    period: string;
+    from: string;
+    to: string;
+    currentStreak?: number;
+    bestStreak?: number;
+    totals: ReportResponseTotals;
+    topicStats?: TopicStat[];
+    tests?: ReportResponseTestsItem[];
+}
+export interface AccuracyResponse {
+    attempts: number;
+    correct?: number;
+    accuracy: number;
+}
+export type AnalyticsDashboardRecentTestsItem = {
+    testId?: number;
+    title?: string;
+    score?: number;
+    totalMarks?: number;
+    /** @nullable */
+    submittedAt?: string | null;
+};
+export interface AnalyticsDashboard {
+    accuracy: AccuracyResponse;
+    solvedCount: number;
+    wrongCount: number;
+    currentStreak: number;
+    bestStreak: number;
+    questionsSolvedThisWeek?: number;
+    dueRevisions: number;
+    weakTopics?: TopicStat[];
+    masteryBySection?: TopicStat[];
+    recentTests?: AnalyticsDashboardRecentTestsItem[];
+}
+export type BookStoreStatus = typeof BookStoreStatus[keyof typeof BookStoreStatus];
+export declare const BookStoreStatus: {
+    readonly pending: "pending";
+    readonly ready: "ready";
+    readonly error: "error";
+};
+export interface BookStore {
+    id: number;
+    subjectId: number;
+    geminiStoreName: string;
+    status: BookStoreStatus;
+    indexedPages: number;
+    /** @nullable */
+    textbookTitle?: string | null;
+    /** @nullable */
+    errorMessage?: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+export type BookStoreStatusResponseStatus = typeof BookStoreStatusResponseStatus[keyof typeof BookStoreStatusResponseStatus];
+export declare const BookStoreStatusResponseStatus: {
+    readonly not_created: "not_created";
+    readonly pending: "pending";
+    readonly ready: "ready";
+    readonly error: "error";
+};
+export interface BookStoreStatusResponse {
+    store?: BookStore;
+    status?: BookStoreStatusResponseStatus;
+}
+export interface CreateBookStoreInput {
+    textbookTitle?: string;
+}
+export interface UploadBookIndexInput {
+    bookTitle: string;
+    fileName: string;
+    textbookContent: string;
+    licenseConfirmed: boolean;
+}
+export interface IndexBookResponse {
+    store?: BookStore;
+    operationName?: string;
+}
+export interface IndexingStatus {
+    done: boolean;
+    /** @nullable */
+    error?: string | null;
+}
+export interface ExplainRequest {
+    /** @minLength 1 */
+    questionText: string;
+    /** @nullable */
+    subjectId?: number | null;
+    /** @nullable */
+    questionId?: number | null;
+}
+export interface Citation {
+    page: number;
+    filename: string;
+    snippet: string;
+}
+export interface ExplainResponse {
+    explanation: string;
+    citations: Citation[];
+    subjectId?: number;
+}
+export interface VerifyQuestionInput {
+    questionId: number;
+}
+export type AIVerificationQuestionType = typeof AIVerificationQuestionType[keyof typeof AIVerificationQuestionType];
+export declare const AIVerificationQuestionType: {
+    readonly mcq: "mcq";
+    readonly short: "short";
+    readonly long: "long";
+};
+export type AIVerificationStatus = typeof AIVerificationStatus[keyof typeof AIVerificationStatus];
+export declare const AIVerificationStatus: {
+    readonly pending: "pending";
+    readonly accepted: "accepted";
+    readonly kept_mine: "kept_mine";
+    readonly dismissed: "dismissed";
+};
+export interface AIVerification {
+    id: number;
+    questionId: number;
+    questionType: AIVerificationQuestionType;
+    aiAnswer: string;
+    /** @nullable */
+    sourcePage?: number | null;
+    /** @nullable */
+    sourceFilename?: string | null;
+    /** @nullable */
+    confidence?: number | null;
+    /** @nullable */
+    agreesWithStored?: boolean | null;
+    status: AIVerificationStatus;
+    createdAt: string;
+    /** @nullable */
+    resolvedAt?: string | null;
+}
+export type AIVerificationListItemQuestionType = typeof AIVerificationListItemQuestionType[keyof typeof AIVerificationListItemQuestionType];
+export declare const AIVerificationListItemQuestionType: {
+    readonly mcq: "mcq";
+    readonly short: "short";
+    readonly long: "long";
+};
+export type AIVerificationListItemStatus = typeof AIVerificationListItemStatus[keyof typeof AIVerificationListItemStatus];
+export declare const AIVerificationListItemStatus: {
+    readonly pending: "pending";
+    readonly accepted: "accepted";
+    readonly kept_mine: "kept_mine";
+    readonly dismissed: "dismissed";
+};
+export interface AIVerificationListItem {
+    id: number;
+    questionId: number;
+    questionType: AIVerificationListItemQuestionType;
+    aiAnswer: string;
+    /** @nullable */
+    sourcePage?: number | null;
+    /** @nullable */
+    sourceFilename?: string | null;
+    /** @nullable */
+    confidence?: number | null;
+    /** @nullable */
+    agreesWithStored?: boolean | null;
+    status: AIVerificationListItemStatus;
+    createdAt: string;
+    /** @nullable */
+    resolvedAt?: string | null;
+    questionText?: string;
+    storedAnswer?: string;
+    subjectName?: string;
+    chapterName?: string;
+}
+export interface AIVerificationPage {
+    verifications: AIVerificationListItem[];
+    total: number;
+    limit: number;
+    offset: number;
+}
+export type AIVerificationDetailQuestionType = typeof AIVerificationDetailQuestionType[keyof typeof AIVerificationDetailQuestionType];
+export declare const AIVerificationDetailQuestionType: {
+    readonly mcq: "mcq";
+    readonly short: "short";
+    readonly long: "long";
+};
+export type AIVerificationDetailStatus = typeof AIVerificationDetailStatus[keyof typeof AIVerificationDetailStatus];
+export declare const AIVerificationDetailStatus: {
+    readonly pending: "pending";
+    readonly accepted: "accepted";
+    readonly kept_mine: "kept_mine";
+    readonly dismissed: "dismissed";
+};
+export interface AIVerificationDetail {
+    id: number;
+    questionId: number;
+    questionType: AIVerificationDetailQuestionType;
+    aiAnswer: string;
+    /** @nullable */
+    sourcePage?: number | null;
+    /** @nullable */
+    sourceFilename?: string | null;
+    /** @nullable */
+    confidence?: number | null;
+    /** @nullable */
+    agreesWithStored?: boolean | null;
+    status: AIVerificationDetailStatus;
+    createdAt: string;
+    /** @nullable */
+    resolvedAt?: string | null;
+    questionText?: string;
+    storedAnswer?: string;
+    question?: Question;
+}
+export interface SuccessResponse {
+    success: boolean;
+}
+export type GenerateQuestionsInputQuestionType = typeof GenerateQuestionsInputQuestionType[keyof typeof GenerateQuestionsInputQuestionType];
+export declare const GenerateQuestionsInputQuestionType: {
+    readonly mcq: "mcq";
+    readonly short: "short";
+    readonly long: "long";
+};
+export interface GenerateQuestionsInput {
+    pageRange: string;
+    questionType: GenerateQuestionsInputQuestionType;
+    /**
+       * @minimum 1
+       * @maximum 20
+       */
+    count: number;
+    /** @nullable */
+    topicFocus?: string | null;
+}
+export type GeneratedQuestionDraftOptions = {
+    A?: string;
+    B?: string;
+    C?: string;
+    D?: string;
+};
+export type GeneratedQuestionDraftCorrectOption = typeof GeneratedQuestionDraftCorrectOption[keyof typeof GeneratedQuestionDraftCorrectOption];
+export declare const GeneratedQuestionDraftCorrectOption: {
+    readonly A: "A";
+    readonly B: "B";
+    readonly C: "C";
+    readonly D: "D";
+};
+export interface GeneratedQuestionDraft {
+    question?: string;
+    options?: GeneratedQuestionDraftOptions;
+    correctOption?: GeneratedQuestionDraftCorrectOption;
+    /** @nullable */
+    modelAnswer?: string | null;
+    sourcePage?: number;
+    /** @nullable */
+    explanation?: string | null;
+}
+export type AIGeneratedQuestionQuestionType = typeof AIGeneratedQuestionQuestionType[keyof typeof AIGeneratedQuestionQuestionType];
+export declare const AIGeneratedQuestionQuestionType: {
+    readonly mcq: "mcq";
+    readonly short: "short";
+    readonly long: "long";
+};
+export type AIGeneratedQuestionPayloadJson = {
+    [key: string]: unknown;
+};
+export interface AIGeneratedQuestion {
+    id: number;
+    chapterId: number;
+    questionType: AIGeneratedQuestionQuestionType;
+    payloadJson: AIGeneratedQuestionPayloadJson;
+    /** @nullable */
+    sourcePage?: number | null;
+    /** @nullable */
+    topicFocus?: string | null;
+    /** @nullable */
+    approvedAt?: string | null;
+    /** @nullable */
+    dismissedAt?: string | null;
+    createdAt: string;
+}
+export interface GenerateQuestionsResponse {
+    drafts: AIGeneratedQuestion[];
+}
+export interface AIGeneratedQuestionPage {
+    drafts: AIGeneratedQuestion[];
+    total: number;
+    limit: number;
+    offset: number;
+}
+export interface AIGradeAnswerInput {
+    [key: string]: unknown;
+}
+export interface GradingSuggestion {
+    marksAwarded: number;
+    feedback: string;
+    missedPoints: string[];
+    citations: Citation[];
+}
+export interface AIGradeResponse {
+    suggestion: GradingSuggestion;
+    answerId?: number;
+    note?: string;
+}
+export interface AIChatSession {
+    id: number;
+    userId: number;
+    subjectId: number;
+    createdAt: string;
+}
+export interface AIChatSessionListItem {
+    id: number;
+    subjectId: number;
+    createdAt: string;
+    subjectName: string;
+    messageCount: number;
+}
+export interface AIChatSessionPage {
+    sessions: AIChatSessionListItem[];
+    total: number;
+    limit: number;
+    offset: number;
+}
+export type AIChatMessageRole = typeof AIChatMessageRole[keyof typeof AIChatMessageRole];
+export declare const AIChatMessageRole: {
+    readonly user: "user";
+    readonly assistant: "assistant";
+};
+export interface AIChatMessage {
+    id: number;
+    sessionId: number;
+    role: AIChatMessageRole;
+    content: string;
+    citationsJson?: Citation[];
+    createdAt: string;
+}
+export interface AIChatSessionWithMessages {
+    session: AIChatSession;
+    messages: AIChatMessage[];
+}
+export interface CreateAIChatSessionInput {
+    subjectId: number;
+}
+export interface SendAIChatMessageInput {
+    /** @minLength 1 */
+    content: string;
+}
+export type SendAIChatMessageResponseAssistantMessageRole = typeof SendAIChatMessageResponseAssistantMessageRole[keyof typeof SendAIChatMessageResponseAssistantMessageRole];
+export declare const SendAIChatMessageResponseAssistantMessageRole: {
+    readonly user: "user";
+    readonly assistant: "assistant";
+};
+export type SendAIChatMessageResponseAssistantMessage = {
+    id: number;
+    sessionId: number;
+    role: SendAIChatMessageResponseAssistantMessageRole;
+    content: string;
+    citations: Citation[];
+    createdAt: string;
+};
+export interface SendAIChatMessageResponse {
+    userMessage: AIChatMessage;
+    assistantMessage: SendAIChatMessageResponseAssistantMessage;
+}
+export type FileAssetVirusScanStatus = typeof FileAssetVirusScanStatus[keyof typeof FileAssetVirusScanStatus];
+export declare const FileAssetVirusScanStatus: {
+    readonly pending: "pending";
+    readonly clean: "clean";
+    readonly infected: "infected";
+    readonly skipped: "skipped";
+    readonly error: "error";
+};
+export type FileAssetProcessingStatus = typeof FileAssetProcessingStatus[keyof typeof FileAssetProcessingStatus];
+export declare const FileAssetProcessingStatus: {
+    readonly pending: "pending";
+    readonly processing: "processing";
+    readonly done: "done";
+    readonly error: "error";
+};
+export interface FileAsset {
+    id: number;
+    subjectId: number;
+    isTextbook: boolean;
+    storageKey: string;
+    originalFilename: string;
+    sizeBytes: number;
+    mimeType: string;
+    virusScanStatus: FileAssetVirusScanStatus;
+    processingStatus: FileAssetProcessingStatus;
+    pageCount?: number | null;
+    fullTextKey?: string | null;
+    textPreview?: string | null;
+    errorMessage?: string | null;
+    createdAt: string;
+    updatedAt?: string;
+}
+export interface FileAssetListResponse {
+    assets: FileAsset[];
+}
+/**
+ * Optional MCQ options (A-D)
+ */
+export type AnswerFromBookInputOptions = {
+    [key: string]: string;
+};
+export interface AnswerFromBookInput {
+    /** @minLength 1 */
+    question: string;
+    /** Optional MCQ options (A-D) */
+    options?: AnswerFromBookInputOptions;
+}
+export interface AnswerCitation {
+    page: number;
+    snippet?: string | null;
+}
+export interface AnswerFromBookResponse {
+    answer: string;
+    sourcePages: number[];
+    citations: AnswerCitation[];
 }
 export type ListClassesParams = {
     includeArchived?: boolean;
@@ -418,6 +1235,34 @@ export type ListQuestionsParams = {
     referenceType?: string;
     includeArchived?: boolean;
 };
+export type ExploreQuestionsParams = {
+    sectionId: number;
+    limit?: number;
+    cursor?: number;
+    search?: string;
+    difficulty?: string;
+    referenceYear?: number;
+    referenceType?: string;
+    tag?: string;
+    status?: string;
+    questionType?: string;
+};
+export type CountExploredQuestionsParams = {
+    sectionId: number;
+    search?: string;
+    difficulty?: string;
+    referenceYear?: number;
+    referenceType?: string;
+    tag?: string;
+    status?: string;
+    questionType?: string;
+};
+export type CountExploredQuestions200 = {
+    total: number;
+};
+export type ListSectionTags200 = {
+    tags: string[];
+};
 export type SearchQuestionsParams = {
     q: string;
     classId?: number;
@@ -428,5 +1273,72 @@ export type SearchQuestionsParams = {
     referenceYearTo?: number;
     page?: number;
     limit?: number;
+};
+export type ListMyQuestionStatesParams = {
+    status?: string;
+    limit?: number;
+};
+export type ListFlashcardsParams = {
+    sectionId: number;
+    page?: number;
+    limit?: number;
+    search?: string;
+};
+export type ListGoalsParams = {
+    year?: number;
+    month?: number;
+};
+export type GetLearningCalendarParams = {
+    year?: number;
+    month?: number;
+};
+export type GetLearningTimelineParams = {
+    limit?: number;
+};
+export type GetLearningHeatmapParams = {
+    year?: number;
+};
+export type GetLearningReportParams = {
+    period?: GetLearningReportPeriod;
+};
+export type GetLearningReportPeriod = typeof GetLearningReportPeriod[keyof typeof GetLearningReportPeriod];
+export declare const GetLearningReportPeriod: {
+    readonly week: "week";
+    readonly month: "month";
+};
+export type GetIndexingStatusParams = {
+    operationName: string;
+};
+export type ListAIVerificationsParams = {
+    status?: ListAIVerificationsStatus;
+    limit?: number;
+    offset?: number;
+};
+export type ListAIVerificationsStatus = typeof ListAIVerificationsStatus[keyof typeof ListAIVerificationsStatus];
+export declare const ListAIVerificationsStatus: {
+    readonly pending: "pending";
+    readonly accepted: "accepted";
+    readonly kept_mine: "kept_mine";
+    readonly dismissed: "dismissed";
+};
+export type ListAIGeneratedQuestionsParams = {
+    status?: ListAIGeneratedQuestionsStatus;
+    limit?: number;
+    offset?: number;
+};
+export type ListAIGeneratedQuestionsStatus = typeof ListAIGeneratedQuestionsStatus[keyof typeof ListAIGeneratedQuestionsStatus];
+export declare const ListAIGeneratedQuestionsStatus: {
+    readonly pending: "pending";
+    readonly approved: "approved";
+    readonly dismissed: "dismissed";
+};
+export type ListAIChatSessionsParams = {
+    subjectId?: number;
+    limit?: number;
+    offset?: number;
+};
+export type GetAIChatSessionParams = {
+    limit?: number;
+    offset?: number;
 };
 //# sourceMappingURL=api.schemas.d.ts.map

@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { QuestionInputCorrectOption } from './questionInputCorrectOption';
+import type { QuestionInputDifficulty } from './questionInputDifficulty';
 import type { QuestionInputQuestionType } from './questionInputQuestionType';
 import type { QuestionInputReferenceType } from './questionInputReferenceType';
 export interface QuestionInput {
@@ -24,5 +25,11 @@ export interface QuestionInput {
     referenceYear?: number;
     referenceType?: QuestionInputReferenceType;
     referenceNote?: string;
+    tags?: string[];
+    difficulty?: QuestionInputDifficulty;
+    bookPage?: number;
+    bookExplanation?: string;
+    aiExplanation?: string;
+    imageUrl?: string;
 }
 //# sourceMappingURL=questionInput.d.ts.map

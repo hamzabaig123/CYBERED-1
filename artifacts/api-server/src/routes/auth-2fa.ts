@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { authenticator } from "otplib";
+import { generateSecret, generateURI, verify } from "otplib";
 import QRCode from "qrcode";
 import crypto from "crypto";
 import { db, usersTable, totpCredentialsTable, totpBackupCodesTable, refreshTokensTable } from "@workspace/db";
@@ -7,6 +7,7 @@ import { eq, and, isNull } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth";
 import { signToken } from "../middlewares/auth";
 import jwt from "jsonwebtoken";
+import { writeAudit } from "../lib/audit";
 
 const router: IRouter = Router();
 
@@ -55,14 +56,18 @@ router.post("/auth/2fa/enroll", requireAuth, async (req, res): Promise<void> => 
       .delete(totpCredentialsTable)
       .where(eq(totpCredentialsTable.userId, user.id));
 
-    secret = authenticator.generateSecret();
+    secret = generateSecret();
     await db.insert(totpCredentialsTable).values({
       userId: user.id,
       encryptedSecret: encrypt(secret),
     });
   }
 
-  const provisioningUri = authenticator.keyuri(user.email, "CyberEd", secret);
+  const provisioningUri = generateURI({
+    issuer: "CyberEd",
+    label: user.email,
+    secret,
+  });
   const qrCode = await QRCode.toDataURL(provisioningUri);
 
   res.json({ provisioningUri, qrCode, secret });
@@ -89,7 +94,8 @@ router.post("/auth/2fa/confirm", requireAuth, async (req, res): Promise<void> =>
   }
 
   const secret = decrypt(pending.encryptedSecret);
-  const isValid = authenticator.verify({ token: code, secret });
+  const result = await verify({ token: code, secret });
+  const isValid = result.valid;
 
   if (!isValid) {
     res.status(400).json({ error: "Invalid TOTP code" });
@@ -116,6 +122,7 @@ router.post("/auth/2fa/confirm", requireAuth, async (req, res): Promise<void> =>
   await db.insert(totpBackupCodesTable).values(codeInserts);
 
   req.log.info({ userId: user.id }, "2FA enabled");
+  await writeAudit(req, { userId: user.id, action: "2FA_ENABLED", entityType: "user", entityId: user.id });
   res.json({ backupCodes: rawCodes });
 });
 
@@ -159,7 +166,8 @@ router.post("/auth/2fa/verify", async (req, res): Promise<void> => {
   }
 
   const secret = decrypt(totpCred.encryptedSecret);
-  let isValid = authenticator.verify({ token: code, secret });
+  let result = await verify({ token: code, secret });
+  let isValid = result.valid;
 
   // Try backup codes if TOTP fails
   if (!isValid) {
@@ -201,6 +209,7 @@ router.post("/auth/2fa/verify", async (req, res): Promise<void> => {
   });
 
   req.log.info({ userId: user.id }, "2FA verified, session issued");
+  await writeAudit(req, { userId: user.id, action: "2FA_VERIFIED", entityType: "user", entityId: user.id });
 
   res.json({
     token,
@@ -237,7 +246,8 @@ router.post("/auth/2fa/disable", requireAuth, async (req, res): Promise<void> =>
   }
 
   const secret = decrypt(totpCred.encryptedSecret);
-  const isValid = authenticator.verify({ token: code, secret });
+  const result = await verify({ token: code, secret });
+  const isValid = result.valid;
 
   if (!isValid) {
     res.status(401).json({ error: "Invalid TOTP code" });
@@ -250,6 +260,7 @@ router.post("/auth/2fa/disable", requireAuth, async (req, res): Promise<void> =>
   });
 
   req.log.info({ userId: user.id }, "2FA disabled");
+  await writeAudit(req, { userId: user.id, action: "2FA_DISABLED", entityType: "user", entityId: user.id });
   res.sendStatus(204);
 });
 

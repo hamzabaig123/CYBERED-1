@@ -8,5 +8,7 @@
 import type { TestAnswer } from './testAnswer';
 export interface TestSubmission {
     answers: TestAnswer[];
+    /** @nullable */
+    draftId?: number | null;
 }
 //# sourceMappingURL=testSubmission.d.ts.map

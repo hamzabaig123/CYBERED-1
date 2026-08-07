@@ -14,8 +14,8 @@ setOnUnauthorized(async () => {
   }
   try {
     const res = await refreshSession({ refreshToken });
-    localStorage.setItem("token", res.token);
-    localStorage.setItem("refreshToken", res.refreshToken);
+    if (res.token) localStorage.setItem("token", res.token);
+    if (res.refreshToken) localStorage.setItem("refreshToken", res.refreshToken);
   } catch (err) {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");

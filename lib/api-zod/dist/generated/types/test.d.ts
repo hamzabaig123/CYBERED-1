@@ -5,12 +5,17 @@
  * CyberEd API specification
  * OpenAPI spec version: 0.1.0
  */
-import type { Question } from './question';
+import type { AttemptSummary } from './attemptSummary';
+import type { TestQuestionItem } from './testQuestionItem';
 export interface Test {
     id: number;
     title: string;
+    mode?: string;
+    /** @nullable */
+    timeLimitMinutes?: number | null;
     totalMarks: number;
-    questions: Question[];
+    questions: TestQuestionItem[];
+    attempts?: AttemptSummary[];
     createdAt: Date;
 }
 //# sourceMappingURL=test.d.ts.map

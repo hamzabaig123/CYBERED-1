@@ -55,9 +55,9 @@ console.log(c.yellow(`📡 Database URL: ${DATABASE_URL.replace(/:([^:@]+)@/, ':
 // Try to push schema using drizzle-kit
 console.log(c.cyan('\n⚙️  Pushing database schema with drizzle-kit...'));
 try {
-  execSync('npx pnpm --filter "@workspace/db" drizzle-kit push --config=drizzle.config.ts', {
+  execSync('npx drizzle-kit push --config ./drizzle.config.ts', {
     stdio: 'inherit',
-    cwd: ROOT,
+    cwd: resolve(ROOT, 'lib', 'db'),
     env: { ...process.env, ...env },
   });
   console.log(c.green('✅ Database schema ready!\n'));

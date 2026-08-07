@@ -8,6 +8,9 @@
 export interface TestSummary {
     id: number;
     title: string;
+    mode?: string;
+    /** @nullable */
+    timeLimitMinutes?: number | null;
     totalMarks: number;
     questionCount: number;
     mcqCount?: number;

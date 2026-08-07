@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import bcrypt from "bcryptjs";
 import { db, usersTable } from "@workspace/db";
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, inArray } from "drizzle-orm";
 import {
   RegisterBody,
   LoginBody,
@@ -10,18 +10,21 @@ import {
   UpdateUserRoleParams,
   UpdateUserRoleBody,
   UpdateUserRoleResponse,
-  RefreshInput,
+  RefreshSessionBody,
   ForgotPasswordBody,
   ResetPasswordBody,
   VerifyEmailBody,
 } from "@workspace/api-zod";
 import { signToken, requireAuth, requireAdmin } from "../middlewares/auth";
 import crypto from "crypto";
-import { refreshTokensTable, passwordResetTokensTable, emailVerificationTokensTable, totpCredentialsTable } from "@workspace/db";
+import { refreshTokensTable, passwordResetTokensTable, emailVerificationTokensTable, totpCredentialsTable, passwordHistoryTable, auditLogsTable } from "@workspace/db";
 import { UAParser } from "ua-parser-js";
 import jwt from "jsonwebtoken";
+import { desc } from "drizzle-orm";
+import { writeAudit } from "../lib/audit";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-in-prod";
+const PASSWORD_HISTORY_LIMIT = 5;
 
 const router: IRouter = Router();
 
@@ -62,6 +65,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
     .returning();
 
   req.log.info({ userId: user.id }, "User registered");
+  await writeAudit(req, { userId: user.id, action: "REGISTER", entityType: "user", entityId: user.id, detail: `User ${user.username} registered` });
 
   const token = signToken(user.id, user.role);
   const refreshTokenRaw = crypto.randomBytes(32).toString("hex");
@@ -105,12 +109,14 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     .where(eq(usersTable.email, email));
 
   if (!user) {
+    await writeAudit(req, { userId: null, action: "LOGIN_FAILED", detail: `No account for email ${email}` });
     res.status(401).json({ error: "Invalid email or password" });
     return;
   }
 
   // Check lockout
   if (user.lockedUntil && user.lockedUntil > new Date()) {
+    await writeAudit(req, { userId: user.id, action: "LOGIN_BLOCKED", detail: "Account locked" });
     res.status(429).json({ error: "Account temporarily locked. Try again later." });
     return;
   }
@@ -124,8 +130,10 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     if (attempts >= 5) {
       const lockedUntil = new Date(Date.now() + 15 * 60 * 1000);
       updates.lockedUntil = lockedUntil;
+      await writeAudit(req, { userId: user.id, action: "ACCOUNT_LOCKED", detail: `Locked after ${attempts} failed attempts` });
     }
     await db.update(usersTable).set(updates).where(eq(usersTable.id, user.id));
+    await writeAudit(req, { userId: user.id, action: "LOGIN_FAILED", detail: `Attempt ${attempts}` });
     res.status(401).json({ error: "Invalid email or password" });
     return;
   }
@@ -137,6 +145,27 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     .where(eq(usersTable.id, user.id));
 
   req.log.info({ userId: user.id }, "User logged in");
+
+  // New-device detection: compare UA + IP against recent successful logins
+  const ua = req.headers["user-agent"] || null;
+  const ip = req.ip || req.socket.remoteAddress || null;
+  const [recentLogin] = await db
+    .select()
+    .from(auditLogsTable)
+    .where(and(eq(auditLogsTable.userId, user.id), eq(auditLogsTable.action, "LOGIN_SUCCESS")))
+    .orderBy(desc(auditLogsTable.createdAt))
+    .limit(1);
+  const isNewDevice = !recentLogin || recentLogin.ipAddress !== ip || (ua && recentLogin.userAgent !== ua);
+  await writeAudit(req, {
+    userId: user.id,
+    action: "LOGIN_SUCCESS",
+    entityType: "user",
+    entityId: user.id,
+    detail: isNewDevice ? "Login from a new device/browser" : null,
+  });
+  if (isNewDevice) {
+    req.log.info({ userId: user.id }, "New device login detected (email alert queued)");
+  }
 
   // Check if user has 2FA enabled
   const [totpCred] = await db
@@ -267,7 +296,7 @@ router.patch("/auth/users/:userId/role", requireAdmin, async (req, res): Promise
 
 // POST /auth/refresh
 router.post("/auth/refresh", async (req, res): Promise<void> => {
-  const parsed = RefreshInput.safeParse(req.body);
+  const parsed = RefreshSessionBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
     return;
@@ -341,7 +370,8 @@ router.get("/auth/sessions", requireAuth, async (req, res): Promise<void> => {
 // DELETE /auth/sessions/:sessionId
 router.delete("/auth/sessions/:sessionId", requireAuth, async (req, res): Promise<void> => {
   const user = (req as typeof req & { user: typeof usersTable.$inferSelect }).user;
-  const sessionId = parseInt(req.params.sessionId);
+  const sessionIdParam = req.params.sessionId;
+  const sessionId = parseInt(Array.isArray(sessionIdParam) ? sessionIdParam[0] : sessionIdParam);
   
   if (isNaN(sessionId)) {
     res.status(400).json({ error: "Invalid session ID" });
@@ -397,6 +427,7 @@ router.post("/auth/password/forgot", async (req, res): Promise<void> => {
 
     // In a real app, send email here. We just log it for now.
     req.log.info({ email, resetToken: rawToken }, "Password reset requested");
+    await writeAudit(req, { userId: user.id, action: "PASSWORD_RESET_REQUESTED", entityType: "user", entityId: user.id });
   }
 
   // Always return 204 to prevent email enumeration
@@ -424,26 +455,63 @@ router.post("/auth/password/reset", async (req, res): Promise<void> => {
   }
 
   const passwordHash = await bcrypt.hash(newPassword, 12);
-  
+
+  // Password history check (1c): reject passwords used in the last N resets
+  const recentHashes = await db
+    .select()
+    .from(passwordHistoryTable)
+    .where(eq(passwordHistoryTable.userId, resetToken.userId))
+    .orderBy(desc(passwordHistoryTable.createdAt))
+    .limit(PASSWORD_HISTORY_LIMIT);
+
+  for (const entry of recentHashes) {
+    if (await bcrypt.compare(newPassword, entry.passwordHash)) {
+      res.status(400).json({ error: "New password must be different from your previous passwords" });
+      return;
+    }
+  }
+
   await db.transaction(async (tx) => {
     // 1. Update password
     await tx
       .update(usersTable)
       .set({ passwordHash })
       .where(eq(usersTable.id, resetToken.userId));
-      
-    // 2. Mark token as used
+
+    // 2. Store the old hash in password history (cap at 5)
+    const [user] = await tx.select().from(usersTable).where(eq(usersTable.id, resetToken.userId));
+    if (user) {
+      await tx.insert(passwordHistoryTable).values({
+        userId: user.id,
+        passwordHash: user.passwordHash,
+      });
+      const historyCount = await tx
+        .select({ id: passwordHistoryTable.id })
+        .from(passwordHistoryTable)
+        .where(eq(passwordHistoryTable.userId, user.id))
+        .orderBy(desc(passwordHistoryTable.createdAt));
+      if (historyCount.length > PASSWORD_HISTORY_LIMIT) {
+        const toDelete = historyCount.slice(PASSWORD_HISTORY_LIMIT).map((h) => h.id);
+        if (toDelete.length > 0) {
+          await tx.delete(passwordHistoryTable).where(inArray(passwordHistoryTable.id, toDelete));
+        }
+      }
+    }
+
+    // 3. Mark token as used
     await tx
       .update(passwordResetTokensTable)
       .set({ usedAt: new Date() })
       .where(eq(passwordResetTokensTable.id, resetToken.id));
-      
-    // 3. Revoke all sessions (1e integration)
+
+    // 4. Revoke all sessions (1e integration)
     await tx
       .update(refreshTokensTable)
       .set({ revokedAt: new Date() })
       .where(eq(refreshTokensTable.userId, resetToken.userId));
   });
+
+  await writeAudit(req, { userId: resetToken.userId, action: "PASSWORD_RESET", entityType: "user", entityId: resetToken.userId });
 
   res.sendStatus(204);
 });
@@ -469,6 +537,7 @@ router.post("/auth/email/verify-request", requireAuth, async (req, res): Promise
 
   // In a real app, send email here. We just log it for now.
   req.log.info({ email: user.email, verifyToken: rawToken }, "Email verification requested");
+  await writeAudit(req, { userId: user.id, action: "VERIFY_EMAIL_REQUESTED", entityType: "user", entityId: user.id });
 
   res.sendStatus(204);
 });
@@ -506,7 +575,60 @@ router.post("/auth/email/verify", async (req, res): Promise<void> => {
       .where(eq(emailVerificationTokensTable.id, verifyToken.id));
   });
 
+  await writeAudit(req, { userId: verifyToken.userId, action: "EMAIL_VERIFIED", entityType: "user", entityId: verifyToken.userId });
+
   res.sendStatus(204);
+});
+
+// GET /auth/security-summary
+router.get("/auth/security-summary", requireAuth, async (req, res): Promise<void> => {
+  const user = (req as typeof req & { user: typeof usersTable.$inferSelect }).user;
+
+  const [totpCred] = await db
+    .select()
+    .from(totpCredentialsTable)
+    .where(and(eq(totpCredentialsTable.userId, user.id)));
+
+  const [lastPasswordChange] = await db
+    .select()
+    .from(passwordHistoryTable)
+    .where(eq(passwordHistoryTable.userId, user.id))
+    .orderBy(desc(passwordHistoryTable.createdAt))
+    .limit(1);
+
+  const activeSessions = await db
+    .select()
+    .from(refreshTokensTable)
+    .where(and(eq(refreshTokensTable.userId, user.id), isNull(refreshTokensTable.revokedAt)));
+
+  const recentActivity = await db
+    .select({
+      id: auditLogsTable.id,
+      action: auditLogsTable.action,
+      detail: auditLogsTable.detail,
+      createdAt: auditLogsTable.createdAt,
+      ipAddress: auditLogsTable.ipAddress,
+      userAgent: auditLogsTable.userAgent,
+    })
+    .from(auditLogsTable)
+    .where(eq(auditLogsTable.userId, user.id))
+    .orderBy(desc(auditLogsTable.createdAt))
+    .limit(10);
+
+  res.json({
+    emailVerified: !!user.emailVerifiedAt,
+    twoFactorEnabled: !!totpCred?.enabledAt,
+    lastPasswordChangeAt: lastPasswordChange?.createdAt ?? null,
+    activeSessionCount: activeSessions.filter((s) => s.expiresAt > new Date()).length,
+    recentActivity: recentActivity.map((a) => ({
+      id: a.id,
+      action: a.action,
+      detail: a.detail,
+      ipAddress: a.ipAddress,
+      userAgent: a.userAgent,
+      createdAt: a.createdAt.toISOString(),
+    })),
+  });
 });
 
 export default router;

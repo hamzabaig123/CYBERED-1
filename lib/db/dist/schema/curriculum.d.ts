@@ -446,7 +446,7 @@ export declare const insertChapterSchema: z.ZodObject<{
 }>;
 export type InsertChapter = z.infer<typeof insertChapterSchema>;
 export type ChapterRow = typeof chaptersTable.$inferSelect;
-export declare const sectionTypeValues: readonly ["mcqs", "short_questions", "long_questions", "notes", "past_papers", "custom"];
+export declare const sectionTypeValues: readonly ["mcqs", "short_questions", "long_questions", "notes", "past_papers", "essays", "practical_questions", "viva_questions", "programming_questions", "flashcards", "mind_maps", "formula_sheets", "cheat_sheets", "custom"];
 export declare const sectionsTable: import("drizzle-orm/pg-core").PgTableWithColumns<{
     name: "sections";
     schema: undefined;

@@ -1,0 +1,1 @@
+{"version":3,"file":"flashcardInput.d.ts","sourceRoot":"","sources":["../../../src/generated/types/flashcardInput.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,MAAM,WAAW,cAAc;IAC7B,mBAAmB;IACnB,KAAK,EAAE,MAAM,CAAC;IACd,mBAAmB;IACnB,IAAI,EAAE,MAAM,CAAC;IACb,eAAe,CAAC,EAAE,MAAM,CAAC;IACzB,aAAa,CAAC,EAAE,MAAM,CAAC;CACxB"}

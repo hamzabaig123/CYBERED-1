@@ -14,6 +14,7 @@ import {
   useRevokeSession,
   useRevokeAllSessions,
   useRequestEmailVerification,
+  useGetSecuritySummary,
 } from "@workspace/api-client-react";
 import {
   Shield,
@@ -54,6 +55,9 @@ export default function SecuritySettings() {
 
   // Email verification
   const { mutate: requestVerify } = useRequestEmailVerification();
+
+  // Security summary
+  const { data: securitySummary } = useGetSecuritySummary();
 
   const handleEnroll = () => {
     enrollMutate(undefined, {
@@ -126,6 +130,70 @@ export default function SecuritySettings() {
       </div>
 
       <div className="space-y-6">
+        {/* Security Summary */}
+        <Card className="border-primary/20">
+          <CardHeader className="border-b border-border/50 pb-4">
+            <CardTitle className="text-primary flex items-center gap-2 text-sm">
+              <ShieldCheck className="h-4 w-4" />
+              SECURITY POSTURE SUMMARY
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            {securitySummary ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="p-3 border border-border bg-muted/10">
+                  <p className="font-mono text-[10px] text-muted-foreground uppercase">Email Verified</p>
+                  <Badge variant={securitySummary.emailVerified ? "default" : "outline"} className={`mt-2 text-xs ${securitySummary.emailVerified ? "" : "border-red-500/50 text-red-400"}`}>
+                    {securitySummary.emailVerified ? "VERIFIED" : "UNVERIFIED"}
+                  </Badge>
+                </div>
+                <div className="p-3 border border-border bg-muted/10">
+                  <p className="font-mono text-[10px] text-muted-foreground uppercase">Two-Factor Auth</p>
+                  <Badge variant={securitySummary.twoFactorEnabled ? "default" : "outline"} className={`mt-2 text-xs ${securitySummary.twoFactorEnabled ? "" : "border-red-500/50 text-red-400"}`}>
+                    {securitySummary.twoFactorEnabled ? "ENABLED" : "DISABLED"}
+                  </Badge>
+                </div>
+                <div className="p-3 border border-border bg-muted/10">
+                  <p className="font-mono text-[10px] text-muted-foreground uppercase">Active Sessions</p>
+                  <p className="mt-2 font-mono text-2xl text-primary">{securitySummary.activeSessionCount}</p>
+                </div>
+                <div className="p-3 border border-border bg-muted/10">
+                  <p className="font-mono text-[10px] text-muted-foreground uppercase">Last Password Change</p>
+                  <p className="mt-2 font-mono text-xs text-foreground">
+                    {securitySummary.lastPasswordChangeAt
+                      ? new Date(securitySummary.lastPasswordChangeAt).toLocaleDateString()
+                      : "NEVER"}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="h-24 bg-muted/20 animate-pulse border border-border/50" />
+            )}
+
+            {securitySummary && securitySummary.recentActivity && securitySummary.recentActivity.length > 0 && (
+              <div className="mt-6">
+                <p className="font-mono text-xs text-muted-foreground uppercase mb-3">Recent Account Activity</p>
+                <div className="border border-border/50 divide-y divide-border/50">
+                  {securitySummary.recentActivity.map((a) => (
+                    <div key={a.id} className="flex items-center justify-between py-2 px-3">
+                      <div>
+                        <p className="font-mono text-xs text-foreground">{(a.action ?? "").replace(/_/g, " ")}</p>
+                        {a.detail && <p className="font-mono text-[10px] text-muted-foreground mt-0.5">{a.detail}</p>}
+                      </div>
+                      <div className="text-right">
+                        <p className="font-mono text-[10px] text-muted-foreground">{a.ipAddress || "Unknown IP"}</p>
+                        <p className="font-mono text-[10px] text-muted-foreground mt-0.5">
+                          {a.createdAt ? new Date(a.createdAt).toLocaleString() : ""}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Email Verification Banner */}
         {!user?.emailVerifiedAt && (
           <Card className="border-yellow-500/50 bg-yellow-500/5">
@@ -186,12 +254,23 @@ export default function SecuritySettings() {
                 <div className="flex items-center justify-between p-4 border border-border bg-muted/10">
                   <div>
                     <p className="font-mono text-sm uppercase tracking-wide">STATUS</p>
-                    <Badge variant="outline" className="mt-1 text-xs border-red-500/50 text-red-400">DISABLED</Badge>
+                    {securitySummary?.twoFactorEnabled ? (
+                      <Badge variant="outline" className="mt-1 text-xs border-primary/50 text-primary">ENABLED</Badge>
+                    ) : (
+                      <Badge variant="outline" className="mt-1 text-xs border-red-500/50 text-red-400">DISABLED</Badge>
+                    )}
                   </div>
-                  <Button onClick={() => { setTwoFaStep("enrolling"); handleEnroll(); }} disabled={isEnrolling}>
-                    {isEnrolling ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    ENABLE 2FA
-                  </Button>
+                  {!securitySummary?.twoFactorEnabled && (
+                    <Button onClick={() => { setTwoFaStep("enrolling"); handleEnroll(); }} disabled={isEnrolling}>
+                      {isEnrolling ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                      ENABLE 2FA
+                    </Button>
+                  )}
+                  {securitySummary?.twoFactorEnabled && (
+                    <Button variant="destructive" onClick={() => setShowDisable(!showDisable)}>
+                      DISABLE 2FA
+                    </Button>
+                  )}
                 </div>
               </div>
             )}

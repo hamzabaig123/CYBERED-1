@@ -14,6 +14,7 @@ import Curriculum from '@/pages/curriculum';
 import Search from '@/pages/search';
 import Tests from '@/pages/tests';
 import TestView from '@/pages/test-view';
+import LearningHub from '@/pages/learning-hub';
 import QuestionEdit from '@/pages/question-edit';
 import Security from '@/pages/security';
 
@@ -63,6 +64,7 @@ function Router() {
       <Route path="/search"><ProtectedRoute component={Search} /></Route>
       <Route path="/tests"><ProtectedRoute component={Tests} /></Route>
       <Route path="/tests/:id"><ProtectedRoute component={TestView} /></Route>
+      <Route path="/learning-hub"><ProtectedRoute component={LearningHub} /></Route>
       
       <Route>
         <div className="min-h-screen bg-black text-primary font-mono flex items-center justify-center flex-col gap-4 crt-overlay">

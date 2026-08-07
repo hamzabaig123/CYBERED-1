@@ -9,8 +9,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { useLocation, Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import { Play } from "lucide-react";
+import { Play, Timer, Target } from "lucide-react";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const genSchema = z.object({
   title: z.string().min(1, "Title required"),
@@ -20,6 +21,9 @@ const genSchema = z.object({
   mcqCount: z.coerce.number().default(5),
   shortQuestionCount: z.coerce.number().default(0),
   longQuestionCount: z.coerce.number().default(0),
+  mode: z.enum(["practice", "exam"]).default("practice"),
+  timeLimitMinutes: z.coerce.number().optional(),
+  weakTopicsOnly: z.boolean().default(false),
   referenceYearFrom: z.coerce.number().optional(),
   referenceYearTo: z.coerce.number().optional(),
 });
@@ -38,9 +42,14 @@ export default function Tests() {
       title: `Simulation-${new Date().getTime().toString().slice(-6)}`,
       mcqCount: 10,
       shortQuestionCount: 0,
-      longQuestionCount: 0
-    }
+      longQuestionCount: 0,
+      mode: "practice",
+      timeLimitMinutes: 60,
+      weakTopicsOnly: false,
+    },
   });
+
+  const selectedMode = form.watch("mode");
 
   const onSubmit = (data: GenFormValues) => {
     const scope: any = {};
@@ -48,32 +57,33 @@ export default function Tests() {
     if (data.subjectId) scope.subjectId = data.subjectId;
     if (data.chapterId) scope.chapterId = data.chapterId;
 
-    const payload = {
+    const payload: any = {
       title: data.title,
       scope,
+      mode: data.mode,
       mcqCount: data.mcqCount,
       shortQuestionCount: data.shortQuestionCount,
       longQuestionCount: data.longQuestionCount,
       referenceYearFrom: data.referenceYearFrom,
-      referenceYearTo: data.referenceYearTo
+      referenceYearTo: data.referenceYearTo,
     };
+    if (data.mode === "exam") payload.timeLimitMinutes = data.timeLimitMinutes || 60;
+    if (data.weakTopicsOnly) payload.weakTopicsOnly = true;
 
     generate({ data: payload }, {
-      onSuccess: (res) => {
-        // useGenerateTest returns a TestConfig? Wait, the hook `useGenerateTest` returns `{ data: TestConfig }` or `Test`?
-        // Let's check api.schemas.ts. `useGenerateTest` usually returns the generated Test object.
-        // Actually, if it returns a Test, we can get its id.
-        // I will assume the response has an `id`.
+      onSuccess: (res: any) => {
         toast({ title: "SIMULATION COMPILED", description: "Test environment prepared." });
-        // Since I don't know the exact type `res` (if it's Test or TestSummary or just ID), I will redirect to tests list or if `res.id` exists, to it.
-        if ((res as any).id) {
-          setLocation(`/tests/${(res as any).id}`);
+        if (res?.id) {
+          setLocation(`/tests/${res.id}`);
         } else {
-          // fallback, just refresh list
           window.location.reload();
         }
       },
-      onError: () => toast({ title: "COMPILATION FAILED", description: "Not enough questions match criteria.", variant: "destructive" })
+      onError: (err: any) => {
+        const detail = (err as any)?.data?.details;
+        const msg = detail ? detail.map((d: any) => `${d.type}: need ${d.requested}, have ${d.available}`).join(", ") : (err as any)?.data?.error;
+        toast({ title: "COMPILATION FAILED", description: msg || "Not enough questions match criteria.", variant: "destructive" });
+      },
     });
   };
 
@@ -96,6 +106,64 @@ export default function Tests() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField control={form.control} name="title" render={({ field }) => (
                   <FormItem><FormLabel>Simulation Designation</FormLabel><FormControl><Input {...field} className="font-mono" /></FormControl><FormMessage /></FormItem>
+                )} />
+
+                <FormField control={form.control} name="mode" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mode</FormLabel>
+                    <FormControl>
+                      <div className="grid grid-cols-2 gap-3">
+                        {(["practice", "exam"] as const).map((m) => (
+                          <button
+                            key={m}
+                            type="button"
+                            onClick={() => field.onChange(m)}
+                            className={cn(
+                              "p-3 border font-mono text-xs uppercase tracking-wider transition-colors text-left",
+                              field.value === m
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-background text-muted-foreground hover:bg-muted/50"
+                            )}
+                          >
+                            <div className="font-bold mb-1">{m === "practice" ? "Practice" : "Exam"}</div>
+                            <div className="text-[10px] opacity-70 normal-case">
+                              {m === "practice" ? "No time limit, instant feedback" : "Server-enforced deadline"}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )} />
+
+                {selectedMode === "exam" && (
+                  <FormField control={form.control} name="timeLimitMinutes" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Time Limit (minutes)</FormLabel>
+                      <FormControl><Input type="number" min={1} {...field} value={field.value ?? 60} /></FormControl>
+                    </FormItem>
+                  )} />
+                )}
+
+                <FormField control={form.control} name="weakTopicsOnly" render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <button
+                        type="button"
+                        onClick={() => field.onChange(!field.value)}
+                        className={cn(
+                          "w-full flex items-center gap-3 p-3 border font-mono text-xs uppercase tracking-wider transition-colors",
+                          field.value
+                            ? "border-accent bg-accent/10 text-accent"
+                            : "border-border bg-background text-muted-foreground hover:bg-muted/50"
+                        )}
+                      >
+                        <Target className="h-4 w-4" />
+                        <span>Target Weak Topics Only</span>
+                        <span className="ml-auto text-[10px] opacity-70">{field.value ? "ARMED" : "OFF"}</span>
+                      </button>
+                    </FormControl>
+                  </FormItem>
                 )} />
 
                 <div className="grid grid-cols-3 gap-4 p-4 border border-border/50 bg-background">
@@ -154,6 +222,8 @@ export default function Tests() {
                   <div className="flex gap-4 text-xs font-mono text-muted-foreground mb-4">
                     <span>Qs: {t.questionCount}</span>
                     <span>Marks: {t.totalMarks}</span>
+                    <span className={t.mode === "exam" ? "text-accent" : ""}>{String(t.mode || "practice").toUpperCase()}</span>
+                    {t.timeLimitMinutes ? <span className="flex items-center gap-1"><Timer className="h-3 w-3" />{t.timeLimitMinutes}m</span> : null}
                   </div>
                   <Button asChild size="sm" variant="secondary" className="w-full h-8 text-[10px]">
                     <Link href={`/tests/${t.id}`}><Play className="mr-2 h-3 w-3" /> ENTER SIMULATION</Link>

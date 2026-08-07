@@ -50,7 +50,22 @@ export type InsertChapter = z.infer<typeof insertChapterSchema>;
 export type ChapterRow = typeof chaptersTable.$inferSelect;
 
 // ── Sections ──────────────────────────────────────────────────────────────────
-export const sectionTypeValues = ["mcqs", "short_questions", "long_questions", "notes", "past_papers", "custom"] as const;
+export const sectionTypeValues = [
+  "mcqs",
+  "short_questions",
+  "long_questions",
+  "notes",
+  "past_papers",
+  "essays",
+  "practical_questions",
+  "viva_questions",
+  "programming_questions",
+  "flashcards",
+  "mind_maps",
+  "formula_sheets",
+  "cheat_sheets",
+  "custom",
+] as const;
 
 export const sectionsTable = pgTable("sections", {
   id: serial("id").primaryKey(),

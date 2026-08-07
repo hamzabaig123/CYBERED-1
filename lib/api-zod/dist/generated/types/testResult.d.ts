@@ -5,12 +5,18 @@
  * CyberEd API specification
  * OpenAPI spec version: 0.1.0
  */
-import type { QuestionResult } from './questionResult';
+import type { QuestionResultItem } from './questionResultItem';
 export interface TestResult {
     testId: number;
+    attemptId: number;
+    mode?: string;
     score: number;
     totalMarks: number;
-    mcqScore: number;
-    results: QuestionResult[];
+    mcqScore?: number;
+    shortScore?: number;
+    longScore?: number;
+    writtenScore?: number;
+    autoSubmitted?: boolean;
+    results: QuestionResultItem[];
 }
 //# sourceMappingURL=testResult.d.ts.map

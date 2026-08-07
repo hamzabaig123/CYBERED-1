@@ -5,11 +5,16 @@
  * CyberEd API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { TestConfigMode } from './testConfigMode';
 import type { TestScope } from './testScope';
 export interface TestConfig {
     /** @minLength 1 */
     title: string;
     scope: TestScope;
+    mode?: TestConfigMode;
+    /** @nullable */
+    timeLimitMinutes?: number | null;
+    weakTopicsOnly?: boolean;
     mcqCount?: number;
     shortQuestionCount?: number;
     longQuestionCount?: number;

@@ -34,9 +34,13 @@ export default function Register() {
       { data },
       {
         onSuccess: (res) => {
-          login(res.token, res.refreshToken);
-          toast({ title: "REGISTRATION COMPLETE", description: "Welcome to the network." });
-          setLocation("/dashboard");
+          if (res.token && res.refreshToken) {
+            login(res.token, res.refreshToken);
+            toast({ title: "REGISTRATION COMPLETE", description: "Welcome to the network." });
+            setLocation("/dashboard");
+          } else {
+            toast({ title: "REGISTRATION INCOMPLETE", description: "Missing tokens in response.", variant: "destructive" });
+          }
         },
         onError: () => {
           toast({ title: "REGISTRATION FAILED", description: "Identity conflict or invalid parameters.", variant: "destructive" });

@@ -1,0 +1,1 @@
+{"version":3,"file":"calendarResponse.d.ts","sourceRoot":"","sources":["../../../src/generated/types/calendarResponse.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,eAAe,CAAC;AAEjD,MAAM,WAAW,gBAAgB;IAC/B,IAAI,EAAE,MAAM,CAAC;IACb,KAAK,EAAE,MAAM,CAAC;IACd,aAAa,CAAC,EAAE,MAAM,CAAC;IACvB,UAAU,CAAC,EAAE,MAAM,CAAC;IACpB,IAAI,EAAE,WAAW,EAAE,CAAC;CACrB"}

@@ -1,8 +1,8 @@
-import { useGetDashboardStats, useGetRecentQuestions } from "@workspace/api-client-react";
+import { useGetDashboardStats, useGetRecentQuestions, useGetAnalyticsDashboard } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shell } from "@/components/layout/shell";
-import { BookOpen, Database, FolderTree, Target, Activity, AlertTriangle } from "lucide-react";
+import { BookOpen, Database, FolderTree, Target, Activity, AlertTriangle, Flame, Crosshair, RefreshCw } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 export default function Dashboard() {
   const { data: stats, isLoading: statsLoading } = useGetDashboardStats();
   const { data: recent, isLoading: recentLoading } = useGetRecentQuestions();
+  const { data: analytics } = useGetAnalyticsDashboard();
   const { user } = useAuth();
 
   return (
@@ -46,6 +47,119 @@ export default function Dashboard() {
           <StatCard title="Test Archives" value={stats.totalTests} icon={<BookOpen className="h-4 w-4 text-primary" />} />
           <StatCard title="Classes" value={stats.totalClasses} icon={<FolderTree className="h-4 w-4 text-primary" />} />
           <StatCard title="Subjects" value={stats.totalSubjects} icon={<Target className="h-4 w-4 text-primary" />} />
+        </div>
+      )}
+
+      {analytics && (
+        <div className="mb-8 space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-4 border border-border bg-card flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Answer Accuracy</span>
+                <Crosshair className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <div className="text-2xl font-mono font-bold text-foreground">
+                  {Math.round((analytics.accuracy.accuracy || 0) * 100)}%
+                </div>
+                <div className="text-[10px] text-muted-foreground font-mono mt-1 uppercase">{analytics.accuracy.attempts} graded attempts</div>
+              </div>
+            </div>
+            <div className="p-4 border border-border bg-card flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Streak</span>
+                <Flame className="h-4 w-4 text-orange-500" />
+              </div>
+              <div>
+                <div className="text-2xl font-mono font-bold text-foreground">{analytics.currentStreak} <span className="text-xs text-muted-foreground">days</span></div>
+                <div className="text-[10px] text-muted-foreground font-mono mt-1 uppercase">Best: {analytics.bestStreak}</div>
+              </div>
+            </div>
+            <div className="p-4 border border-border bg-card flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Week Solved</span>
+                <Target className="h-4 w-4 text-accent" />
+              </div>
+              <div>
+                <div className="text-2xl font-mono font-bold text-foreground">{analytics.questionsSolvedThisWeek}</div>
+                <div className="text-[10px] text-muted-foreground font-mono mt-1 uppercase">Solved {analytics.solvedCount} / Wrong {analytics.wrongCount}</div>
+              </div>
+            </div>
+            <div className="p-4 border border-border bg-card flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Due Revisions</span>
+                <RefreshCw className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <div className="text-2xl font-mono font-bold text-foreground">{analytics.dueRevisions}</div>
+                <Link href="/learning-hub" className="text-[10px] font-mono mt-1 uppercase text-primary hover:underline block">
+                  &gt; open hub
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader className="border-b border-border/50 pb-4">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-destructive" />
+                  Weak Topic Signals
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4">
+                {(analytics.weakTopics ?? []).length === 0 ? (
+                  <div className="text-center p-6 text-muted-foreground font-mono text-sm border border-dashed border-border">
+                    NO WEAK TOPICS DETECTED
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {(analytics.weakTopics ?? []).map(t => (
+                      <div key={t.sectionId} className="flex items-center gap-3 p-2 border border-destructive/30 bg-destructive/5">
+                        <div className="flex-1">
+                          <div className="font-mono text-xs font-bold uppercase text-foreground">{t.sectionName}</div>
+                          <div className="text-[10px] text-muted-foreground">{t.subjectName} / {t.chapterName} // {t.attempts} attempts</div>
+                        </div>
+                        <Badge variant="destructive" className="text-[9px]">{Math.round(t.accuracy * 100)}%</Badge>
+                        <Link href={`/tests`}><Button size="sm" variant="outline" className="h-7 text-[10px] border-destructive/40 text-destructive">TARGET</Button></Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="border-b border-border/50 pb-4">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Target className="h-4 w-4 text-primary" />
+                  Topic Mastery Ladder
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4">
+                {(analytics.masteryBySection ?? []).length === 0 ? (
+                  <div className="text-center p-6 text-muted-foreground font-mono text-sm border border-dashed border-border">
+                    NO MASTERY DATA YET
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {(analytics.masteryBySection ?? []).slice(0, 6).map(t => (
+                      <div key={t.sectionId} className="flex items-center gap-3 p-2 border border-border/50 bg-muted/10">
+                        <div className="flex-1">
+                          <div className="font-mono text-xs font-bold uppercase">{t.sectionName}</div>
+                          <div className="text-[10px] text-muted-foreground">{t.attempts} attempts // acc {(t.accuracy * 100).toFixed(0)}%</div>
+                        </div>
+                        <div className="w-28 h-2 bg-muted">
+                          <div className="h-full bg-primary" style={{ width: `${t.mastery}%` }} />
+                        </div>
+                        <span className="font-mono text-[10px] text-muted-foreground w-8 text-right">{t.mastery}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 

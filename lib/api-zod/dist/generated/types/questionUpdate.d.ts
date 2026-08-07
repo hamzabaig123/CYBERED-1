@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { QuestionUpdateCorrectOption } from './questionUpdateCorrectOption';
+import type { QuestionUpdateDifficulty } from './questionUpdateDifficulty';
 import type { QuestionUpdateReferenceType } from './questionUpdateReferenceType';
 export interface QuestionUpdate {
     /** @minLength 1 */
@@ -22,5 +23,11 @@ export interface QuestionUpdate {
     referenceYear?: number;
     referenceType?: QuestionUpdateReferenceType;
     referenceNote?: string;
+    tags?: string[];
+    difficulty?: QuestionUpdateDifficulty;
+    bookPage?: number;
+    bookExplanation?: string;
+    aiExplanation?: string;
+    imageUrl?: string;
 }
 //# sourceMappingURL=questionUpdate.d.ts.map

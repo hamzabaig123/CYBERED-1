@@ -12,6 +12,14 @@ export declare const SectionInputSectionType: {
     readonly long_questions: "long_questions";
     readonly notes: "notes";
     readonly past_papers: "past_papers";
+    readonly essays: "essays";
+    readonly practical_questions: "practical_questions";
+    readonly viva_questions: "viva_questions";
+    readonly programming_questions: "programming_questions";
+    readonly flashcards: "flashcards";
+    readonly mind_maps: "mind_maps";
+    readonly formula_sheets: "formula_sheets";
+    readonly cheat_sheets: "cheat_sheets";
     readonly custom: "custom";
 };
 //# sourceMappingURL=sectionInputSectionType.d.ts.map

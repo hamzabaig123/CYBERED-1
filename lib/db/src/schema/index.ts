@@ -4,3 +4,8 @@ export * from "./questions";
 export * from "./tests";
 export * from "./audit";
 export * from "./auth";
+export * from "./flashcards";
+export * from "./userQuestionState";
+export * from "./learning";
+export * from "./ai";
+export * from "./fileAssets";

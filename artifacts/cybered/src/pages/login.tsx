@@ -59,9 +59,13 @@ export default function Login() {
       { data },
       {
         onSuccess: (res) => {
-          login(res.token, res.refreshToken);
-          toast({ title: "ACCESS GRANTED", description: "Welcome back, Operator." });
-          setLocation("/dashboard");
+          if (res.token && res.refreshToken) {
+            login(res.token, res.refreshToken);
+            toast({ title: "ACCESS GRANTED", description: "Welcome back, Operator." });
+            setLocation("/dashboard");
+          } else {
+            toast({ title: "AUTHENTICATION INCOMPLETE", description: "Missing tokens in response.", variant: "destructive" });
+          }
         },
         onError: () => {
           toast({ title: "ACCESS DENIED", description: "Invalid credentials.", variant: "destructive" });

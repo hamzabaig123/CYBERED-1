@@ -1,4 +1,4 @@
-openapi: 3.1.0
+﻿openapi: 3.1.0
 info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
@@ -26,6 +26,16 @@ tags:
     description: Test generation operations
   - name: dashboard
     description: Dashboard summary operations
+  - name: learning
+    description: Learning hub operations
+  - name: revisions
+    description: Spaced-repetition revision operations
+  - name: goals
+    description: Daily goal operations
+  - name: analytics
+    description: Analytics and progress operations
+  - name: ai
+    description: AI Knowledge Engine operations
 
 paths:
   /healthz:
@@ -41,7 +51,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
 
-  # ──── Auth ────────────────────────────────────────────────────────────────
+  # â”€â”€â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   /auth/register:
     post:
       operationId: register
@@ -174,7 +184,7 @@ paths:
     post:
       operationId: enroll2fa
       tags: [auth]
-      summary: Begin 2FA enrollment — returns provisioning URI and QR code
+      summary: Begin 2FA enrollment â€” returns provisioning URI and QR code
       security:
         - bearerAuth: []
       responses:
@@ -202,7 +212,7 @@ paths:
               $ref: "#/components/schemas/TotpCodeInput"
       responses:
         "200":
-          description: OK — returns backup codes
+          description: OK â€” returns backup codes
           content:
             application/json:
               schema:
@@ -301,6 +311,21 @@ paths:
         "401":
           description: Unauthorized
 
+  /auth/security-summary:
+    get:
+      operationId: getSecuritySummary
+      tags: [auth]
+      summary: Get security summary for current user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SecuritySummary"
+        "401":
+          description: Unauthorized
+
   /auth/sessions/{sessionId}:
     delete:
       operationId: revokeSession
@@ -358,7 +383,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
 
-  # ──── Dashboard ───────────────────────────────────────────────────────────
+  # â”€â”€â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   /dashboard/stats:
     get:
       operationId: getDashboardStats
@@ -387,7 +412,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/RecentQuestion"
 
-  # ──── Classes ─────────────────────────────────────────────────────────────
+  # â”€â”€â”€â”€ Classes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   /classes:
     get:
       operationId: listClasses
@@ -486,7 +511,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Class"
 
-  # ──── Subjects ────────────────────────────────────────────────────────────
+  # â”€â”€â”€â”€ Subjects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   # List uses flat path (query-only) to avoid Orval *Params name collision
   /subjects:
     get:
@@ -600,7 +625,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Subject"
 
-  # ──── Chapters ────────────────────────────────────────────────────────────
+  # â”€â”€â”€â”€ Chapters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   /chapters:
     get:
       operationId: listChapters
@@ -712,7 +737,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Chapter"
 
-  # ──── Sections ────────────────────────────────────────────────────────────
+  # â”€â”€â”€â”€ Sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   /sections:
     get:
       operationId: listSections
@@ -824,7 +849,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Section"
 
-  # ──── Questions ───────────────────────────────────────────────────────────
+  # â”€â”€â”€â”€ Questions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   # List uses flat path (query-only) to avoid Orval *Params name collision
   /questions:
     get:
@@ -920,6 +945,137 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Question"
+
+  /questions/explorer:
+    get:
+      operationId: exploreQuestions
+      tags: [questions]
+      summary: Explore questions with keyset pagination and filters
+      parameters:
+        - name: sectionId
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: cursor
+          in: query
+          schema:
+            type: number
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: difficulty
+          in: query
+          schema:
+            type: string
+        - name: referenceYear
+          in: query
+          schema:
+            type: number
+        - name: referenceType
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: questionType
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExplorerResult"
+
+  /questions/explorer/count:
+    get:
+      operationId: countExploredQuestions
+      tags: [questions]
+      summary: Count questions matching explorer filters
+      parameters:
+        - name: sectionId
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: difficulty
+          in: query
+          schema:
+            type: string
+        - name: referenceYear
+          in: query
+          schema:
+            type: number
+        - name: referenceType
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: questionType
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [total]
+                properties:
+                  total:
+                    type: number
+
+  /sections/{sectionId}/tags:
+    get:
+      operationId: listSectionTags
+      tags: [questions]
+      summary: List distinct tags used across a section's questions
+      parameters:
+        - name: sectionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [tags]
+                properties:
+                  tags:
+                    type: array
+                    items:
+                      type: string
 
   # Search must come before /questions/{questionId} to avoid routing ambiguity
   /questions/search:
@@ -1034,7 +1190,212 @@ paths:
               schema:
                 $ref: "#/components/schemas/Question"
 
-  # ──── Tests ───────────────────────────────────────────────────────────────
+  /questions/{questionId}/state:
+    get:
+      operationId: getQuestionState
+      tags: [questions]
+      summary: Get current user's state for a question
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionState"
+    put:
+      operationId: setQuestionState
+      tags: [questions]
+      summary: Set current user's state for a question
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionStateInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionState"
+
+  /my/question-states:
+    get:
+      operationId: listMyQuestionStates
+      tags: [questions]
+      summary: List current user's question states (bookmarks, mistakes)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QuestionState"
+
+  # â”€â”€â”€â”€ Flashcards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  /flashcards:
+    get:
+      operationId: listFlashcards
+      tags: [questions]
+      summary: List flashcards in a section
+      parameters:
+        - name: sectionId
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: page
+          in: query
+          schema:
+            type: number
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlashcardPage"
+
+  /sections/{sectionId}/flashcards:
+    post:
+      operationId: createFlashcard
+      tags: [questions]
+      summary: Create a flashcard
+      parameters:
+        - name: sectionId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlashcardInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flashcard"
+
+  /sections/{sectionId}/flashcards/bulk:
+    post:
+      operationId: bulkCreateFlashcards
+      tags: [questions]
+      summary: Bulk create flashcards in a section
+      parameters:
+        - name: sectionId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkFlashcardInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Flashcard"
+
+  /flashcards/{flashcardId}:
+    get:
+      operationId: getFlashcard
+      tags: [questions]
+      summary: Get a flashcard
+      parameters:
+        - name: flashcardId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flashcard"
+    patch:
+      operationId: updateFlashcard
+      tags: [questions]
+      summary: Update a flashcard
+      parameters:
+        - name: flashcardId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FlashcardUpdate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flashcard"
+    delete:
+      operationId: deleteFlashcard
+      tags: [questions]
+      summary: Archive/delete a flashcard
+      parameters:
+        - name: flashcardId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: No content
+
+  # â”€â”€â”€â”€ Tests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   /tests:
     get:
       operationId: listTests
@@ -1111,6 +1472,869 @@ paths:
               schema:
                 $ref: "#/components/schemas/TestResult"
 
+  /tests/{testId}/draft:
+    post:
+      operationId: saveTestDraft
+      tags: [tests]
+      summary: Autosave an in-progress attempt
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestDraftInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestDraftResponse"
+
+  /tests/{testId}/attempts/{attemptId}/self-grade:
+    post:
+      operationId: selfGradeTest
+      tags: [tests]
+      summary: Self-grade written answers of an attempt
+      parameters:
+        - name: testId
+          in: path
+          required: true
+          schema:
+            type: number
+        - name: attemptId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SelfGradeInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SelfGradeResult"
+
+  # â”€â”€â”€â”€ Revisions (spaced repetition) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  /revisions/due:
+    get:
+      operationId: getDueRevisions
+      tags: [revisions]
+      summary: List revision questions that are due now
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RevisionDue"
+
+  /revisions:
+    post:
+      operationId: scheduleRevision
+      tags: [revisions]
+      summary: Schedule questions for revision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleRevisionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RevisionUpdate"
+
+  /revisions/{revisionId}/complete:
+    post:
+      operationId: completeRevision
+      tags: [revisions]
+      summary: Mark a revision complete and reschedule
+      parameters:
+        - name: revisionId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompleteRevisionInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RevisionUpdate"
+
+  # â”€â”€â”€â”€ Daily goals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  /goals:
+    get:
+      operationId: listGoals
+      tags: [goals]
+      summary: List daily goals
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: number
+        - name: month
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Goal"
+
+  /goals/today:
+    put:
+      operationId: setTodayGoal
+      tags: [goals]
+      summary: Create or update today's goal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetTodayGoalInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+
+  /goals/{goalId}:
+    patch:
+      operationId: updateGoal
+      tags: [goals]
+      summary: Update a goal
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetTodayGoalInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+    delete:
+      operationId: deleteGoal
+      tags: [goals]
+      summary: Delete a goal
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+
+  # â”€â”€â”€â”€ Learning hub â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  /learning-hub/calendar:
+    get:
+      operationId: getLearningCalendar
+      tags: [learning]
+      summary: Monthly study calendar with daily totals and goals
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: number
+        - name: month
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CalendarResponse"
+
+  /learning-hub/timeline:
+    get:
+      operationId: getLearningTimeline
+      tags: [learning]
+      summary: Recent study activity timeline
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimelineEvent"
+
+  /learning-hub/heatmap:
+    get:
+      operationId: getLearningHeatmap
+      tags: [learning]
+      summary: Yearly activity heatmap
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeatmapResponse"
+
+  /learning-hub/streak:
+    get:
+      operationId: getLearningStreak
+      tags: [learning]
+      summary: Current and best study streak
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StreakResponse"
+
+  /learning-hub/reports:
+    get:
+      operationId: getLearningReport
+      tags: [learning]
+      summary: Weekly or monthly study report
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [week, month]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportResponse"
+
+  # â”€â”€â”€â”€ Analytics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  /analytics/accuracy:
+    get:
+      operationId: getAnalyticsAccuracy
+      tags: [analytics]
+      summary: Overall answer accuracy
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccuracyResponse"
+
+  /analytics/topics:
+    get:
+      operationId: getAnalyticsTopics
+      tags: [analytics]
+      summary: Per-topic accuracy with weak/strong signals
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopicStat"
+
+  /analytics/mastery:
+    get:
+      operationId: getAnalyticsMastery
+      tags: [analytics]
+      summary: Per-topic mastery scores (ascending)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopicStat"
+
+/analytics/dashboard:
+    get:
+      operationId: getAnalyticsDashboard
+      tags: [analytics]
+      summary: Aggregated analytics dashboard summary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsDashboard"
+
+  # ──── AI Knowledge Engine ──────────────────────────────────────────────────
+  # Book Store (3a/3b)
+  /subjects/{subjectId}/book-store:
+    get:
+      operationId: getBookStoreStatus
+      tags: [ai]
+      summary: Get book store status for a subject
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookStoreStatusResponse"
+    post:
+      operationId: createBookStore
+      tags: [ai]
+      summary: Create a new book store for a subject
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookStoreInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookStore"
+        "409":
+          description: Book store already exists
+
+  /subjects/{subjectId}/book-store/index:
+    post:
+      operationId: indexBook
+      tags: [ai]
+      summary: Upload and index a textbook into the subject's book store
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadBookIndexInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndexBookResponse"
+
+  /book-stores/{storeId}/indexing-status:
+    get:
+      operationId: getIndexingStatus
+      tags: [ai]
+      summary: Check indexing operation status
+      parameters:
+        - name: storeId
+          in: path
+          required: true
+          schema:
+            type: number
+        - name: operationName
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndexingStatus"
+
+  # Explain from Book (3c)
+  /ai/explain:
+    post:
+      operationId: explainFromBook
+      tags: [ai]
+      summary: Generate a textbook-grounded explanation with citations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExplainRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExplainResponse"
+
+  # Verification Queue (3d)
+  /ai/verify:
+    post:
+      operationId: verifyQuestion
+      tags: [ai]
+      summary: Queue a question for verification against the textbook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyQuestionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIVerification"
+
+  /ai/verifications:
+    get:
+      operationId: listAIVerifications
+      tags: [ai]
+      summary: List AI verifications (review queue)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, accepted, kept_mine, dismissed]
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: offset
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIVerificationPage"
+
+  /ai/verifications/{verificationId}:
+    get:
+      operationId: getAIVerification
+      tags: [ai]
+      summary: Get a specific AI verification
+      parameters:
+        - name: verificationId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIVerificationDetail"
+
+  /ai/verifications/{verificationId}/accept:
+    post:
+      operationId: acceptAIVerification
+      tags: [ai]
+      summary: Accept AI verification suggestion
+      parameters:
+        - name: verificationId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /ai/verifications/{verificationId}/dismiss:
+    post:
+      operationId: dismissAIVerification
+      tags: [ai]
+      summary: Dismiss AI verification (keep original answer)
+      parameters:
+        - name: verificationId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # AI Question Generation (3e)
+  /chapters/{chapterId}/ai-generate-questions:
+    post:
+      operationId: generateAIQuestions
+      tags: [ai]
+      summary: Generate AI questions from textbook pages
+      parameters:
+        - name: chapterId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateQuestionsInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateQuestionsResponse"
+
+  /chapters/{chapterId}/ai-generated-questions:
+    get:
+      operationId: listAIGeneratedQuestions
+      tags: [ai]
+      summary: List AI-generated question drafts for a chapter
+      parameters:
+        - name: chapterId
+          in: path
+          required: true
+          schema:
+            type: number
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, dismissed]
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: offset
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIGeneratedQuestionPage"
+
+  /ai-generated-questions/{questionId}:
+    get:
+      operationId: getAIGeneratedQuestion
+      tags: [ai]
+      summary: Get a specific AI-generated question draft
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIGeneratedQuestion"
+
+  /ai-generated-questions/{questionId}/approve:
+    post:
+      operationId: approveAIGeneratedQuestion
+      tags: [ai]
+      summary: Approve and save AI-generated question as real question
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+
+  /ai-generated-questions/{questionId}/dismiss:
+    post:
+      operationId: dismissAIGeneratedQuestion
+      tags: [ai]
+      summary: Dismiss AI-generated question draft
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # AI Grading (3f)
+  /attempts/{attemptId}/answers/{answerId}/ai-grade:
+    post:
+      operationId: aiGradeAnswer
+      tags: [ai]
+      summary: Get AI grading suggestion for a written answer
+      parameters:
+        - name: attemptId
+          in: path
+          required: true
+          schema:
+            type: number
+        - name: answerId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AIGradeAnswerInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIGradeResponse"
+
+  # Ask Book Chat (3g)
+  /ai/chat/sessions:
+    get:
+      operationId: listAIChatSessions
+      tags: [ai]
+      summary: List user's AI chat sessions
+      parameters:
+        - name: subjectId
+          in: query
+          schema:
+            type: number
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: offset
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIChatSessionPage"
+    post:
+      operationId: createAIChatSession
+      tags: [ai]
+      summary: Create a new AI chat session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAIChatSessionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIChatSession"
+
+  /ai/chat/sessions/{sessionId}:
+    get:
+      operationId: getAIChatSession
+      tags: [ai]
+      summary: Get an AI chat session with messages
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: number
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: offset
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIChatSessionWithMessages"
+
+  /ai/chat/sessions/{sessionId}/messages:
+    post:
+      operationId: sendAIChatMessage
+      tags: [ai]
+      summary: Send a message in an AI chat session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendAIChatMessageInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SendAIChatMessageResponse"
+
+  # Module 7 - Textbook Library
+  /books/{subjectId}/assets:
+    get:
+      operationId: listSubjectAssets
+      tags: [ai]
+      summary: List stored file assets for a subject
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileAssetListResponse"
+        "401":
+          description: Unauthorized
+
+  /books/{subjectId}/answer:
+    post:
+      operationId: answerFromBook
+      tags: [ai]
+      summary: Answer a question using the subject's textbook
+      parameters:
+        - name: subjectId
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnswerFromBookInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnswerFromBookResponse"
+        "400":
+          description: Bad request
+        "404":
+          description: Subject or textbook not found
+        "401":
+          description: Unauthorized
+
 components:
   schemas:
     HealthStatus:
@@ -1120,7 +2344,7 @@ components:
         status:
           type: string
 
-    # ── Auth ────────────────────────────────────────────────────────────────
+    # â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     RegisterInput:
       type: object
       required: [username, email, password]
@@ -1278,7 +2502,7 @@ components:
           type: string
           enum: [admin, editor, viewer]
 
-    # ── Dashboard ───────────────────────────────────────────────────────────
+    # â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     DashboardStats:
       type: object
       required:
@@ -1331,7 +2555,7 @@ components:
           type: string
           format: date-time
 
-    # ── Classes ─────────────────────────────────────────────────────────────
+    # â”€â”€ Classes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Class:
       type: object
       required: [id, name, orderIndex, isArchived, createdAt]
@@ -1373,7 +2597,7 @@ components:
         orderIndex:
           type: number
 
-    # ── Subjects ────────────────────────────────────────────────────────────
+    # â”€â”€ Subjects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Subject:
       type: object
       required: [id, classId, name, orderIndex, isArchived, createdAt]
@@ -1417,7 +2641,7 @@ components:
         orderIndex:
           type: number
 
-    # ── Chapters ────────────────────────────────────────────────────────────
+    # â”€â”€ Chapters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Chapter:
       type: object
       required: [id, subjectId, name, orderIndex, isArchived, createdAt]
@@ -1461,7 +2685,7 @@ components:
         orderIndex:
           type: number
 
-    # ── Sections ────────────────────────────────────────────────────────────
+    # â”€â”€ Sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Section:
       type: object
       required: [id, chapterId, name, sectionType, orderIndex, isArchived, createdAt]
@@ -1474,7 +2698,7 @@ components:
           type: string
         sectionType:
           type: string
-          enum: [mcqs, short_questions, long_questions, notes, past_papers, custom]
+          enum: [mcqs, short_questions, long_questions, notes, past_papers, essays, practical_questions, viva_questions, programming_questions, flashcards, mind_maps, formula_sheets, cheat_sheets, custom]
         orderIndex:
           type: number
         isArchived:
@@ -1494,7 +2718,7 @@ components:
           minLength: 1
         sectionType:
           type: string
-          enum: [mcqs, short_questions, long_questions, notes, past_papers, custom]
+          enum: [mcqs, short_questions, long_questions, notes, past_papers, essays, practical_questions, viva_questions, programming_questions, flashcards, mind_maps, formula_sheets, cheat_sheets, custom]
         orderIndex:
           type: number
 
@@ -1507,7 +2731,7 @@ components:
         orderIndex:
           type: number
 
-    # ── Questions ───────────────────────────────────────────────────────────
+    # â”€â”€ Questions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Question:
       type: object
       required: [id, sectionId, questionType, questionText, isArchived, createdAt]
@@ -1544,6 +2768,21 @@ components:
         referenceType:
           type: ["string", "null"]
         referenceNote:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        difficulty:
+          type: ["string", "null"]
+          enum: [easy, medium, hard]
+        bookPage:
+          type: ["number", "null"]
+        bookExplanation:
+          type: ["string", "null"]
+        aiExplanation:
+          type: ["string", "null"]
+        imageUrl:
           type: ["string", "null"]
         isArchived:
           type: boolean
@@ -1587,6 +2826,21 @@ components:
           enum: [board_paper, coaching_paper, other]
         referenceNote:
           type: string
+        tags:
+          type: array
+          items:
+            type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        bookPage:
+          type: number
+        bookExplanation:
+          type: string
+        aiExplanation:
+          type: string
+        imageUrl:
+          type: string
 
     QuestionUpdate:
       type: object
@@ -1620,6 +2874,21 @@ components:
           enum: [board_paper, coaching_paper, other]
         referenceNote:
           type: string
+        tags:
+          type: array
+          items:
+            type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        bookPage:
+          type: number
+        bookExplanation:
+          type: string
+        aiExplanation:
+          type: string
+        imageUrl:
+          type: string
 
     BulkQuestionInput:
       type: object
@@ -1645,7 +2914,152 @@ components:
         limit:
           type: number
 
-    # ── Tests ───────────────────────────────────────────────────────────────
+    ExplorerResult:
+      type: object
+      required: [questions, nextCursor, hasMore]
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Question"
+        nextCursor:
+          type: ["number", "null"]
+        hasMore:
+          type: boolean
+
+    QuestionState:
+      type: object
+      properties:
+        id:
+          type: number
+        questionId:
+          type: number
+        questionType:
+          type: string
+        status:
+          type: ["string", "null"]
+          enum: [solved, wrong, bookmarked]
+        lastAttemptedAt:
+          type: ["string", "null"]
+          format: date-time
+
+    QuestionStateInput:
+      type: object
+      required: [status]
+      properties:
+        questionType:
+          type: string
+        status:
+          type: ["string", "null"]
+          enum: [solved, wrong, bookmarked, ""]
+
+    Flashcard:
+      type: object
+      required: [id, sectionId, front, back, isArchived, createdAt]
+      properties:
+        id:
+          type: number
+        sectionId:
+          type: number
+        front:
+          type: string
+        back:
+          type: string
+        referenceSource:
+          type: ["string", "null"]
+        referenceYear:
+          type: ["number", "null"]
+        isArchived:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    FlashcardInput:
+      type: object
+      required: [front, back]
+      properties:
+        front:
+          type: string
+          minLength: 1
+        back:
+          type: string
+          minLength: 1
+        referenceSource:
+          type: string
+        referenceYear:
+          type: number
+
+    FlashcardUpdate:
+      type: object
+      properties:
+        front:
+          type: string
+          minLength: 1
+        back:
+          type: string
+          minLength: 1
+        referenceSource:
+          type: string
+        referenceYear:
+          type: number
+
+    BulkFlashcardInput:
+      type: object
+      required: [flashcards]
+      properties:
+        flashcards:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlashcardInput"
+
+    FlashcardPage:
+      type: object
+      required: [flashcards, total, page, limit]
+      properties:
+        flashcards:
+          type: array
+          items:
+            $ref: "#/components/schemas/Flashcard"
+        total:
+          type: number
+        page:
+          type: number
+        limit:
+          type: number
+
+    SecuritySummary:
+      type: object
+      properties:
+        emailVerified:
+          type: boolean
+        twoFactorEnabled:
+          type: boolean
+        lastPasswordChangeAt:
+          type: ["string", "null"]
+          format: date-time
+        activeSessionCount:
+          type: number
+        recentActivity:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              action:
+                type: string
+              detail:
+                type: ["string", "null"]
+              ipAddress:
+                type: ["string", "null"]
+              userAgent:
+                type: ["string", "null"]
+              createdAt:
+                type: string
+                format: date-time
+
+    # â”€â”€ Tests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     TestScope:
       type: object
       properties:
@@ -1669,6 +3083,13 @@ components:
           minLength: 1
         scope:
           $ref: "#/components/schemas/TestScope"
+        mode:
+          type: string
+          enum: [practice, exam]
+        timeLimitMinutes:
+          type: ["number", "null"]
+        weakTopicsOnly:
+          type: boolean
         mcqCount:
           type: number
         shortQuestionCount:
@@ -1694,6 +3115,10 @@ components:
           type: number
         title:
           type: string
+        mode:
+          type: string
+        timeLimitMinutes:
+          type: ["number", "null"]
         totalMarks:
           type: number
         questionCount:
@@ -1716,13 +3141,105 @@ components:
           type: number
         title:
           type: string
+        mode:
+          type: string
+        timeLimitMinutes:
+          type: ["number", "null"]
         totalMarks:
           type: number
         questions:
           type: array
           items:
-            $ref: "#/components/schemas/Question"
+            $ref: "#/components/schemas/TestQuestionItem"
+        attempts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttemptSummary"
         createdAt:
+          type: string
+          format: date-time
+
+    TestQuestionItem:
+      type: object
+      required: [questionId, questionType, questionText]
+      properties:
+        questionId:
+          type: number
+        questionType:
+          type: string
+          enum: [mcq, short, long]
+        questionText:
+          type: string
+        optionA:
+          type: ["string", "null"]
+        optionB:
+          type: ["string", "null"]
+        optionC:
+          type: ["string", "null"]
+        optionD:
+          type: ["string", "null"]
+        correctOption:
+          type: ["string", "null"]
+        explanation:
+          type: ["string", "null"]
+        modelAnswer:
+          type: ["string", "null"]
+        marks:
+          type: ["number", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        difficulty:
+          type: ["string", "null"]
+
+    AttemptSummary:
+      type: object
+      required: [id, score, totalMarks, status, createdAt]
+      properties:
+        id:
+          type: number
+        score:
+          type: number
+        totalMarks:
+          type: number
+        mcqScore:
+          type: number
+        shortScore:
+          type: number
+        longScore:
+          type: number
+        status:
+          type: string
+        autoSubmitted:
+          type: boolean
+        startedAt:
+          type: string
+          format: date-time
+        submittedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    TestDraftInput:
+      type: object
+      required: [answers]
+      properties:
+        attemptId:
+          type: ["number", "null"]
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/TestAnswer"
+
+    TestDraftResponse:
+      type: object
+      required: [attemptId, startedAt]
+      properties:
+        attemptId:
+          type: number
+        startedAt:
           type: string
           format: date-time
 
@@ -1734,6 +3251,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/TestAnswer"
+        draftId:
+          type: ["number", "null"]
 
     TestAnswer:
       type: object
@@ -1748,28 +3267,50 @@ components:
 
     TestResult:
       type: object
-      required: [testId, score, totalMarks, mcqScore, results]
+      required: [testId, attemptId, score, totalMarks, results]
       properties:
         testId:
           type: number
+        attemptId:
+          type: number
+        mode:
+          type: string
         score:
           type: number
         totalMarks:
           type: number
         mcqScore:
           type: number
+        shortScore:
+          type: number
+        longScore:
+          type: number
+        writtenScore:
+          type: number
+        autoSubmitted:
+          type: boolean
         results:
           type: array
           items:
-            $ref: "#/components/schemas/QuestionResult"
+            $ref: "#/components/schemas/QuestionResultItem"
 
-    QuestionResult:
+    QuestionResultItem:
       type: object
-      required: [questionId, isCorrect]
+      required: [questionId, questionType]
       properties:
         questionId:
           type: number
+        questionType:
+          type: string
         isCorrect:
+          type: ["boolean", "null"]
+        marksAwarded:
+          type: number
+        marksPossible:
+          type: number
+        gradedBy:
+          type: string
+        needsGrading:
           type: boolean
         correctOption:
           type: ["string", "null"]
@@ -1777,3 +3318,958 @@ components:
           type: ["string", "null"]
         explanation:
           type: ["string", "null"]
+        keywordMatch:
+          type: number
+        keywordTotal:
+          type: number
+        selectedOption:
+          type: ["string", "null"]
+        writtenAnswer:
+          type: ["string", "null"]
+
+    SelfGradeInput:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            required: [questionId, marksAwarded]
+            properties:
+              questionId:
+                type: number
+              marksAwarded:
+                type: number
+
+    SelfGradeResult:
+      type: object
+      required: [attemptId, score, totalMarks, results]
+      properties:
+        attemptId:
+          type: number
+        score:
+          type: number
+        totalMarks:
+          type: number
+        mcqScore:
+          type: number
+        shortScore:
+          type: number
+        longScore:
+          type: number
+        writtenScore:
+          type: number
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionResultItem"
+
+    # â”€â”€ Revisions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    RevisionDue:
+      type: object
+      required: [id, questionId, dueAt]
+      properties:
+        id:
+          type: number
+        questionId:
+          type: number
+        questionType:
+          type: string
+        questionText:
+          type: ["string", "null"]
+        sectionName:
+          type: ["string", "null"]
+        dueAt:
+          type: string
+          format: date-time
+        intervalDays:
+          type: number
+        repetitions:
+          type: number
+        easeFactor:
+          type: number
+
+    ScheduleRevisionInput:
+      type: object
+      required: [questionIds]
+      properties:
+        questionIds:
+          type: array
+          items:
+            type: number
+
+    CompleteRevisionInput:
+      type: object
+      required: [grade]
+      properties:
+        grade:
+          type: string
+          enum: [again, hard, good, easy]
+
+    RevisionUpdate:
+      type: object
+      required: [id, questionId, dueAt]
+      properties:
+        id:
+          type: number
+        questionId:
+          type: number
+        dueAt:
+          type: string
+          format: date-time
+        intervalDays:
+          type: number
+        repetitions:
+          type: number
+        easeFactor:
+          type: number
+
+    # â”€â”€ Goals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    Goal:
+      type: object
+      required: [id, goalDate]
+      properties:
+        id:
+          type: number
+        goalDate:
+          type: string
+        questionsTarget:
+          type: number
+        minutesTarget:
+          type: number
+        testsTarget:
+          type: number
+
+    SetTodayGoalInput:
+      type: object
+      properties:
+        questionsTarget:
+          type: number
+        minutesTarget:
+          type: number
+        testsTarget:
+          type: number
+
+    # â”€â”€ Learning hub â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    CalendarResponse:
+      type: object
+      required: [year, month, days]
+      properties:
+        year:
+          type: number
+        month:
+          type: number
+        currentStreak:
+          type: number
+        bestStreak:
+          type: number
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/CalendarDay"
+
+    CalendarDay:
+      type: object
+      required: [date, events]
+      properties:
+        date:
+          type: string
+        minutes:
+          type: number
+        questionsSolved:
+          type: number
+        questionsAdded:
+          type: number
+        testsTaken:
+          type: number
+        flashcardsReviewed:
+          type: number
+        revisionsCompleted:
+          type: number
+        events:
+          type: number
+        goal:
+          type: ["object", "null"]
+          properties:
+            id:
+              type: number
+            goalDate:
+              type: string
+            questionsTarget:
+              type: number
+            minutesTarget:
+              type: number
+            testsTarget:
+              type: number
+        goalMet:
+          type: ["boolean", "null"]
+
+    TimelineEvent:
+      type: object
+      required: [id, type, activityDate, createdAt]
+      properties:
+        id:
+          type: number
+        type:
+          type: string
+        count:
+          type: number
+        minutes:
+          type: number
+        activityDate:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        questionText:
+          type: ["string", "null"]
+        testTitle:
+          type: ["string", "null"]
+
+    HeatmapResponse:
+      type: object
+      required: [year, days]
+      properties:
+        year:
+          type: number
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/HeatmapDay"
+
+    HeatmapDay:
+      type: object
+      required: [date, events]
+      properties:
+        date:
+          type: string
+        events:
+          type: number
+        minutes:
+          type: number
+        questionsSolved:
+          type: number
+
+    StreakResponse:
+      type: object
+      required: [currentStreak, bestStreak]
+      properties:
+        currentStreak:
+          type: number
+        bestStreak:
+          type: number
+
+    ReportResponse:
+      type: object
+      required: [period, from, to, totals]
+      properties:
+        period:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        currentStreak:
+          type: number
+        bestStreak:
+          type: number
+        totals:
+          type: object
+          properties:
+            minutes:
+              type: number
+            questionsSolved:
+              type: number
+            questionsAdded:
+              type: number
+            testsTaken:
+              type: number
+            flashcardsReviewed:
+              type: number
+            revisionsCompleted:
+              type: number
+            events:
+              type: number
+        topicStats:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicStat"
+        tests:
+          type: array
+          items:
+            type: object
+            properties:
+              testId:
+                type: number
+              title:
+                type: string
+              score:
+                type: number
+              totalMarks:
+                type: number
+              submittedAt:
+                type: ["string", "null"]
+                format: date-time
+
+    # â”€â”€ Analytics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    AccuracyResponse:
+      type: object
+      required: [attempts, accuracy]
+      properties:
+        attempts:
+          type: number
+        correct:
+          type: number
+        accuracy:
+          type: number
+
+    TopicStat:
+      type: object
+      required: [sectionId, sectionName, attempts, accuracy, mastery, label]
+      properties:
+        sectionId:
+          type: number
+        sectionName:
+          type: string
+        chapterName:
+          type: string
+        subjectName:
+          type: string
+        className:
+          type: string
+        attempts:
+          type: number
+        correct:
+          type: number
+        accuracy:
+          type: number
+        lastAttemptDaysAgo:
+          type: ["number", "null"]
+        mastery:
+          type: number
+        label:
+          type: string
+          enum: [weak, strong, neutral]
+
+    AnalyticsDashboard:
+      type: object
+      required: [accuracy, solvedCount, wrongCount, currentStreak, bestStreak, dueRevisions]
+      properties:
+        accuracy:
+          $ref: "#/components/schemas/AccuracyResponse"
+        solvedCount:
+          type: number
+        wrongCount:
+          type: number
+        currentStreak:
+          type: number
+        bestStreak:
+          type: number
+        questionsSolvedThisWeek:
+          type: number
+        dueRevisions:
+          type: number
+        weakTopics:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicStat"
+        masteryBySection:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicStat"
+        recentTests:
+          type: array
+          items:
+            type: object
+            properties:
+              testId:
+                type: number
+              title:
+                type: string
+              score:
+                type: number
+              totalMarks:
+                type: number
+              submittedAt:
+                type: ["string", "null"]
+                format: date-time
+
+    # â”€â”€ AI Knowledge Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    BookStore:
+      type: object
+      required: [id, subjectId, geminiStoreName, status, indexedPages, createdAt, updatedAt]
+      properties:
+        id:
+          type: number
+        subjectId:
+          type: number
+        geminiStoreName:
+          type: string
+        status:
+          type: string
+          enum: [pending, ready, error]
+        indexedPages:
+          type: number
+        textbookTitle:
+          type: ["string", "null"]
+        errorMessage:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    BookStoreStatusResponse:
+      type: object
+      properties:
+        store:
+          $ref: "#/components/schemas/BookStore"
+        status:
+          type: string
+          enum: [not_created, pending, ready, error]
+
+    CreateBookStoreInput:
+      type: object
+      properties:
+        textbookTitle:
+          type: string
+
+    UploadBookIndexInput:
+      type: object
+      required: [bookTitle, fileName, textbookContent, licenseConfirmed]
+      properties:
+        bookTitle:
+          type: string
+        fileName:
+          type: string
+        textbookContent:
+          type: string
+        licenseConfirmed:
+          type: boolean
+
+    IndexBookResponse:
+      type: object
+      properties:
+        store:
+          $ref: "#/components/schemas/BookStore"
+        operationName:
+          type: string
+
+    IndexingStatus:
+      type: object
+      required: [done]
+      properties:
+        done:
+          type: boolean
+        error:
+          type: ["string", "null"]
+
+    ExplainRequest:
+      type: object
+      required: [questionText]
+      properties:
+        questionText:
+          type: string
+          minLength: 1
+        subjectId:
+          type: ["number", "null"]
+        questionId:
+          type: ["number", "null"]
+
+    Citation:
+      type: object
+      required: [page, filename, snippet]
+      properties:
+        page:
+          type: number
+        filename:
+          type: string
+        snippet:
+          type: string
+
+    ExplainResponse:
+      type: object
+      required: [explanation, citations]
+      properties:
+        explanation:
+          type: string
+        citations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Citation"
+        subjectId:
+          type: number
+
+    VerifyQuestionInput:
+      type: object
+      required: [questionId]
+      properties:
+        questionId:
+          type: number
+
+    AIVerification:
+      type: object
+      required: [id, questionId, questionType, aiAnswer, status, createdAt]
+      properties:
+        id:
+          type: number
+        questionId:
+          type: number
+        questionType:
+          type: string
+          enum: [mcq, short, long]
+        aiAnswer:
+          type: string
+        sourcePage:
+          type: ["number", "null"]
+        sourceFilename:
+          type: ["string", "null"]
+        confidence:
+          type: ["number", "null"]
+        agreesWithStored:
+          type: ["boolean", "null"]
+        status:
+          type: string
+          enum: [pending, accepted, kept_mine, dismissed]
+        createdAt:
+          type: string
+          format: date-time
+        resolvedAt:
+          type: ["string", "null"]
+          format: date-time
+
+    AIVerificationPage:
+      type: object
+      required: [verifications, total, limit, offset]
+      properties:
+        verifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIVerificationListItem"
+        total:
+          type: number
+        limit:
+          type: number
+        offset:
+          type: number
+
+    AIVerificationListItem:
+      type: object
+      required: [id, questionId, questionType, aiAnswer, status, createdAt]
+      properties:
+        id:
+          type: number
+        questionId:
+          type: number
+        questionType:
+          type: string
+          enum: [mcq, short, long]
+        aiAnswer:
+          type: string
+        sourcePage:
+          type: ["number", "null"]
+        sourceFilename:
+          type: ["string", "null"]
+        confidence:
+          type: ["number", "null"]
+        agreesWithStored:
+          type: ["boolean", "null"]
+        status:
+          type: string
+          enum: [pending, accepted, kept_mine, dismissed]
+        createdAt:
+          type: string
+          format: date-time
+        resolvedAt:
+          type: ["string", "null"]
+          format: date-time
+        questionText:
+          type: string
+        storedAnswer:
+          type: string
+        subjectName:
+          type: string
+        chapterName:
+          type: string
+
+    AIVerificationDetail:
+      type: object
+      required: [id, questionId, questionType, aiAnswer, status, createdAt]
+      properties:
+        id:
+          type: number
+        questionId:
+          type: number
+        questionType:
+          type: string
+          enum: [mcq, short, long]
+        aiAnswer:
+          type: string
+        sourcePage:
+          type: ["number", "null"]
+        sourceFilename:
+          type: ["string", "null"]
+        confidence:
+          type: ["number", "null"]
+        agreesWithStored:
+          type: ["boolean", "null"]
+        status:
+          type: string
+          enum: [pending, accepted, kept_mine, dismissed]
+        createdAt:
+          type: string
+          format: date-time
+        resolvedAt:
+          type: ["string", "null"]
+          format: date-time
+        questionText:
+          type: string
+        storedAnswer:
+          type: string
+        question:
+          $ref: "#/components/schemas/Question"
+
+    SuccessResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+
+    GenerateQuestionsInput:
+      type: object
+      required: [pageRange, questionType, count]
+      properties:
+        pageRange:
+          type: string
+        questionType:
+          type: string
+          enum: [mcq, short, long]
+        count:
+          type: number
+          minimum: 1
+          maximum: 20
+        topicFocus:
+          type: ["string", "null"]
+
+    GeneratedQuestionDraft:
+      type: object
+      properties:
+        question:
+          type: string
+        options:
+          type: object
+          properties:
+            A:
+              type: string
+            B:
+              type: string
+            C:
+              type: string
+            D:
+              type: string
+        correctOption:
+          type: string
+          enum: [A, B, C, D]
+        modelAnswer:
+          type: ["string", "null"]
+        sourcePage:
+          type: number
+        explanation:
+          type: ["string", "null"]
+
+    GenerateQuestionsResponse:
+      type: object
+      required: [drafts]
+      properties:
+        drafts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIGeneratedQuestion"
+
+    AIGeneratedQuestion:
+      type: object
+      required: [id, chapterId, questionType, payloadJson, createdAt]
+      properties:
+        id:
+          type: number
+        chapterId:
+          type: number
+        questionType:
+          type: string
+          enum: [mcq, short, long]
+        payloadJson:
+          type: object
+        sourcePage:
+          type: ["number", "null"]
+        topicFocus:
+          type: ["string", "null"]
+        approvedAt:
+          type: ["string", "null"]
+          format: date-time
+        dismissedAt:
+          type: ["string", "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    AIGeneratedQuestionPage:
+      type: object
+      required: [drafts, total, limit, offset]
+      properties:
+        drafts:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIGeneratedQuestion"
+        total:
+          type: number
+        limit:
+          type: number
+        offset:
+          type: number
+
+    AIGradeAnswerInput:
+      type: object
+      properties: {}
+
+    AIGradeResponse:
+      type: object
+      required: [suggestion]
+      properties:
+        suggestion:
+          $ref: "#/components/schemas/GradingSuggestion"
+        answerId:
+          type: number
+        note:
+          type: string
+
+    GradingSuggestion:
+      type: object
+      required: [marksAwarded, feedback, missedPoints, citations]
+      properties:
+        marksAwarded:
+          type: number
+        feedback:
+          type: string
+        missedPoints:
+          type: array
+          items:
+            type: string
+        citations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Citation"
+
+    AIChatSession:
+      type: object
+      required: [id, userId, subjectId, createdAt]
+      properties:
+        id:
+          type: number
+        userId:
+          type: number
+        subjectId:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+
+    AIChatSessionPage:
+      type: object
+      required: [sessions, total, limit, offset]
+      properties:
+        sessions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIChatSessionListItem"
+        total:
+          type: number
+        limit:
+          type: number
+        offset:
+          type: number
+
+    AIChatSessionListItem:
+      type: object
+      required: [id, subjectId, createdAt, subjectName, messageCount]
+      properties:
+        id:
+          type: number
+        subjectId:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        subjectName:
+          type: string
+        messageCount:
+          type: number
+
+    AIChatSessionWithMessages:
+      type: object
+      required: [session, messages]
+      properties:
+        session:
+          $ref: "#/components/schemas/AIChatSession"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIChatMessage"
+
+    AIChatMessage:
+      type: object
+      required: [id, sessionId, role, content, createdAt]
+      properties:
+        id:
+          type: number
+        sessionId:
+          type: number
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        citationsJson:
+          type: array
+          items:
+            $ref: "#/components/schemas/Citation"
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateAIChatSessionInput:
+      type: object
+      required: [subjectId]
+      properties:
+        subjectId:
+          type: number
+
+    SendAIChatMessageInput:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+
+    SendAIChatMessageResponse:
+      type: object
+      required: [userMessage, assistantMessage]
+      properties:
+        userMessage:
+          $ref: "#/components/schemas/AIChatMessage"
+        assistantMessage:
+          type: object
+          required: [id, sessionId, role, content, createdAt, citations]
+          properties:
+            id:
+              type: number
+            sessionId:
+              type: number
+            role:
+              type: string
+              enum: [user, assistant]
+            content:
+              type: string
+            citations:
+              type: array
+              items:
+                $ref: "#/components/schemas/Citation"
+            createdAt:
+              type: string
+              format: date-time
+
+    # â”€â”€ Module 7 - Textbook Library â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    FileAsset:
+      type: object
+      required: [id, subjectId, isTextbook, storageKey, originalFilename, sizeBytes, mimeType, virusScanStatus, processingStatus, createdAt]
+      properties:
+        id:
+          type: number
+        subjectId:
+          type: number
+        isTextbook:
+          type: boolean
+        storageKey:
+          type: string
+        originalFilename:
+          type: string
+        sizeBytes:
+          type: number
+        mimeType:
+          type: string
+        virusScanStatus:
+          type: string
+          enum: [pending, clean, infected, skipped, error]
+        processingStatus:
+          type: string
+          enum: [pending, processing, done, error]
+        pageCount:
+          type: number
+          nullable: true
+        fullTextKey:
+          type: string
+          nullable: true
+        textPreview:
+          type: string
+          nullable: true
+        errorMessage:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    FileAssetListResponse:
+      type: object
+      required: [assets]
+      properties:
+        assets:
+          type: array
+          items:
+            $ref: "#/components/schemas/FileAsset"
+
+    AnswerFromBookInput:
+      type: object
+      required: [question]
+      properties:
+        question:
+          type: string
+          minLength: 1
+        options:
+          type: object
+          additionalProperties:
+            type: string
+          description: Optional MCQ options (A-D)
+
+    AnswerCitation:
+      type: object
+      required: [page]
+      properties:
+        page:
+          type: number
+        snippet:
+          type: string
+          nullable: true
+
+    AnswerFromBookResponse:
+      type: object
+      required: [answer, sourcePages, citations]
+      properties:
+        answer:
+          type: string
+        sourcePages:
+          type: array
+          items:
+            type: number
+        citations:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnswerCitation"

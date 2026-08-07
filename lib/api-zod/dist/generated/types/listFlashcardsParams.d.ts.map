@@ -1,0 +1,1 @@
+{"version":3,"file":"listFlashcardsParams.d.ts","sourceRoot":"","sources":["../../../src/generated/types/listFlashcardsParams.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,MAAM,MAAM,oBAAoB,GAAG;IACnC,SAAS,EAAE,MAAM,CAAC;IAClB,IAAI,CAAC,EAAE,MAAM,CAAC;IACd,KAAK,CAAC,EAAE,MAAM,CAAC;IACf,MAAM,CAAC,EAAE,MAAM,CAAC;CACf,CAAC"}

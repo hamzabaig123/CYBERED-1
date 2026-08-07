@@ -28,6 +28,10 @@ const questionSchema = z.object({
   referenceYear: z.coerce.number().optional(),
   referenceType: z.enum(["board_paper", "coaching_paper", "other"]).optional(),
   referenceNote: z.string().optional(),
+  difficulty: z.enum(["easy", "medium", "hard"]).optional(),
+  tags: z.array(z.string()).default([]),
+  bookPage: z.coerce.number().optional(),
+  bookExplanation: z.string().optional(),
 });
 
 type QuestionFormValues = z.infer<typeof questionSchema>;
@@ -60,7 +64,8 @@ export default function QuestionEdit() {
       correctOption: undefined,
       explanation: "", modelAnswer: "",
       marks: undefined, referenceSource: "", referenceYear: undefined,
-      referenceType: undefined, referenceNote: ""
+      referenceType: undefined, referenceNote: "",
+      difficulty: undefined, tags: [], bookPage: undefined, bookExplanation: "",
     }
   });
 
@@ -82,7 +87,11 @@ export default function QuestionEdit() {
         referenceSource: existingData.referenceSource || "",
         referenceYear: existingData.referenceYear || undefined,
         referenceType: existingData.referenceType as any || undefined,
-        referenceNote: existingData.referenceNote || ""
+        referenceNote: existingData.referenceNote || "",
+        difficulty: existingData.difficulty as any || undefined,
+        tags: existingData.tags || [],
+        bookPage: existingData.bookPage || undefined,
+        bookExplanation: existingData.bookExplanation || "",
       });
     }
   }, [existingData, isNew, form]);
@@ -280,6 +289,40 @@ export default function QuestionEdit() {
                   <FormItem><FormLabel>Source Name</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
                 )} />
               </div>
+              <div className="grid md:grid-cols-3 gap-4 mt-4">
+                <FormField control={form.control} name="difficulty" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Difficulty</FormLabel>
+                    <Select onValueChange={(v) => field.onChange(v === "none" ? undefined : v)} defaultValue={field.value || "none"}>
+                      <FormControl><SelectTrigger><SelectValue placeholder="-" /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">-</SelectItem>
+                        <SelectItem value="easy">Easy</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="hard">Hard</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="bookPage" render={({ field }) => (
+                  <FormItem><FormLabel>Book Page</FormLabel><FormControl><Input type="number" {...field} value={field.value || ""} /></FormControl></FormItem>
+                )} />
+                <FormField control={form.control} name="bookExplanation" render={({ field }) => (
+                  <FormItem><FormLabel>Book Explanation</FormLabel><FormControl><Input {...field} /></FormControl></FormItem>
+                )} />
+              </div>
+              <FormField control={form.control} name="tags" render={({ field }) => (
+                <FormItem className="mt-4">
+                  <FormLabel>Tags (comma-separated)</FormLabel>
+                  <FormControl>
+                    <Input
+                      value={(field.value || []).join(", ")}
+                      onChange={(e) => field.onChange(e.target.value.split(",").map((t) => t.trim()).filter(Boolean))}
+                      placeholder="circuit, derivation, previous year"
+                    />
+                  </FormControl>
+                </FormItem>
+              )} />
             </div>
 
             <Button type="submit" disabled={isPending} className="w-full h-12">
