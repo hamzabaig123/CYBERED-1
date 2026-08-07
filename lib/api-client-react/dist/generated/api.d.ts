@@ -224,7 +224,7 @@ export declare const useVerifyEmail: <TError = ErrorType<void>, TContext = unkno
 }, TContext>;
 export declare const getEnroll2faUrl: () => string;
 /**
- * @summary Begin 2FA enrollment â€” returns provisioning URI and QR code
+ * @summary Begin 2FA enrollment — returns provisioning URI and QR code
  */
 export declare const enroll2fa: (options?: Parameters<typeof customFetch>[1]) => Promise<TotpEnrollResponse>;
 export declare const getEnroll2faMutationOptions: <TError = ErrorType<void>, TContext = unknown>(options?: {
@@ -234,7 +234,7 @@ export declare const getEnroll2faMutationOptions: <TError = ErrorType<void>, TCo
 export type Enroll2faMutationResult = NonNullable<Awaited<ReturnType<typeof enroll2fa>>>;
 export type Enroll2faMutationError = ErrorType<void>;
 /**
-* @summary Begin 2FA enrollment â€” returns provisioning URI and QR code
+* @summary Begin 2FA enrollment — returns provisioning URI and QR code
 */
 export declare const useEnroll2fa: <TError = ErrorType<void>, TContext = unknown>(options?: {
     mutation?: UseMutationOptions<Awaited<ReturnType<typeof enroll2fa>>, TError, void, TContext>;

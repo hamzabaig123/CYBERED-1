@@ -5,7 +5,7 @@ import {
   GetSubjectParams,
   CreateBookStoreParams,
   CreateBookStoreBody,
-  UploadBookIndexBody,
+  IndexBookBody,
   GetBookStoreStatusParams,
 } from "@workspace/api-zod";
 import { requireAuth, requireEditor } from "../middlewares/auth";
@@ -109,7 +109,7 @@ router.post("/subjects/:subjectId/book-store/index", requireEditor, async (req, 
     return;
   }
 
-  const body = UploadBookIndexBody.safeParse(req.body);
+  const body = IndexBookBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
     return;

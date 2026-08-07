@@ -1,9 +1,9 @@
-import { Router, type IRouter } from "express";
+﻿import { Router, type IRouter } from "express";
 import { db, attemptAnswersTable, testQuestionsTable, testAttemptsTable, testsTable, bookStoresTable, chaptersTable, sectionsTable, subjectsTable } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
 import {
-  AIGradeAnswerParams,
-  AIGradeAnswerBody,
+  AiGradeAnswerParams,
+  AiGradeAnswerBody,
 } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
 import { gradeAnswer } from "../ai/geminiClient";
@@ -18,7 +18,7 @@ function parseId(raw: string | string[]): number {
 
 // POST /attempts/:attemptId/answers/:answerId/ai-grade - Get AI grading suggestion
 router.post("/attempts/:attemptId/answers/:answerId/ai-grade", requireAuth, async (req, res): Promise<void> => {
-  const params = AIGradeAnswerParams.safeParse({ 
+  const params = AiGradeAnswerParams.safeParse({ 
     attemptId: parseId(req.params.attemptId),
     answerId: parseId(req.params.answerId),
   });
@@ -27,7 +27,7 @@ router.post("/attempts/:attemptId/answers/:answerId/ai-grade", requireAuth, asyn
     return;
   }
 
-  const body = AIGradeAnswerBody.safeParse(req.body);
+  const body = AiGradeAnswerBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
     return;
@@ -102,7 +102,7 @@ router.post("/attempts/:attemptId/answers/:answerId/ai-grade", requireAuth, asyn
       store.geminiStoreName,
       answer.testQuestion.questionText,
       answer.writtenAnswer,
-      answer.testQuestion.modelAnswer,
+      answer.testQuestion.modelAnswer ?? undefined,
       answer.marksPossible
     );
 

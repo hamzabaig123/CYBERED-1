@@ -52,21 +52,36 @@ export interface ChatResponse {
   citations: Citation[];
 }
 
+export interface ExcerptAnswer {
+  text: string;
+}
+
+/**
+ * Phase 5: answer an MCQ/plain question using only the provided textbook
+ * excerpt (page-tagged). The model is told to rely solely on the excerpt and
+ * cite the page number, so answers stay grounded in the book.
+ */
 export async function answerFromExcerpt(
   excerpt: string,
-  question: string
-): Promise<string> {
+  question: string,
+  options?: Record<string, string>
+): Promise<ExcerptAnswer> {
   const client = getGeminiClient();
+  const optionsText = options
+    ? `\nMCQ options:\n${Object.entries(options).map(([k, v]) => `${k}) ${v}`).join("\n")}`
+    : "";
+
   const response = await client.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `Excerpt:\n${excerpt}\n\nQuestion: ${question}`,
-    config: {
-      systemInstruction:
-        "Answer using only the provided textbook excerpt. Cite the page number the answer comes from. If the excerpt does not contain the answer, say so instead of guessing. For a multiple-choice question, state the correct option letter first.",
-    },
+    contents: `Answer the question using ONLY the textbook excerpt below. Base your answer strictly on the excerpt — do not use outside knowledge. If the excerpt does not contain the answer, say so instead of guessing. Cite the page number(s) the answer comes from as [page N]. Keep it to 2-4 sentences and, for MCQs, state the chosen option letter.
+
+Textbook excerpt:
+${excerpt}
+
+Question: ${question}${optionsText}`,
   });
 
-  return (response as { text?: string }).text ?? "";
+  return { text: (response as { text?: string }).text ?? "" };
 }
 
 export async function createBookStore(subjectName: string): Promise<string> {
@@ -74,7 +89,7 @@ export async function createBookStore(subjectName: string): Promise<string> {
   const store = await client.fileSearchStores.create({
     config: { displayName: `cybered-${subjectName}` },
   });
-  return store.name;
+  return store.name ?? "";
 }
 
 export async function uploadToFileSearchStore(
@@ -84,16 +99,25 @@ export async function uploadToFileSearchStore(
 ): Promise<string> {
   const client = getGeminiClient();
   const operation = await client.fileSearchStores.uploadToFileSearchStore({
-    file: new Blob([fileBytes]),
+    file: new Blob([Buffer.from(fileBytes)]),
     fileSearchStoreName,
     config: { displayName },
   });
-  return operation.name;
+  return operation.name ?? "";
+}
+
+interface FileSearchOperationLike {
+  name?: string;
+  done?: boolean;
+  error?: { message?: string };
 }
 
 export async function checkIndexingStatus(operationName: string): Promise<{ done: boolean; error?: string }> {
   const client = getGeminiClient();
-  const operation = await client.operations.get({ name: operationName });
+  const get = client.operations.get as unknown as (
+    params: { operation: { name: string } }
+  ) => Promise<FileSearchOperationLike>;
+  const operation = await get({ operation: { name: operationName } });
   return {
     done: operation.done ?? false,
     error: operation.error?.message,
@@ -200,36 +224,6 @@ export async function chatWithBook(
   });
 
   return parseChatResponse(response);
-}
-
-export interface ExcerptAnswer {
-  text: string;
-}
-
-/**
- * Phase 5: answer an MCQ/plain question using only the provided textbook
- * excerpt (page-tagged). The model is told to rely solely on the excerpt and
- * cite the page number, so answers stay grounded in the book.
- */
-export async function answerFromExcerpt(
-  excerpt: string,
-  question: string,
-  options?: Record<string, string>
-): Promise<ExcerptAnswer> {
-  const client = getGeminiClient();
-  const optionsText = options ? `\nMCQ options:\n${Object.entries(options).map(([k, v]) => `${k}) ${v}`).join("\n")}` : "";
-
-  const response = await client.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: `Answer the question using ONLY the textbook excerpt below. Base your answer strictly on the excerpt — do not use outside knowledge. Cite the page number(s) the answer comes from as [page N]. Keep it to 2-4 sentences and, for MCQs, state the chosen option letter.
-
-Textbook excerpt:
-${excerpt}
-
-Question: ${question}${optionsText}`,
-  });
-
-  return { text: response.text ?? "" };
 }
 
 function parseExplanationResponse(response: unknown): ExplainResponse {

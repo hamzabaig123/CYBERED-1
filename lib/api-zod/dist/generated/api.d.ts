@@ -11,11 +11,7 @@ import * as zod from 'zod';
  */
 export declare const HealthCheckResponse: zod.ZodObject<{
     status: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    status: string;
-}, {
-    status: string;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Register a new user
  */
@@ -25,15 +21,7 @@ export declare const RegisterBody: zod.ZodObject<{
     username: zod.ZodString;
     email: zod.ZodString;
     password: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    username: string;
-    email: string;
-    password: string;
-}, {
-    username: string;
-    email: string;
-    password: string;
-}>;
+}, zod.z.core.$strip>;
 export declare const RegisterResponse: zod.ZodObject<{
     token: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     refreshToken: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -43,64 +31,22 @@ export declare const RegisterResponse: zod.ZodObject<{
         id: zod.ZodNumber;
         username: zod.ZodString;
         email: zod.ZodString;
-        role: zod.ZodEnum<["admin", "editor", "viewer"]>;
-        createdAt: zod.ZodDate;
-        emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-    }, "strip", zod.ZodTypeAny, {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    }, {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    }>;
-}, "strip", zod.ZodTypeAny, {
-    user: {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    };
-    token?: string | null | undefined;
-    refreshToken?: string | null | undefined;
-    totpRequired?: boolean | undefined;
-    totpChallenge?: string | null | undefined;
-}, {
-    user: {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    };
-    token?: string | null | undefined;
-    refreshToken?: string | null | undefined;
-    totpRequired?: boolean | undefined;
-    totpChallenge?: string | null | undefined;
-}>;
+        role: zod.ZodEnum<{
+            admin: "admin";
+            editor: "editor";
+            viewer: "viewer";
+        }>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+        emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+    }, zod.z.core.$strip>;
+}, zod.z.core.$strip>;
 /**
  * @summary Login
  */
 export declare const LoginBody: zod.ZodObject<{
     email: zod.ZodString;
     password: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    email: string;
-    password: string;
-}, {
-    email: string;
-    password: string;
-}>;
+}, zod.z.core.$strip>;
 export declare const LoginResponse: zod.ZodObject<{
     token: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     refreshToken: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -110,51 +56,15 @@ export declare const LoginResponse: zod.ZodObject<{
         id: zod.ZodNumber;
         username: zod.ZodString;
         email: zod.ZodString;
-        role: zod.ZodEnum<["admin", "editor", "viewer"]>;
-        createdAt: zod.ZodDate;
-        emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-    }, "strip", zod.ZodTypeAny, {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    }, {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    }>;
-}, "strip", zod.ZodTypeAny, {
-    user: {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    };
-    token?: string | null | undefined;
-    refreshToken?: string | null | undefined;
-    totpRequired?: boolean | undefined;
-    totpChallenge?: string | null | undefined;
-}, {
-    user: {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    };
-    token?: string | null | undefined;
-    refreshToken?: string | null | undefined;
-    totpRequired?: boolean | undefined;
-    totpChallenge?: string | null | undefined;
-}>;
+        role: zod.ZodEnum<{
+            admin: "admin";
+            editor: "editor";
+            viewer: "viewer";
+        }>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+        emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+    }, zod.z.core.$strip>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get current user
  */
@@ -162,24 +72,14 @@ export declare const GetMeResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     username: zod.ZodString;
     email: zod.ZodString;
-    role: zod.ZodEnum<["admin", "editor", "viewer"]>;
-    createdAt: zod.ZodDate;
-    emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-}, "strip", zod.ZodTypeAny, {
-    username: string;
-    email: string;
-    id: number;
-    role: "admin" | "editor" | "viewer";
-    createdAt: Date;
-    emailVerifiedAt?: Date | null | undefined;
-}, {
-    username: string;
-    email: string;
-    id: number;
-    role: "admin" | "editor" | "viewer";
-    createdAt: Date;
-    emailVerifiedAt?: Date | null | undefined;
-}>;
+    role: zod.ZodEnum<{
+        admin: "admin";
+        editor: "editor";
+        viewer: "viewer";
+    }>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+    emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+}, zod.z.core.$strip>;
 /**
  * @summary Logout
  */
@@ -189,11 +89,7 @@ export declare const LogoutResponse: zod.ZodVoid;
  */
 export declare const ForgotPasswordBody: zod.ZodObject<{
     email: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    email: string;
-}, {
-    email: string;
-}>;
+}, zod.z.core.$strip>;
 export declare const ForgotPasswordResponse: zod.ZodVoid;
 /**
  * @summary Reset password using token
@@ -202,13 +98,7 @@ export declare const resetPasswordBodyNewPasswordMin = 8;
 export declare const ResetPasswordBody: zod.ZodObject<{
     token: zod.ZodString;
     newPassword: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    token: string;
-    newPassword: string;
-}, {
-    token: string;
-    newPassword: string;
-}>;
+}, zod.z.core.$strip>;
 export declare const ResetPasswordResponse: zod.ZodVoid;
 /**
  * @summary Request email verification link
@@ -219,11 +109,7 @@ export declare const RequestEmailVerificationResponse: zod.ZodVoid;
  */
 export declare const VerifyEmailBody: zod.ZodObject<{
     token: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    token: string;
-}, {
-    token: string;
-}>;
+}, zod.z.core.$strip>;
 export declare const VerifyEmailResponse: zod.ZodVoid;
 /**
  * @summary Begin 2FA enrollment — returns provisioning URI and QR code
@@ -232,45 +118,23 @@ export declare const Enroll2faResponse: zod.ZodObject<{
     provisioningUri: zod.ZodString;
     qrCode: zod.ZodString;
     secret: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    provisioningUri: string;
-    qrCode: string;
-    secret: string;
-}, {
-    provisioningUri: string;
-    qrCode: string;
-    secret: string;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Confirm 2FA enrollment using first TOTP code
  */
 export declare const Confirm2faBody: zod.ZodObject<{
     code: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    code: string;
-}, {
-    code: string;
-}>;
+}, zod.z.core.$strip>;
 export declare const Confirm2faResponse: zod.ZodObject<{
-    backupCodes: zod.ZodArray<zod.ZodString, "many">;
-}, "strip", zod.ZodTypeAny, {
-    backupCodes: string[];
-}, {
-    backupCodes: string[];
-}>;
+    backupCodes: zod.ZodArray<zod.ZodString>;
+}, zod.z.core.$strip>;
 /**
  * @summary Verify TOTP code during login (step 2)
  */
 export declare const Verify2faBody: zod.ZodObject<{
     totpChallenge: zod.ZodString;
     code: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    code: string;
-    totpChallenge: string;
-}, {
-    code: string;
-    totpChallenge: string;
-}>;
+}, zod.z.core.$strip>;
 export declare const Verify2faResponse: zod.ZodObject<{
     token: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     refreshToken: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -280,72 +144,28 @@ export declare const Verify2faResponse: zod.ZodObject<{
         id: zod.ZodNumber;
         username: zod.ZodString;
         email: zod.ZodString;
-        role: zod.ZodEnum<["admin", "editor", "viewer"]>;
-        createdAt: zod.ZodDate;
-        emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-    }, "strip", zod.ZodTypeAny, {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    }, {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    }>;
-}, "strip", zod.ZodTypeAny, {
-    user: {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    };
-    token?: string | null | undefined;
-    refreshToken?: string | null | undefined;
-    totpRequired?: boolean | undefined;
-    totpChallenge?: string | null | undefined;
-}, {
-    user: {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    };
-    token?: string | null | undefined;
-    refreshToken?: string | null | undefined;
-    totpRequired?: boolean | undefined;
-    totpChallenge?: string | null | undefined;
-}>;
+        role: zod.ZodEnum<{
+            admin: "admin";
+            editor: "editor";
+            viewer: "viewer";
+        }>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+        emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+    }, zod.z.core.$strip>;
+}, zod.z.core.$strip>;
 /**
  * @summary Disable 2FA
  */
 export declare const Disable2faBody: zod.ZodObject<{
     code: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    code: string;
-}, {
-    code: string;
-}>;
+}, zod.z.core.$strip>;
 export declare const Disable2faResponse: zod.ZodVoid;
 /**
  * @summary Refresh access token using refresh token
  */
 export declare const RefreshSessionBody: zod.ZodObject<{
     refreshToken: zod.ZodString;
-}, "strip", zod.ZodTypeAny, {
-    refreshToken: string;
-}, {
-    refreshToken: string;
-}>;
+}, zod.z.core.$strip>;
 export declare const RefreshSessionResponse: zod.ZodObject<{
     token: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     refreshToken: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -355,51 +175,15 @@ export declare const RefreshSessionResponse: zod.ZodObject<{
         id: zod.ZodNumber;
         username: zod.ZodString;
         email: zod.ZodString;
-        role: zod.ZodEnum<["admin", "editor", "viewer"]>;
-        createdAt: zod.ZodDate;
-        emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-    }, "strip", zod.ZodTypeAny, {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    }, {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    }>;
-}, "strip", zod.ZodTypeAny, {
-    user: {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    };
-    token?: string | null | undefined;
-    refreshToken?: string | null | undefined;
-    totpRequired?: boolean | undefined;
-    totpChallenge?: string | null | undefined;
-}, {
-    user: {
-        username: string;
-        email: string;
-        id: number;
-        role: "admin" | "editor" | "viewer";
-        createdAt: Date;
-        emailVerifiedAt?: Date | null | undefined;
-    };
-    token?: string | null | undefined;
-    refreshToken?: string | null | undefined;
-    totpRequired?: boolean | undefined;
-    totpChallenge?: string | null | undefined;
-}>;
+        role: zod.ZodEnum<{
+            admin: "admin";
+            editor: "editor";
+            viewer: "viewer";
+        }>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+        emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+    }, zod.z.core.$strip>;
+}, zod.z.core.$strip>;
 /**
  * @summary List active sessions for current user
  */
@@ -407,40 +191,16 @@ export declare const ListSessionsResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     userAgent: zod.ZodNullable<zod.ZodString>;
     ipAddress: zod.ZodNullable<zod.ZodString>;
-    createdAt: zod.ZodDate;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
     current: zod.ZodBoolean;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    userAgent: string | null;
-    ipAddress: string | null;
-    current: boolean;
-}, {
-    id: number;
-    createdAt: Date;
-    userAgent: string | null;
-    ipAddress: string | null;
-    current: boolean;
-}>;
+}, zod.z.core.$strip>;
 export declare const ListSessionsResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     userAgent: zod.ZodNullable<zod.ZodString>;
     ipAddress: zod.ZodNullable<zod.ZodString>;
-    createdAt: zod.ZodDate;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
     current: zod.ZodBoolean;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    userAgent: string | null;
-    ipAddress: string | null;
-    current: boolean;
-}, {
-    id: number;
-    createdAt: Date;
-    userAgent: string | null;
-    ipAddress: string | null;
-    current: boolean;
-}>, "many">;
+}, zod.z.core.$strip>>;
 /**
  * @summary Revoke all other sessions
  */
@@ -451,7 +211,7 @@ export declare const RevokeAllSessionsResponse: zod.ZodVoid;
 export declare const GetSecuritySummaryResponse: zod.ZodObject<{
     emailVerified: zod.ZodOptional<zod.ZodBoolean>;
     twoFactorEnabled: zod.ZodOptional<zod.ZodBoolean>;
-    lastPasswordChangeAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
+    lastPasswordChangeAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
     activeSessionCount: zod.ZodOptional<zod.ZodNumber>;
     recentActivity: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
         id: zod.ZodOptional<zod.ZodNumber>;
@@ -459,59 +219,15 @@ export declare const GetSecuritySummaryResponse: zod.ZodObject<{
         detail: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         ipAddress: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         userAgent: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-        createdAt: zod.ZodOptional<zod.ZodDate>;
-    }, "strip", zod.ZodTypeAny, {
-        id?: number | undefined;
-        createdAt?: Date | undefined;
-        userAgent?: string | null | undefined;
-        ipAddress?: string | null | undefined;
-        action?: string | undefined;
-        detail?: string | null | undefined;
-    }, {
-        id?: number | undefined;
-        createdAt?: Date | undefined;
-        userAgent?: string | null | undefined;
-        ipAddress?: string | null | undefined;
-        action?: string | undefined;
-        detail?: string | null | undefined;
-    }>, "many">>;
-}, "strip", zod.ZodTypeAny, {
-    emailVerified?: boolean | undefined;
-    twoFactorEnabled?: boolean | undefined;
-    lastPasswordChangeAt?: Date | null | undefined;
-    activeSessionCount?: number | undefined;
-    recentActivity?: {
-        id?: number | undefined;
-        createdAt?: Date | undefined;
-        userAgent?: string | null | undefined;
-        ipAddress?: string | null | undefined;
-        action?: string | undefined;
-        detail?: string | null | undefined;
-    }[] | undefined;
-}, {
-    emailVerified?: boolean | undefined;
-    twoFactorEnabled?: boolean | undefined;
-    lastPasswordChangeAt?: Date | null | undefined;
-    activeSessionCount?: number | undefined;
-    recentActivity?: {
-        id?: number | undefined;
-        createdAt?: Date | undefined;
-        userAgent?: string | null | undefined;
-        ipAddress?: string | null | undefined;
-        action?: string | undefined;
-        detail?: string | null | undefined;
-    }[] | undefined;
-}>;
+        createdAt: zod.ZodOptional<zod.z.ZodCoercedDate<unknown>>;
+    }, zod.z.core.$strip>>>;
+}, zod.z.core.$strip>;
 /**
  * @summary Revoke a specific session
  */
 export declare const RevokeSessionParams: zod.ZodObject<{
-    sessionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    sessionId: number;
-}, {
-    sessionId: number;
-}>;
+    sessionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const RevokeSessionResponse: zod.ZodVoid;
 /**
  * @summary List all users (admin only)
@@ -520,85 +236,51 @@ export declare const ListUsersResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     username: zod.ZodString;
     email: zod.ZodString;
-    role: zod.ZodEnum<["admin", "editor", "viewer"]>;
-    createdAt: zod.ZodDate;
-    emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-}, "strip", zod.ZodTypeAny, {
-    username: string;
-    email: string;
-    id: number;
-    role: "admin" | "editor" | "viewer";
-    createdAt: Date;
-    emailVerifiedAt?: Date | null | undefined;
-}, {
-    username: string;
-    email: string;
-    id: number;
-    role: "admin" | "editor" | "viewer";
-    createdAt: Date;
-    emailVerifiedAt?: Date | null | undefined;
-}>;
+    role: zod.ZodEnum<{
+        admin: "admin";
+        editor: "editor";
+        viewer: "viewer";
+    }>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+    emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+}, zod.z.core.$strip>;
 export declare const ListUsersResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     username: zod.ZodString;
     email: zod.ZodString;
-    role: zod.ZodEnum<["admin", "editor", "viewer"]>;
-    createdAt: zod.ZodDate;
-    emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-}, "strip", zod.ZodTypeAny, {
-    username: string;
-    email: string;
-    id: number;
-    role: "admin" | "editor" | "viewer";
-    createdAt: Date;
-    emailVerifiedAt?: Date | null | undefined;
-}, {
-    username: string;
-    email: string;
-    id: number;
-    role: "admin" | "editor" | "viewer";
-    createdAt: Date;
-    emailVerifiedAt?: Date | null | undefined;
-}>, "many">;
+    role: zod.ZodEnum<{
+        admin: "admin";
+        editor: "editor";
+        viewer: "viewer";
+    }>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+    emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Update user role (admin only)
  */
 export declare const UpdateUserRoleParams: zod.ZodObject<{
-    userId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    userId: number;
-}, {
-    userId: number;
-}>;
+    userId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const UpdateUserRoleBody: zod.ZodObject<{
-    role: zod.ZodEnum<["admin", "editor", "viewer"]>;
-}, "strip", zod.ZodTypeAny, {
-    role: "admin" | "editor" | "viewer";
-}, {
-    role: "admin" | "editor" | "viewer";
-}>;
+    role: zod.ZodEnum<{
+        admin: "admin";
+        editor: "editor";
+        viewer: "viewer";
+    }>;
+}, zod.z.core.$strip>;
 export declare const UpdateUserRoleResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     username: zod.ZodString;
     email: zod.ZodString;
-    role: zod.ZodEnum<["admin", "editor", "viewer"]>;
-    createdAt: zod.ZodDate;
-    emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-}, "strip", zod.ZodTypeAny, {
-    username: string;
-    email: string;
-    id: number;
-    role: "admin" | "editor" | "viewer";
-    createdAt: Date;
-    emailVerifiedAt?: Date | null | undefined;
-}, {
-    username: string;
-    email: string;
-    id: number;
-    role: "admin" | "editor" | "viewer";
-    createdAt: Date;
-    emailVerifiedAt?: Date | null | undefined;
-}>;
+    role: zod.ZodEnum<{
+        admin: "admin";
+        editor: "editor";
+        viewer: "viewer";
+    }>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+    emailVerifiedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get dashboard statistics
  */
@@ -612,27 +294,7 @@ export declare const GetDashboardStatsResponse: zod.ZodObject<{
     totalShortQuestions: zod.ZodNumber;
     totalLongQuestions: zod.ZodNumber;
     totalTests: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    totalClasses: number;
-    totalSubjects: number;
-    totalChapters: number;
-    totalSections: number;
-    totalQuestions: number;
-    totalMcqs: number;
-    totalShortQuestions: number;
-    totalLongQuestions: number;
-    totalTests: number;
-}, {
-    totalClasses: number;
-    totalSubjects: number;
-    totalChapters: number;
-    totalSections: number;
-    totalQuestions: number;
-    totalMcqs: number;
-    totalShortQuestions: number;
-    totalLongQuestions: number;
-    totalTests: number;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get recently added questions
  */
@@ -643,24 +305,8 @@ export declare const GetRecentQuestionsResponseItem: zod.ZodObject<{
     chapterName: zod.ZodString;
     subjectName: zod.ZodString;
     className: zod.ZodString;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: string;
-    chapterName: string;
-    subjectName: string;
-    className: string;
-}, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: string;
-    chapterName: string;
-    subjectName: string;
-    className: string;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 export declare const GetRecentQuestionsResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     questionText: zod.ZodString;
@@ -668,78 +314,30 @@ export declare const GetRecentQuestionsResponse: zod.ZodArray<zod.ZodObject<{
     chapterName: zod.ZodString;
     subjectName: zod.ZodString;
     className: zod.ZodString;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: string;
-    chapterName: string;
-    subjectName: string;
-    className: string;
-}, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: string;
-    chapterName: string;
-    subjectName: string;
-    className: string;
-}>, "many">;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>>;
 /**
  * @summary List all classes
  */
 export declare const ListClassesQueryParams: zod.ZodObject<{
-    includeArchived: zod.ZodOptional<zod.ZodBoolean>;
-}, "strip", zod.ZodTypeAny, {
-    includeArchived?: boolean | undefined;
-}, {
-    includeArchived?: boolean | undefined;
-}>;
+    includeArchived: zod.ZodOptional<zod.z.ZodCoercedBoolean<unknown>>;
+}, zod.z.core.$strip>;
 export declare const ListClassesResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 export declare const ListClassesResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}>, "many">;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Create a class
  */
@@ -747,159 +345,69 @@ export declare const CreateClassBody: zod.ZodObject<{
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodString>;
     orderIndex: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    name: string;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}, {
-    name: string;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const CreateClassResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get a class
  */
 export declare const GetClassParams: zod.ZodObject<{
-    classId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    classId: number;
-}, {
-    classId: number;
-}>;
+    classId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const GetClassResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Update a class
  */
 export declare const UpdateClassParams: zod.ZodObject<{
-    classId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    classId: number;
-}, {
-    classId: number;
-}>;
+    classId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const UpdateClassBody: zod.ZodObject<{
     name: zod.ZodOptional<zod.ZodString>;
     description: zod.ZodOptional<zod.ZodString>;
     orderIndex: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    name?: string | undefined;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}, {
-    name?: string | undefined;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const UpdateClassResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Archive a class
  */
 export declare const ArchiveClassParams: zod.ZodObject<{
-    classId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    classId: number;
-}, {
-    classId: number;
-}>;
+    classId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const ArchiveClassResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary List subjects for a class
  */
 export declare const ListSubjectsQueryParams: zod.ZodObject<{
-    classId: zod.ZodNumber;
-    includeArchived: zod.ZodOptional<zod.ZodBoolean>;
-}, "strip", zod.ZodTypeAny, {
-    classId: number;
-    includeArchived?: boolean | undefined;
-}, {
-    classId: number;
-    includeArchived?: boolean | undefined;
-}>;
+    classId: zod.z.ZodCoercedNumber<unknown>;
+    includeArchived: zod.ZodOptional<zod.z.ZodCoercedBoolean<unknown>>;
+}, zod.z.core.$strip>;
 export declare const ListSubjectsResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     classId: zod.ZodNumber;
@@ -907,24 +415,8 @@ export declare const ListSubjectsResponseItem: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 export declare const ListSubjectsResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     classId: zod.ZodNumber;
@@ -932,47 +424,19 @@ export declare const ListSubjectsResponse: zod.ZodArray<zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}>, "many">;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Create a subject
  */
 export declare const CreateSubjectParams: zod.ZodObject<{
-    classId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    classId: number;
-}, {
-    classId: number;
-}>;
+    classId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const CreateSubjectBody: zod.ZodObject<{
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodString>;
     orderIndex: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    name: string;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}, {
-    name: string;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const CreateSubjectResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     classId: zod.ZodNumber;
@@ -980,34 +444,14 @@ export declare const CreateSubjectResponse: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get a subject
  */
 export declare const GetSubjectParams: zod.ZodObject<{
-    subjectId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    subjectId: number;
-}, {
-    subjectId: number;
-}>;
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const GetSubjectResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     classId: zod.ZodNumber;
@@ -1015,47 +459,19 @@ export declare const GetSubjectResponse: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Update a subject
  */
 export declare const UpdateSubjectParams: zod.ZodObject<{
-    subjectId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    subjectId: number;
-}, {
-    subjectId: number;
-}>;
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const UpdateSubjectBody: zod.ZodObject<{
     name: zod.ZodOptional<zod.ZodString>;
     description: zod.ZodOptional<zod.ZodString>;
     orderIndex: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    name?: string | undefined;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}, {
-    name?: string | undefined;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const UpdateSubjectResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     classId: zod.ZodNumber;
@@ -1063,34 +479,14 @@ export declare const UpdateSubjectResponse: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Archive a subject
  */
 export declare const ArchiveSubjectParams: zod.ZodObject<{
-    subjectId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    subjectId: number;
-}, {
-    subjectId: number;
-}>;
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const ArchiveSubjectResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     classId: zod.ZodNumber;
@@ -1098,37 +494,15 @@ export declare const ArchiveSubjectResponse: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    classId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary List chapters for a subject
  */
 export declare const ListChaptersQueryParams: zod.ZodObject<{
-    subjectId: zod.ZodNumber;
-    includeArchived: zod.ZodOptional<zod.ZodBoolean>;
-}, "strip", zod.ZodTypeAny, {
-    subjectId: number;
-    includeArchived?: boolean | undefined;
-}, {
-    subjectId: number;
-    includeArchived?: boolean | undefined;
-}>;
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+    includeArchived: zod.ZodOptional<zod.z.ZodCoercedBoolean<unknown>>;
+}, zod.z.core.$strip>;
 export declare const ListChaptersResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     subjectId: zod.ZodNumber;
@@ -1136,24 +510,8 @@ export declare const ListChaptersResponseItem: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 export declare const ListChaptersResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     subjectId: zod.ZodNumber;
@@ -1161,47 +519,19 @@ export declare const ListChaptersResponse: zod.ZodArray<zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}>, "many">;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Create a chapter
  */
 export declare const CreateChapterParams: zod.ZodObject<{
-    subjectId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    subjectId: number;
-}, {
-    subjectId: number;
-}>;
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const CreateChapterBody: zod.ZodObject<{
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodString>;
     orderIndex: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    name: string;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}, {
-    name: string;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const CreateChapterResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     subjectId: zod.ZodNumber;
@@ -1209,34 +539,14 @@ export declare const CreateChapterResponse: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get a chapter
  */
 export declare const GetChapterParams: zod.ZodObject<{
-    chapterId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    chapterId: number;
-}, {
-    chapterId: number;
-}>;
+    chapterId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const GetChapterResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     subjectId: zod.ZodNumber;
@@ -1244,47 +554,19 @@ export declare const GetChapterResponse: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Update a chapter
  */
 export declare const UpdateChapterParams: zod.ZodObject<{
-    chapterId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    chapterId: number;
-}, {
-    chapterId: number;
-}>;
+    chapterId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const UpdateChapterBody: zod.ZodObject<{
     name: zod.ZodOptional<zod.ZodString>;
     description: zod.ZodOptional<zod.ZodString>;
     orderIndex: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    name?: string | undefined;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}, {
-    name?: string | undefined;
-    description?: string | undefined;
-    orderIndex?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const UpdateChapterResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     subjectId: zod.ZodNumber;
@@ -1292,34 +574,14 @@ export declare const UpdateChapterResponse: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Archive a chapter
  */
 export declare const ArchiveChapterParams: zod.ZodObject<{
-    chapterId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    chapterId: number;
-}, {
-    chapterId: number;
-}>;
+    chapterId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const ArchiveChapterResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     subjectId: zod.ZodNumber;
@@ -1327,301 +589,234 @@ export declare const ArchiveChapterResponse: zod.ZodObject<{
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    subjectId: number;
-    description?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary List sections for a chapter
  */
 export declare const ListSectionsQueryParams: zod.ZodObject<{
-    chapterId: zod.ZodNumber;
-    includeArchived: zod.ZodOptional<zod.ZodBoolean>;
-}, "strip", zod.ZodTypeAny, {
-    chapterId: number;
-    includeArchived?: boolean | undefined;
-}, {
-    chapterId: number;
-    includeArchived?: boolean | undefined;
-}>;
+    chapterId: zod.z.ZodCoercedNumber<unknown>;
+    includeArchived: zod.ZodOptional<zod.z.ZodCoercedBoolean<unknown>>;
+}, zod.z.core.$strip>;
 export declare const ListSectionsResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     chapterId: zod.ZodNumber;
     name: zod.ZodString;
-    sectionType: zod.ZodEnum<["mcqs", "short_questions", "long_questions", "notes", "past_papers", "essays", "practical_questions", "viva_questions", "programming_questions", "flashcards", "mind_maps", "formula_sheets", "cheat_sheets", "custom"]>;
+    sectionType: zod.ZodEnum<{
+        custom: "custom";
+        mcqs: "mcqs";
+        short_questions: "short_questions";
+        long_questions: "long_questions";
+        notes: "notes";
+        past_papers: "past_papers";
+        essays: "essays";
+        practical_questions: "practical_questions";
+        viva_questions: "viva_questions";
+        programming_questions: "programming_questions";
+        flashcards: "flashcards";
+        mind_maps: "mind_maps";
+        formula_sheets: "formula_sheets";
+        cheat_sheets: "cheat_sheets";
+    }>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
     questionCount: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 export declare const ListSectionsResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     chapterId: zod.ZodNumber;
     name: zod.ZodString;
-    sectionType: zod.ZodEnum<["mcqs", "short_questions", "long_questions", "notes", "past_papers", "essays", "practical_questions", "viva_questions", "programming_questions", "flashcards", "mind_maps", "formula_sheets", "cheat_sheets", "custom"]>;
+    sectionType: zod.ZodEnum<{
+        custom: "custom";
+        mcqs: "mcqs";
+        short_questions: "short_questions";
+        long_questions: "long_questions";
+        notes: "notes";
+        past_papers: "past_papers";
+        essays: "essays";
+        practical_questions: "practical_questions";
+        viva_questions: "viva_questions";
+        programming_questions: "programming_questions";
+        flashcards: "flashcards";
+        mind_maps: "mind_maps";
+        formula_sheets: "formula_sheets";
+        cheat_sheets: "cheat_sheets";
+    }>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
     questionCount: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}>, "many">;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Create a section
  */
 export declare const CreateSectionParams: zod.ZodObject<{
-    chapterId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    chapterId: number;
-}, {
-    chapterId: number;
-}>;
+    chapterId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const CreateSectionBody: zod.ZodObject<{
     name: zod.ZodString;
-    sectionType: zod.ZodEnum<["mcqs", "short_questions", "long_questions", "notes", "past_papers", "essays", "practical_questions", "viva_questions", "programming_questions", "flashcards", "mind_maps", "formula_sheets", "cheat_sheets", "custom"]>;
+    sectionType: zod.ZodEnum<{
+        custom: "custom";
+        mcqs: "mcqs";
+        short_questions: "short_questions";
+        long_questions: "long_questions";
+        notes: "notes";
+        past_papers: "past_papers";
+        essays: "essays";
+        practical_questions: "practical_questions";
+        viva_questions: "viva_questions";
+        programming_questions: "programming_questions";
+        flashcards: "flashcards";
+        mind_maps: "mind_maps";
+        formula_sheets: "formula_sheets";
+        cheat_sheets: "cheat_sheets";
+    }>;
     orderIndex: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    name: string;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    orderIndex?: number | undefined;
-}, {
-    name: string;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    orderIndex?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const CreateSectionResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     chapterId: zod.ZodNumber;
     name: zod.ZodString;
-    sectionType: zod.ZodEnum<["mcqs", "short_questions", "long_questions", "notes", "past_papers", "essays", "practical_questions", "viva_questions", "programming_questions", "flashcards", "mind_maps", "formula_sheets", "cheat_sheets", "custom"]>;
+    sectionType: zod.ZodEnum<{
+        custom: "custom";
+        mcqs: "mcqs";
+        short_questions: "short_questions";
+        long_questions: "long_questions";
+        notes: "notes";
+        past_papers: "past_papers";
+        essays: "essays";
+        practical_questions: "practical_questions";
+        viva_questions: "viva_questions";
+        programming_questions: "programming_questions";
+        flashcards: "flashcards";
+        mind_maps: "mind_maps";
+        formula_sheets: "formula_sheets";
+        cheat_sheets: "cheat_sheets";
+    }>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
     questionCount: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get a section
  */
 export declare const GetSectionParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-}, {
-    sectionId: number;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const GetSectionResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     chapterId: zod.ZodNumber;
     name: zod.ZodString;
-    sectionType: zod.ZodEnum<["mcqs", "short_questions", "long_questions", "notes", "past_papers", "essays", "practical_questions", "viva_questions", "programming_questions", "flashcards", "mind_maps", "formula_sheets", "cheat_sheets", "custom"]>;
+    sectionType: zod.ZodEnum<{
+        custom: "custom";
+        mcqs: "mcqs";
+        short_questions: "short_questions";
+        long_questions: "long_questions";
+        notes: "notes";
+        past_papers: "past_papers";
+        essays: "essays";
+        practical_questions: "practical_questions";
+        viva_questions: "viva_questions";
+        programming_questions: "programming_questions";
+        flashcards: "flashcards";
+        mind_maps: "mind_maps";
+        formula_sheets: "formula_sheets";
+        cheat_sheets: "cheat_sheets";
+    }>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
     questionCount: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Update a section
  */
 export declare const UpdateSectionParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-}, {
-    sectionId: number;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const UpdateSectionBody: zod.ZodObject<{
     name: zod.ZodOptional<zod.ZodString>;
     orderIndex: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    name?: string | undefined;
-    orderIndex?: number | undefined;
-}, {
-    name?: string | undefined;
-    orderIndex?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const UpdateSectionResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     chapterId: zod.ZodNumber;
     name: zod.ZodString;
-    sectionType: zod.ZodEnum<["mcqs", "short_questions", "long_questions", "notes", "past_papers", "essays", "practical_questions", "viva_questions", "programming_questions", "flashcards", "mind_maps", "formula_sheets", "cheat_sheets", "custom"]>;
+    sectionType: zod.ZodEnum<{
+        custom: "custom";
+        mcqs: "mcqs";
+        short_questions: "short_questions";
+        long_questions: "long_questions";
+        notes: "notes";
+        past_papers: "past_papers";
+        essays: "essays";
+        practical_questions: "practical_questions";
+        viva_questions: "viva_questions";
+        programming_questions: "programming_questions";
+        flashcards: "flashcards";
+        mind_maps: "mind_maps";
+        formula_sheets: "formula_sheets";
+        cheat_sheets: "cheat_sheets";
+    }>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
     questionCount: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Archive a section
  */
 export declare const ArchiveSectionParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-}, {
-    sectionId: number;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const ArchiveSectionResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     chapterId: zod.ZodNumber;
     name: zod.ZodString;
-    sectionType: zod.ZodEnum<["mcqs", "short_questions", "long_questions", "notes", "past_papers", "essays", "practical_questions", "viva_questions", "programming_questions", "flashcards", "mind_maps", "formula_sheets", "cheat_sheets", "custom"]>;
+    sectionType: zod.ZodEnum<{
+        custom: "custom";
+        mcqs: "mcqs";
+        short_questions: "short_questions";
+        long_questions: "long_questions";
+        notes: "notes";
+        past_papers: "past_papers";
+        essays: "essays";
+        practical_questions: "practical_questions";
+        viva_questions: "viva_questions";
+        programming_questions: "programming_questions";
+        flashcards: "flashcards";
+        mind_maps: "mind_maps";
+        formula_sheets: "formula_sheets";
+        cheat_sheets: "cheat_sheets";
+    }>;
     orderIndex: zod.ZodNumber;
     isArchived: zod.ZodBoolean;
     questionCount: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    name: string;
-    orderIndex: number;
-    isArchived: boolean;
-    chapterId: number;
-    sectionType: "custom" | "mcqs" | "short_questions" | "long_questions" | "notes" | "past_papers" | "essays" | "practical_questions" | "viva_questions" | "programming_questions" | "flashcards" | "mind_maps" | "formula_sheets" | "cheat_sheets";
-    questionCount?: number | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary List questions in a section (paginated)
  */
 export declare const ListQuestionsQueryParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-    page: zod.ZodOptional<zod.ZodNumber>;
-    limit: zod.ZodOptional<zod.ZodNumber>;
-    search: zod.ZodOptional<zod.ZodString>;
-    referenceYear: zod.ZodOptional<zod.ZodNumber>;
-    referenceType: zod.ZodOptional<zod.ZodString>;
-    includeArchived: zod.ZodOptional<zod.ZodBoolean>;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-    includeArchived?: boolean | undefined;
-    page?: number | undefined;
-    limit?: number | undefined;
-    search?: string | undefined;
-    referenceYear?: number | undefined;
-    referenceType?: string | undefined;
-}, {
-    sectionId: number;
-    includeArchived?: boolean | undefined;
-    page?: number | undefined;
-    limit?: number | undefined;
-    search?: string | undefined;
-    referenceYear?: number | undefined;
-    referenceType?: string | undefined;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+    page: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    search: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    referenceYear: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    referenceType: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    includeArchived: zod.ZodOptional<zod.z.ZodCoercedBoolean<unknown>>;
+}, zod.z.core.$strip>;
 export declare const ListQuestionsResponse: zod.ZodObject<{
     questions: zod.ZodArray<zod.ZodObject<{
         id: zod.ZodNumber;
         sectionId: zod.ZodNumber;
-        questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
         questionText: zod.ZodString;
         optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -1635,207 +830,76 @@ export declare const ListQuestionsResponse: zod.ZodObject<{
         referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-        difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["easy", "medium", "hard"]>>>;
+        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+        difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+            easy: "easy";
+            medium: "medium";
+            hard: "hard";
+        }>>>;
         bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         isArchived: zod.ZodBoolean;
-        createdAt: zod.ZodDate;
-    }, "strip", zod.ZodTypeAny, {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }, {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }>, "many">;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
     total: zod.ZodNumber;
     page: zod.ZodNumber;
     limit: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    page: number;
-    limit: number;
-    questions: {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }[];
-    total: number;
-}, {
-    page: number;
-    limit: number;
-    questions: {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }[];
-    total: number;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Create a question
  */
 export declare const CreateQuestionParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-}, {
-    sectionId: number;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const CreateQuestionBody: zod.ZodObject<{
-    questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
     questionText: zod.ZodString;
     optionA: zod.ZodOptional<zod.ZodString>;
     optionB: zod.ZodOptional<zod.ZodString>;
     optionC: zod.ZodOptional<zod.ZodString>;
     optionD: zod.ZodOptional<zod.ZodString>;
-    correctOption: zod.ZodOptional<zod.ZodEnum<["A", "B", "C", "D"]>>;
+    correctOption: zod.ZodOptional<zod.ZodEnum<{
+        A: "A";
+        B: "B";
+        C: "C";
+        D: "D";
+    }>>;
     explanation: zod.ZodOptional<zod.ZodString>;
     modelAnswer: zod.ZodOptional<zod.ZodString>;
     marks: zod.ZodOptional<zod.ZodNumber>;
     referenceSource: zod.ZodOptional<zod.ZodString>;
     referenceYear: zod.ZodOptional<zod.ZodNumber>;
-    referenceType: zod.ZodOptional<zod.ZodEnum<["board_paper", "coaching_paper", "other"]>>;
+    referenceType: zod.ZodOptional<zod.ZodEnum<{
+        board_paper: "board_paper";
+        coaching_paper: "coaching_paper";
+        other: "other";
+    }>>;
     referenceNote: zod.ZodOptional<zod.ZodString>;
-    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-    difficulty: zod.ZodOptional<zod.ZodEnum<["easy", "medium", "hard"]>>;
+    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+    difficulty: zod.ZodOptional<zod.ZodEnum<{
+        easy: "easy";
+        medium: "medium";
+        hard: "hard";
+    }>>;
     bookPage: zod.ZodOptional<zod.ZodNumber>;
     bookExplanation: zod.ZodOptional<zod.ZodString>;
     aiExplanation: zod.ZodOptional<zod.ZodString>;
     imageUrl: zod.ZodOptional<zod.ZodString>;
-}, "strip", zod.ZodTypeAny, {
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    referenceYear?: number | undefined;
-    referenceType?: "board_paper" | "coaching_paper" | "other" | undefined;
-    optionA?: string | undefined;
-    optionB?: string | undefined;
-    optionC?: string | undefined;
-    optionD?: string | undefined;
-    correctOption?: "A" | "B" | "C" | "D" | undefined;
-    explanation?: string | undefined;
-    modelAnswer?: string | undefined;
-    marks?: number | undefined;
-    referenceSource?: string | undefined;
-    referenceNote?: string | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | undefined;
-    bookPage?: number | undefined;
-    bookExplanation?: string | undefined;
-    aiExplanation?: string | undefined;
-    imageUrl?: string | undefined;
-}, {
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    referenceYear?: number | undefined;
-    referenceType?: "board_paper" | "coaching_paper" | "other" | undefined;
-    optionA?: string | undefined;
-    optionB?: string | undefined;
-    optionC?: string | undefined;
-    optionD?: string | undefined;
-    correctOption?: "A" | "B" | "C" | "D" | undefined;
-    explanation?: string | undefined;
-    modelAnswer?: string | undefined;
-    marks?: number | undefined;
-    referenceSource?: string | undefined;
-    referenceNote?: string | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | undefined;
-    bookPage?: number | undefined;
-    bookExplanation?: string | undefined;
-    aiExplanation?: string | undefined;
-    imageUrl?: string | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const CreateQuestionResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
-    questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
     questionText: zod.ZodString;
     optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -1849,191 +913,74 @@ export declare const CreateQuestionResponse: zod.ZodObject<{
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["easy", "medium", "hard"]>>>;
+    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        easy: "easy";
+        medium: "medium";
+        hard: "hard";
+    }>>>;
     bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Bulk create questions in a section
  */
 export declare const BulkCreateQuestionsParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-}, {
-    sectionId: number;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const BulkCreateQuestionsBody: zod.ZodObject<{
     questions: zod.ZodArray<zod.ZodObject<{
-        questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
         questionText: zod.ZodString;
         optionA: zod.ZodOptional<zod.ZodString>;
         optionB: zod.ZodOptional<zod.ZodString>;
         optionC: zod.ZodOptional<zod.ZodString>;
         optionD: zod.ZodOptional<zod.ZodString>;
-        correctOption: zod.ZodOptional<zod.ZodEnum<["A", "B", "C", "D"]>>;
+        correctOption: zod.ZodOptional<zod.ZodEnum<{
+            A: "A";
+            B: "B";
+            C: "C";
+            D: "D";
+        }>>;
         explanation: zod.ZodOptional<zod.ZodString>;
         modelAnswer: zod.ZodOptional<zod.ZodString>;
         marks: zod.ZodOptional<zod.ZodNumber>;
         referenceSource: zod.ZodOptional<zod.ZodString>;
         referenceYear: zod.ZodOptional<zod.ZodNumber>;
-        referenceType: zod.ZodOptional<zod.ZodEnum<["board_paper", "coaching_paper", "other"]>>;
+        referenceType: zod.ZodOptional<zod.ZodEnum<{
+            board_paper: "board_paper";
+            coaching_paper: "coaching_paper";
+            other: "other";
+        }>>;
         referenceNote: zod.ZodOptional<zod.ZodString>;
-        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-        difficulty: zod.ZodOptional<zod.ZodEnum<["easy", "medium", "hard"]>>;
+        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+        difficulty: zod.ZodOptional<zod.ZodEnum<{
+            easy: "easy";
+            medium: "medium";
+            hard: "hard";
+        }>>;
         bookPage: zod.ZodOptional<zod.ZodNumber>;
         bookExplanation: zod.ZodOptional<zod.ZodString>;
         aiExplanation: zod.ZodOptional<zod.ZodString>;
         imageUrl: zod.ZodOptional<zod.ZodString>;
-    }, "strip", zod.ZodTypeAny, {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        referenceYear?: number | undefined;
-        referenceType?: "board_paper" | "coaching_paper" | "other" | undefined;
-        optionA?: string | undefined;
-        optionB?: string | undefined;
-        optionC?: string | undefined;
-        optionD?: string | undefined;
-        correctOption?: "A" | "B" | "C" | "D" | undefined;
-        explanation?: string | undefined;
-        modelAnswer?: string | undefined;
-        marks?: number | undefined;
-        referenceSource?: string | undefined;
-        referenceNote?: string | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | undefined;
-        bookPage?: number | undefined;
-        bookExplanation?: string | undefined;
-        aiExplanation?: string | undefined;
-        imageUrl?: string | undefined;
-    }, {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        referenceYear?: number | undefined;
-        referenceType?: "board_paper" | "coaching_paper" | "other" | undefined;
-        optionA?: string | undefined;
-        optionB?: string | undefined;
-        optionC?: string | undefined;
-        optionD?: string | undefined;
-        correctOption?: "A" | "B" | "C" | "D" | undefined;
-        explanation?: string | undefined;
-        modelAnswer?: string | undefined;
-        marks?: number | undefined;
-        referenceSource?: string | undefined;
-        referenceNote?: string | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | undefined;
-        bookPage?: number | undefined;
-        bookExplanation?: string | undefined;
-        aiExplanation?: string | undefined;
-        imageUrl?: string | undefined;
-    }>, "many">;
-}, "strip", zod.ZodTypeAny, {
-    questions: {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        referenceYear?: number | undefined;
-        referenceType?: "board_paper" | "coaching_paper" | "other" | undefined;
-        optionA?: string | undefined;
-        optionB?: string | undefined;
-        optionC?: string | undefined;
-        optionD?: string | undefined;
-        correctOption?: "A" | "B" | "C" | "D" | undefined;
-        explanation?: string | undefined;
-        modelAnswer?: string | undefined;
-        marks?: number | undefined;
-        referenceSource?: string | undefined;
-        referenceNote?: string | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | undefined;
-        bookPage?: number | undefined;
-        bookExplanation?: string | undefined;
-        aiExplanation?: string | undefined;
-        imageUrl?: string | undefined;
-    }[];
-}, {
-    questions: {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        referenceYear?: number | undefined;
-        referenceType?: "board_paper" | "coaching_paper" | "other" | undefined;
-        optionA?: string | undefined;
-        optionB?: string | undefined;
-        optionC?: string | undefined;
-        optionD?: string | undefined;
-        correctOption?: "A" | "B" | "C" | "D" | undefined;
-        explanation?: string | undefined;
-        modelAnswer?: string | undefined;
-        marks?: number | undefined;
-        referenceSource?: string | undefined;
-        referenceNote?: string | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | undefined;
-        bookPage?: number | undefined;
-        bookExplanation?: string | undefined;
-        aiExplanation?: string | undefined;
-        imageUrl?: string | undefined;
-    }[];
-}>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
 export declare const BulkCreateQuestionsResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
-    questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
     questionText: zod.ZodString;
     optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -2047,69 +994,27 @@ export declare const BulkCreateQuestionsResponseItem: zod.ZodObject<{
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["easy", "medium", "hard"]>>>;
+    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        easy: "easy";
+        medium: "medium";
+        hard: "hard";
+    }>>>;
     bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 export declare const BulkCreateQuestionsResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
-    questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
     questionText: zod.ZodString;
     optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -2123,107 +1028,43 @@ export declare const BulkCreateQuestionsResponse: zod.ZodArray<zod.ZodObject<{
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["easy", "medium", "hard"]>>>;
+    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        easy: "easy";
+        medium: "medium";
+        hard: "hard";
+    }>>>;
     bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}>, "many">;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Explore questions with keyset pagination and filters
  */
 export declare const ExploreQuestionsQueryParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-    limit: zod.ZodOptional<zod.ZodNumber>;
-    cursor: zod.ZodOptional<zod.ZodNumber>;
-    search: zod.ZodOptional<zod.ZodString>;
-    difficulty: zod.ZodOptional<zod.ZodString>;
-    referenceYear: zod.ZodOptional<zod.ZodNumber>;
-    referenceType: zod.ZodOptional<zod.ZodString>;
-    tag: zod.ZodOptional<zod.ZodString>;
-    status: zod.ZodOptional<zod.ZodString>;
-    questionType: zod.ZodOptional<zod.ZodString>;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-    status?: string | undefined;
-    questionType?: string | undefined;
-    limit?: number | undefined;
-    search?: string | undefined;
-    referenceYear?: number | undefined;
-    referenceType?: string | undefined;
-    difficulty?: string | undefined;
-    cursor?: number | undefined;
-    tag?: string | undefined;
-}, {
-    sectionId: number;
-    status?: string | undefined;
-    questionType?: string | undefined;
-    limit?: number | undefined;
-    search?: string | undefined;
-    referenceYear?: number | undefined;
-    referenceType?: string | undefined;
-    difficulty?: string | undefined;
-    cursor?: number | undefined;
-    tag?: string | undefined;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    cursor: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    search: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    difficulty: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    referenceYear: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    referenceType: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    tag: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    status: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    questionType: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+}, zod.z.core.$strip>;
 export declare const ExploreQuestionsResponse: zod.ZodObject<{
     questions: zod.ZodArray<zod.ZodObject<{
         id: zod.ZodNumber;
         sectionId: zod.ZodNumber;
-        questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
         questionText: zod.ZodString;
         optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -2237,220 +1078,70 @@ export declare const ExploreQuestionsResponse: zod.ZodObject<{
         referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-        difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["easy", "medium", "hard"]>>>;
+        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+        difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+            easy: "easy";
+            medium: "medium";
+            hard: "hard";
+        }>>>;
         bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         isArchived: zod.ZodBoolean;
-        createdAt: zod.ZodDate;
-    }, "strip", zod.ZodTypeAny, {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }, {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }>, "many">;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
     nextCursor: zod.ZodNullable<zod.ZodNumber>;
     hasMore: zod.ZodBoolean;
-}, "strip", zod.ZodTypeAny, {
-    questions: {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }[];
-    nextCursor: number | null;
-    hasMore: boolean;
-}, {
-    questions: {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }[];
-    nextCursor: number | null;
-    hasMore: boolean;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Count questions matching explorer filters
  */
 export declare const CountExploredQuestionsQueryParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-    search: zod.ZodOptional<zod.ZodString>;
-    difficulty: zod.ZodOptional<zod.ZodString>;
-    referenceYear: zod.ZodOptional<zod.ZodNumber>;
-    referenceType: zod.ZodOptional<zod.ZodString>;
-    tag: zod.ZodOptional<zod.ZodString>;
-    status: zod.ZodOptional<zod.ZodString>;
-    questionType: zod.ZodOptional<zod.ZodString>;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-    status?: string | undefined;
-    questionType?: string | undefined;
-    search?: string | undefined;
-    referenceYear?: number | undefined;
-    referenceType?: string | undefined;
-    difficulty?: string | undefined;
-    tag?: string | undefined;
-}, {
-    sectionId: number;
-    status?: string | undefined;
-    questionType?: string | undefined;
-    search?: string | undefined;
-    referenceYear?: number | undefined;
-    referenceType?: string | undefined;
-    difficulty?: string | undefined;
-    tag?: string | undefined;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+    search: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    difficulty: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    referenceYear: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    referenceType: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    tag: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    status: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    questionType: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+}, zod.z.core.$strip>;
 export declare const CountExploredQuestionsResponse: zod.ZodObject<{
     total: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    total: number;
-}, {
-    total: number;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary List distinct tags used across a section's questions
  */
 export declare const ListSectionTagsParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-}, {
-    sectionId: number;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const ListSectionTagsResponse: zod.ZodObject<{
-    tags: zod.ZodArray<zod.ZodString, "many">;
-}, "strip", zod.ZodTypeAny, {
-    tags: string[];
-}, {
-    tags: string[];
-}>;
+    tags: zod.ZodArray<zod.ZodString>;
+}, zod.z.core.$strip>;
 /**
  * @summary Full-text search across all questions
  */
 export declare const SearchQuestionsQueryParams: zod.ZodObject<{
-    q: zod.ZodString;
-    classId: zod.ZodOptional<zod.ZodNumber>;
-    subjectId: zod.ZodOptional<zod.ZodNumber>;
-    questionType: zod.ZodOptional<zod.ZodString>;
-    referenceType: zod.ZodOptional<zod.ZodString>;
-    referenceYearFrom: zod.ZodOptional<zod.ZodNumber>;
-    referenceYearTo: zod.ZodOptional<zod.ZodNumber>;
-    page: zod.ZodOptional<zod.ZodNumber>;
-    limit: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    q: string;
-    questionType?: string | undefined;
-    classId?: number | undefined;
-    subjectId?: number | undefined;
-    page?: number | undefined;
-    limit?: number | undefined;
-    referenceType?: string | undefined;
-    referenceYearFrom?: number | undefined;
-    referenceYearTo?: number | undefined;
-}, {
-    q: string;
-    questionType?: string | undefined;
-    classId?: number | undefined;
-    subjectId?: number | undefined;
-    page?: number | undefined;
-    limit?: number | undefined;
-    referenceType?: string | undefined;
-    referenceYearFrom?: number | undefined;
-    referenceYearTo?: number | undefined;
-}>;
+    q: zod.z.ZodCoercedString<unknown>;
+    classId: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    subjectId: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    questionType: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    referenceType: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    referenceYearFrom: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    referenceYearTo: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    page: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
 export declare const SearchQuestionsResponse: zod.ZodObject<{
     questions: zod.ZodArray<zod.ZodObject<{
         id: zod.ZodNumber;
         sectionId: zod.ZodNumber;
-        questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
         questionText: zod.ZodString;
         optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -2464,143 +1155,37 @@ export declare const SearchQuestionsResponse: zod.ZodObject<{
         referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-        difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["easy", "medium", "hard"]>>>;
+        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+        difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+            easy: "easy";
+            medium: "medium";
+            hard: "hard";
+        }>>>;
         bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         isArchived: zod.ZodBoolean;
-        createdAt: zod.ZodDate;
-    }, "strip", zod.ZodTypeAny, {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }, {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }>, "many">;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
     total: zod.ZodNumber;
     page: zod.ZodNumber;
     limit: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    page: number;
-    limit: number;
-    questions: {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }[];
-    total: number;
-}, {
-    page: number;
-    limit: number;
-    questions: {
-        id: number;
-        createdAt: Date;
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        isArchived: boolean;
-        sectionId: number;
-        referenceYear?: number | null | undefined;
-        referenceType?: string | null | undefined;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-        referenceNote?: string | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: "easy" | "medium" | "hard" | null | undefined;
-        bookPage?: number | null | undefined;
-        bookExplanation?: string | null | undefined;
-        aiExplanation?: string | null | undefined;
-        imageUrl?: string | null | undefined;
-    }[];
-    total: number;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get a question
  */
 export declare const GetQuestionParams: zod.ZodObject<{
-    questionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    questionId: number;
-}, {
-    questionId: number;
-}>;
+    questionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const GetQuestionResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
-    questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
     questionText: zod.ZodString;
     optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -2614,140 +1199,67 @@ export declare const GetQuestionResponse: zod.ZodObject<{
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["easy", "medium", "hard"]>>>;
+    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        easy: "easy";
+        medium: "medium";
+        hard: "hard";
+    }>>>;
     bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Update a question (creates new version, archives old)
  */
 export declare const UpdateQuestionParams: zod.ZodObject<{
-    questionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    questionId: number;
-}, {
-    questionId: number;
-}>;
+    questionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const UpdateQuestionBody: zod.ZodObject<{
     questionText: zod.ZodOptional<zod.ZodString>;
     optionA: zod.ZodOptional<zod.ZodString>;
     optionB: zod.ZodOptional<zod.ZodString>;
     optionC: zod.ZodOptional<zod.ZodString>;
     optionD: zod.ZodOptional<zod.ZodString>;
-    correctOption: zod.ZodOptional<zod.ZodEnum<["A", "B", "C", "D"]>>;
+    correctOption: zod.ZodOptional<zod.ZodEnum<{
+        A: "A";
+        B: "B";
+        C: "C";
+        D: "D";
+    }>>;
     explanation: zod.ZodOptional<zod.ZodString>;
     modelAnswer: zod.ZodOptional<zod.ZodString>;
     marks: zod.ZodOptional<zod.ZodNumber>;
     referenceSource: zod.ZodOptional<zod.ZodString>;
     referenceYear: zod.ZodOptional<zod.ZodNumber>;
-    referenceType: zod.ZodOptional<zod.ZodEnum<["board_paper", "coaching_paper", "other"]>>;
+    referenceType: zod.ZodOptional<zod.ZodEnum<{
+        board_paper: "board_paper";
+        coaching_paper: "coaching_paper";
+        other: "other";
+    }>>;
     referenceNote: zod.ZodOptional<zod.ZodString>;
-    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-    difficulty: zod.ZodOptional<zod.ZodEnum<["easy", "medium", "hard"]>>;
+    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+    difficulty: zod.ZodOptional<zod.ZodEnum<{
+        easy: "easy";
+        medium: "medium";
+        hard: "hard";
+    }>>;
     bookPage: zod.ZodOptional<zod.ZodNumber>;
     bookExplanation: zod.ZodOptional<zod.ZodString>;
     aiExplanation: zod.ZodOptional<zod.ZodString>;
     imageUrl: zod.ZodOptional<zod.ZodString>;
-}, "strip", zod.ZodTypeAny, {
-    questionText?: string | undefined;
-    referenceYear?: number | undefined;
-    referenceType?: "board_paper" | "coaching_paper" | "other" | undefined;
-    optionA?: string | undefined;
-    optionB?: string | undefined;
-    optionC?: string | undefined;
-    optionD?: string | undefined;
-    correctOption?: "A" | "B" | "C" | "D" | undefined;
-    explanation?: string | undefined;
-    modelAnswer?: string | undefined;
-    marks?: number | undefined;
-    referenceSource?: string | undefined;
-    referenceNote?: string | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | undefined;
-    bookPage?: number | undefined;
-    bookExplanation?: string | undefined;
-    aiExplanation?: string | undefined;
-    imageUrl?: string | undefined;
-}, {
-    questionText?: string | undefined;
-    referenceYear?: number | undefined;
-    referenceType?: "board_paper" | "coaching_paper" | "other" | undefined;
-    optionA?: string | undefined;
-    optionB?: string | undefined;
-    optionC?: string | undefined;
-    optionD?: string | undefined;
-    correctOption?: "A" | "B" | "C" | "D" | undefined;
-    explanation?: string | undefined;
-    modelAnswer?: string | undefined;
-    marks?: number | undefined;
-    referenceSource?: string | undefined;
-    referenceNote?: string | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | undefined;
-    bookPage?: number | undefined;
-    bookExplanation?: string | undefined;
-    aiExplanation?: string | undefined;
-    imageUrl?: string | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const UpdateQuestionResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
-    questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
     questionText: zod.ZodString;
     optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -2761,79 +1273,33 @@ export declare const UpdateQuestionResponse: zod.ZodObject<{
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["easy", "medium", "hard"]>>>;
+    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        easy: "easy";
+        medium: "medium";
+        hard: "hard";
+    }>>>;
     bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Archive a question
  */
 export declare const ArchiveQuestionParams: zod.ZodObject<{
-    questionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    questionId: number;
-}, {
-    questionId: number;
-}>;
+    questionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const ArchiveQuestionResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
-    questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
     questionText: zod.ZodString;
     optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -2847,203 +1313,100 @@ export declare const ArchiveQuestionResponse: zod.ZodObject<{
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
-    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["easy", "medium", "hard"]>>>;
+    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        easy: "easy";
+        medium: "medium";
+        hard: "hard";
+    }>>>;
     bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questionText: string;
-    questionType: "mcq" | "short" | "long";
-    isArchived: boolean;
-    sectionId: number;
-    referenceYear?: number | null | undefined;
-    referenceType?: string | null | undefined;
-    optionA?: string | null | undefined;
-    optionB?: string | null | undefined;
-    optionC?: string | null | undefined;
-    optionD?: string | null | undefined;
-    correctOption?: string | null | undefined;
-    explanation?: string | null | undefined;
-    modelAnswer?: string | null | undefined;
-    marks?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-    referenceNote?: string | null | undefined;
-    tags?: string[] | undefined;
-    difficulty?: "easy" | "medium" | "hard" | null | undefined;
-    bookPage?: number | null | undefined;
-    bookExplanation?: string | null | undefined;
-    aiExplanation?: string | null | undefined;
-    imageUrl?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get current user's state for a question
  */
 export declare const GetQuestionStateParams: zod.ZodObject<{
-    questionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    questionId: number;
-}, {
-    questionId: number;
-}>;
+    questionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const GetQuestionStateResponse: zod.ZodObject<{
     id: zod.ZodOptional<zod.ZodNumber>;
     questionId: zod.ZodOptional<zod.ZodNumber>;
     questionType: zod.ZodOptional<zod.ZodString>;
-    status: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["solved", "wrong", "bookmarked"]>>>;
-    lastAttemptedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-}, "strip", zod.ZodTypeAny, {
-    status?: "solved" | "wrong" | "bookmarked" | null | undefined;
-    id?: number | undefined;
-    questionType?: string | undefined;
-    questionId?: number | undefined;
-    lastAttemptedAt?: Date | null | undefined;
-}, {
-    status?: "solved" | "wrong" | "bookmarked" | null | undefined;
-    id?: number | undefined;
-    questionType?: string | undefined;
-    questionId?: number | undefined;
-    lastAttemptedAt?: Date | null | undefined;
-}>;
+    status: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        solved: "solved";
+        wrong: "wrong";
+        bookmarked: "bookmarked";
+    }>>>;
+    lastAttemptedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+}, zod.z.core.$strip>;
 /**
  * @summary Set current user's state for a question
  */
 export declare const SetQuestionStateParams: zod.ZodObject<{
-    questionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    questionId: number;
-}, {
-    questionId: number;
-}>;
+    questionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const SetQuestionStateBody: zod.ZodObject<{
     questionType: zod.ZodOptional<zod.ZodString>;
-    status: zod.ZodNullable<zod.ZodEnum<["solved", "wrong", "bookmarked", ""]>>;
-}, "strip", zod.ZodTypeAny, {
-    status: "" | "solved" | "wrong" | "bookmarked" | null;
-    questionType?: string | undefined;
-}, {
-    status: "" | "solved" | "wrong" | "bookmarked" | null;
-    questionType?: string | undefined;
-}>;
+    status: zod.ZodNullable<zod.ZodEnum<{
+        "": "";
+        solved: "solved";
+        wrong: "wrong";
+        bookmarked: "bookmarked";
+    }>>;
+}, zod.z.core.$strip>;
 export declare const SetQuestionStateResponse: zod.ZodObject<{
     id: zod.ZodOptional<zod.ZodNumber>;
     questionId: zod.ZodOptional<zod.ZodNumber>;
     questionType: zod.ZodOptional<zod.ZodString>;
-    status: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["solved", "wrong", "bookmarked"]>>>;
-    lastAttemptedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-}, "strip", zod.ZodTypeAny, {
-    status?: "solved" | "wrong" | "bookmarked" | null | undefined;
-    id?: number | undefined;
-    questionType?: string | undefined;
-    questionId?: number | undefined;
-    lastAttemptedAt?: Date | null | undefined;
-}, {
-    status?: "solved" | "wrong" | "bookmarked" | null | undefined;
-    id?: number | undefined;
-    questionType?: string | undefined;
-    questionId?: number | undefined;
-    lastAttemptedAt?: Date | null | undefined;
-}>;
+    status: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        solved: "solved";
+        wrong: "wrong";
+        bookmarked: "bookmarked";
+    }>>>;
+    lastAttemptedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+}, zod.z.core.$strip>;
 /**
  * @summary List current user's question states (bookmarks, mistakes)
  */
 export declare const ListMyQuestionStatesQueryParams: zod.ZodObject<{
-    status: zod.ZodOptional<zod.ZodString>;
-    limit: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    status?: string | undefined;
-    limit?: number | undefined;
-}, {
-    status?: string | undefined;
-    limit?: number | undefined;
-}>;
+    status: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
 export declare const ListMyQuestionStatesResponseItem: zod.ZodObject<{
     id: zod.ZodOptional<zod.ZodNumber>;
     questionId: zod.ZodOptional<zod.ZodNumber>;
     questionType: zod.ZodOptional<zod.ZodString>;
-    status: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["solved", "wrong", "bookmarked"]>>>;
-    lastAttemptedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-}, "strip", zod.ZodTypeAny, {
-    status?: "solved" | "wrong" | "bookmarked" | null | undefined;
-    id?: number | undefined;
-    questionType?: string | undefined;
-    questionId?: number | undefined;
-    lastAttemptedAt?: Date | null | undefined;
-}, {
-    status?: "solved" | "wrong" | "bookmarked" | null | undefined;
-    id?: number | undefined;
-    questionType?: string | undefined;
-    questionId?: number | undefined;
-    lastAttemptedAt?: Date | null | undefined;
-}>;
+    status: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        solved: "solved";
+        wrong: "wrong";
+        bookmarked: "bookmarked";
+    }>>>;
+    lastAttemptedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+}, zod.z.core.$strip>;
 export declare const ListMyQuestionStatesResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodOptional<zod.ZodNumber>;
     questionId: zod.ZodOptional<zod.ZodNumber>;
     questionType: zod.ZodOptional<zod.ZodString>;
-    status: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<["solved", "wrong", "bookmarked"]>>>;
-    lastAttemptedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-}, "strip", zod.ZodTypeAny, {
-    status?: "solved" | "wrong" | "bookmarked" | null | undefined;
-    id?: number | undefined;
-    questionType?: string | undefined;
-    questionId?: number | undefined;
-    lastAttemptedAt?: Date | null | undefined;
-}, {
-    status?: "solved" | "wrong" | "bookmarked" | null | undefined;
-    id?: number | undefined;
-    questionType?: string | undefined;
-    questionId?: number | undefined;
-    lastAttemptedAt?: Date | null | undefined;
-}>, "many">;
+    status: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        solved: "solved";
+        wrong: "wrong";
+        bookmarked: "bookmarked";
+    }>>>;
+    lastAttemptedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+}, zod.z.core.$strip>>;
 /**
  * @summary List flashcards in a section
  */
 export declare const ListFlashcardsQueryParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-    page: zod.ZodOptional<zod.ZodNumber>;
-    limit: zod.ZodOptional<zod.ZodNumber>;
-    search: zod.ZodOptional<zod.ZodString>;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-    page?: number | undefined;
-    limit?: number | undefined;
-    search?: string | undefined;
-}, {
-    sectionId: number;
-    page?: number | undefined;
-    limit?: number | undefined;
-    search?: string | undefined;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+    page: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    search: zod.ZodOptional<zod.z.ZodCoercedString<unknown>>;
+}, zod.z.core.$strip>;
 export declare const ListFlashcardsResponse: zod.ZodObject<{
     flashcards: zod.ZodArray<zod.ZodObject<{
         id: zod.ZodNumber;
@@ -3053,84 +1416,24 @@ export declare const ListFlashcardsResponse: zod.ZodObject<{
         referenceSource: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         isArchived: zod.ZodBoolean;
-        createdAt: zod.ZodDate;
-    }, "strip", zod.ZodTypeAny, {
-        id: number;
-        createdAt: Date;
-        isArchived: boolean;
-        sectionId: number;
-        front: string;
-        back: string;
-        referenceYear?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-    }, {
-        id: number;
-        createdAt: Date;
-        isArchived: boolean;
-        sectionId: number;
-        front: string;
-        back: string;
-        referenceYear?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-    }>, "many">;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
     total: zod.ZodNumber;
     page: zod.ZodNumber;
     limit: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    flashcards: {
-        id: number;
-        createdAt: Date;
-        isArchived: boolean;
-        sectionId: number;
-        front: string;
-        back: string;
-        referenceYear?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-    }[];
-    page: number;
-    limit: number;
-    total: number;
-}, {
-    flashcards: {
-        id: number;
-        createdAt: Date;
-        isArchived: boolean;
-        sectionId: number;
-        front: string;
-        back: string;
-        referenceYear?: number | null | undefined;
-        referenceSource?: string | null | undefined;
-    }[];
-    page: number;
-    limit: number;
-    total: number;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Create a flashcard
  */
 export declare const CreateFlashcardParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-}, {
-    sectionId: number;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const CreateFlashcardBody: zod.ZodObject<{
     front: zod.ZodString;
     back: zod.ZodString;
     referenceSource: zod.ZodOptional<zod.ZodString>;
     referenceYear: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    front: string;
-    back: string;
-    referenceYear?: number | undefined;
-    referenceSource?: string | undefined;
-}, {
-    front: string;
-    back: string;
-    referenceYear?: number | undefined;
-    referenceSource?: string | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const CreateFlashcardResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
@@ -3139,68 +1442,22 @@ export declare const CreateFlashcardResponse: zod.ZodObject<{
     referenceSource: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Bulk create flashcards in a section
  */
 export declare const BulkCreateFlashcardsParams: zod.ZodObject<{
-    sectionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-}, {
-    sectionId: number;
-}>;
+    sectionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const BulkCreateFlashcardsBody: zod.ZodObject<{
     flashcards: zod.ZodArray<zod.ZodObject<{
         front: zod.ZodString;
         back: zod.ZodString;
         referenceSource: zod.ZodOptional<zod.ZodString>;
         referenceYear: zod.ZodOptional<zod.ZodNumber>;
-    }, "strip", zod.ZodTypeAny, {
-        front: string;
-        back: string;
-        referenceYear?: number | undefined;
-        referenceSource?: string | undefined;
-    }, {
-        front: string;
-        back: string;
-        referenceYear?: number | undefined;
-        referenceSource?: string | undefined;
-    }>, "many">;
-}, "strip", zod.ZodTypeAny, {
-    flashcards: {
-        front: string;
-        back: string;
-        referenceYear?: number | undefined;
-        referenceSource?: string | undefined;
-    }[];
-}, {
-    flashcards: {
-        front: string;
-        back: string;
-        referenceYear?: number | undefined;
-        referenceSource?: string | undefined;
-    }[];
-}>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
 export declare const BulkCreateFlashcardsResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
@@ -3209,26 +1466,8 @@ export declare const BulkCreateFlashcardsResponseItem: zod.ZodObject<{
     referenceSource: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 export declare const BulkCreateFlashcardsResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
@@ -3237,36 +1476,14 @@ export declare const BulkCreateFlashcardsResponse: zod.ZodArray<zod.ZodObject<{
     referenceSource: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}>, "many">;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Get a flashcard
  */
 export declare const GetFlashcardParams: zod.ZodObject<{
-    flashcardId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    flashcardId: number;
-}, {
-    flashcardId: number;
-}>;
+    flashcardId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const GetFlashcardResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
@@ -3275,52 +1492,20 @@ export declare const GetFlashcardResponse: zod.ZodObject<{
     referenceSource: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Update a flashcard
  */
 export declare const UpdateFlashcardParams: zod.ZodObject<{
-    flashcardId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    flashcardId: number;
-}, {
-    flashcardId: number;
-}>;
+    flashcardId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const UpdateFlashcardBody: zod.ZodObject<{
     front: zod.ZodOptional<zod.ZodString>;
     back: zod.ZodOptional<zod.ZodString>;
     referenceSource: zod.ZodOptional<zod.ZodString>;
     referenceYear: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    referenceYear?: number | undefined;
-    referenceSource?: string | undefined;
-    front?: string | undefined;
-    back?: string | undefined;
-}, {
-    referenceYear?: number | undefined;
-    referenceSource?: string | undefined;
-    front?: string | undefined;
-    back?: string | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const UpdateFlashcardResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     sectionId: zod.ZodNumber;
@@ -3329,36 +1514,14 @@ export declare const UpdateFlashcardResponse: zod.ZodObject<{
     referenceSource: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     isArchived: zod.ZodBoolean;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    isArchived: boolean;
-    sectionId: number;
-    front: string;
-    back: string;
-    referenceYear?: number | null | undefined;
-    referenceSource?: string | null | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Archive/delete a flashcard
  */
 export declare const DeleteFlashcardParams: zod.ZodObject<{
-    flashcardId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    flashcardId: number;
-}, {
-    flashcardId: number;
-}>;
+    flashcardId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const DeleteFlashcardResponse: zod.ZodVoid;
 /**
  * @summary List generated tests
@@ -3373,30 +1536,8 @@ export declare const ListTestsResponseItem: zod.ZodObject<{
     mcqCount: zod.ZodOptional<zod.ZodNumber>;
     shortCount: zod.ZodOptional<zod.ZodNumber>;
     longCount: zod.ZodOptional<zod.ZodNumber>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionCount: number;
-    title: string;
-    totalMarks: number;
-    mode?: string | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    mcqCount?: number | undefined;
-    shortCount?: number | undefined;
-    longCount?: number | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questionCount: number;
-    title: string;
-    totalMarks: number;
-    mode?: string | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    mcqCount?: number | undefined;
-    shortCount?: number | undefined;
-    longCount?: number | undefined;
-}>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 export declare const ListTestsResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     title: zod.ZodString;
@@ -3407,30 +1548,8 @@ export declare const ListTestsResponse: zod.ZodArray<zod.ZodObject<{
     mcqCount: zod.ZodOptional<zod.ZodNumber>;
     shortCount: zod.ZodOptional<zod.ZodNumber>;
     longCount: zod.ZodOptional<zod.ZodNumber>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questionCount: number;
-    title: string;
-    totalMarks: number;
-    mode?: string | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    mcqCount?: number | undefined;
-    shortCount?: number | undefined;
-    longCount?: number | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questionCount: number;
-    title: string;
-    totalMarks: number;
-    mode?: string | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    mcqCount?: number | undefined;
-    shortCount?: number | undefined;
-    longCount?: number | undefined;
-}>, "many">;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Generate a test from stored questions
  */
@@ -3440,19 +1559,12 @@ export declare const GenerateTestBody: zod.ZodObject<{
         classId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         subjectId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         chapterId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-        sectionIds: zod.ZodOptional<zod.ZodArray<zod.ZodNumber, "many">>;
-    }, "strip", zod.ZodTypeAny, {
-        classId?: number | null | undefined;
-        subjectId?: number | null | undefined;
-        chapterId?: number | null | undefined;
-        sectionIds?: number[] | undefined;
-    }, {
-        classId?: number | null | undefined;
-        subjectId?: number | null | undefined;
-        chapterId?: number | null | undefined;
-        sectionIds?: number[] | undefined;
-    }>;
-    mode: zod.ZodOptional<zod.ZodEnum<["practice", "exam"]>>;
+        sectionIds: zod.ZodOptional<zod.ZodArray<zod.ZodNumber>>;
+    }, zod.z.core.$strip>;
+    mode: zod.ZodOptional<zod.ZodEnum<{
+        practice: "practice";
+        exam: "exam";
+    }>>;
     timeLimitMinutes: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     weakTopicsOnly: zod.ZodOptional<zod.ZodBoolean>;
     mcqCount: zod.ZodOptional<zod.ZodNumber>;
@@ -3463,45 +1575,7 @@ export declare const GenerateTestBody: zod.ZodObject<{
     referenceYearFrom: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     referenceYearTo: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-}, "strip", zod.ZodTypeAny, {
-    title: string;
-    scope: {
-        classId?: number | null | undefined;
-        subjectId?: number | null | undefined;
-        chapterId?: number | null | undefined;
-        sectionIds?: number[] | undefined;
-    };
-    referenceType?: string | null | undefined;
-    referenceYearFrom?: number | null | undefined;
-    referenceYearTo?: number | null | undefined;
-    mode?: "practice" | "exam" | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    mcqCount?: number | undefined;
-    weakTopicsOnly?: boolean | undefined;
-    shortQuestionCount?: number | undefined;
-    longQuestionCount?: number | undefined;
-    shortQuestionMarks?: number | undefined;
-    longQuestionMarks?: number | undefined;
-}, {
-    title: string;
-    scope: {
-        classId?: number | null | undefined;
-        subjectId?: number | null | undefined;
-        chapterId?: number | null | undefined;
-        sectionIds?: number[] | undefined;
-    };
-    referenceType?: string | null | undefined;
-    referenceYearFrom?: number | null | undefined;
-    referenceYearTo?: number | null | undefined;
-    mode?: "practice" | "exam" | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    mcqCount?: number | undefined;
-    weakTopicsOnly?: boolean | undefined;
-    shortQuestionCount?: number | undefined;
-    longQuestionCount?: number | undefined;
-    shortQuestionMarks?: number | undefined;
-    longQuestionMarks?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const GenerateTestResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     title: zod.ZodString;
@@ -3510,7 +1584,11 @@ export declare const GenerateTestResponse: zod.ZodObject<{
     totalMarks: zod.ZodNumber;
     questions: zod.ZodArray<zod.ZodObject<{
         questionId: zod.ZodNumber;
-        questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
         questionText: zod.ZodString;
         optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -3520,37 +1598,9 @@ export declare const GenerateTestResponse: zod.ZodObject<{
         explanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         modelAnswer: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         marks: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
+        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
         difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    }, "strip", zod.ZodTypeAny, {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        questionId: number;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: string | null | undefined;
-    }, {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        questionId: number;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: string | null | undefined;
-    }>, "many">;
+    }, zod.z.core.$strip>>;
     attempts: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
         id: zod.ZodNumber;
         score: zod.ZodNumber;
@@ -3560,116 +1610,18 @@ export declare const GenerateTestResponse: zod.ZodObject<{
         longScore: zod.ZodOptional<zod.ZodNumber>;
         status: zod.ZodString;
         autoSubmitted: zod.ZodOptional<zod.ZodBoolean>;
-        startedAt: zod.ZodOptional<zod.ZodDate>;
+        startedAt: zod.ZodOptional<zod.z.ZodCoercedDate<unknown>>;
         submittedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-        createdAt: zod.ZodDate;
-    }, "strip", zod.ZodTypeAny, {
-        status: string;
-        id: number;
-        createdAt: Date;
-        totalMarks: number;
-        score: number;
-        mcqScore?: number | undefined;
-        shortScore?: number | undefined;
-        longScore?: number | undefined;
-        autoSubmitted?: boolean | undefined;
-        startedAt?: Date | undefined;
-        submittedAt?: string | null | undefined;
-    }, {
-        status: string;
-        id: number;
-        createdAt: Date;
-        totalMarks: number;
-        score: number;
-        mcqScore?: number | undefined;
-        shortScore?: number | undefined;
-        longScore?: number | undefined;
-        autoSubmitted?: boolean | undefined;
-        startedAt?: Date | undefined;
-        submittedAt?: string | null | undefined;
-    }>, "many">>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questions: {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        questionId: number;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: string | null | undefined;
-    }[];
-    title: string;
-    totalMarks: number;
-    mode?: string | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    attempts?: {
-        status: string;
-        id: number;
-        createdAt: Date;
-        totalMarks: number;
-        score: number;
-        mcqScore?: number | undefined;
-        shortScore?: number | undefined;
-        longScore?: number | undefined;
-        autoSubmitted?: boolean | undefined;
-        startedAt?: Date | undefined;
-        submittedAt?: string | null | undefined;
-    }[] | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questions: {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        questionId: number;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: string | null | undefined;
-    }[];
-    title: string;
-    totalMarks: number;
-    mode?: string | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    attempts?: {
-        status: string;
-        id: number;
-        createdAt: Date;
-        totalMarks: number;
-        score: number;
-        mcqScore?: number | undefined;
-        shortScore?: number | undefined;
-        longScore?: number | undefined;
-        autoSubmitted?: boolean | undefined;
-        startedAt?: Date | undefined;
-        submittedAt?: string | null | undefined;
-    }[] | undefined;
-}>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Get a test with its questions
  */
 export declare const GetTestParams: zod.ZodObject<{
-    testId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    testId: number;
-}, {
-    testId: number;
-}>;
+    testId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const GetTestResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     title: zod.ZodString;
@@ -3678,7 +1630,11 @@ export declare const GetTestResponse: zod.ZodObject<{
     totalMarks: zod.ZodNumber;
     questions: zod.ZodArray<zod.ZodObject<{
         questionId: zod.ZodNumber;
-        questionType: zod.ZodEnum<["mcq", "short", "long"]>;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
         questionText: zod.ZodString;
         optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
@@ -3688,37 +1644,9 @@ export declare const GetTestResponse: zod.ZodObject<{
         explanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         modelAnswer: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         marks: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString, "many">>;
+        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
         difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    }, "strip", zod.ZodTypeAny, {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        questionId: number;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: string | null | undefined;
-    }, {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        questionId: number;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: string | null | undefined;
-    }>, "many">;
+    }, zod.z.core.$strip>>;
     attempts: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
         id: zod.ZodNumber;
         score: zod.ZodNumber;
@@ -3728,146 +1656,26 @@ export declare const GetTestResponse: zod.ZodObject<{
         longScore: zod.ZodOptional<zod.ZodNumber>;
         status: zod.ZodString;
         autoSubmitted: zod.ZodOptional<zod.ZodBoolean>;
-        startedAt: zod.ZodOptional<zod.ZodDate>;
+        startedAt: zod.ZodOptional<zod.z.ZodCoercedDate<unknown>>;
         submittedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-        createdAt: zod.ZodDate;
-    }, "strip", zod.ZodTypeAny, {
-        status: string;
-        id: number;
-        createdAt: Date;
-        totalMarks: number;
-        score: number;
-        mcqScore?: number | undefined;
-        shortScore?: number | undefined;
-        longScore?: number | undefined;
-        autoSubmitted?: boolean | undefined;
-        startedAt?: Date | undefined;
-        submittedAt?: string | null | undefined;
-    }, {
-        status: string;
-        id: number;
-        createdAt: Date;
-        totalMarks: number;
-        score: number;
-        mcqScore?: number | undefined;
-        shortScore?: number | undefined;
-        longScore?: number | undefined;
-        autoSubmitted?: boolean | undefined;
-        startedAt?: Date | undefined;
-        submittedAt?: string | null | undefined;
-    }>, "many">>;
-    createdAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    createdAt: Date;
-    questions: {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        questionId: number;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: string | null | undefined;
-    }[];
-    title: string;
-    totalMarks: number;
-    mode?: string | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    attempts?: {
-        status: string;
-        id: number;
-        createdAt: Date;
-        totalMarks: number;
-        score: number;
-        mcqScore?: number | undefined;
-        shortScore?: number | undefined;
-        longScore?: number | undefined;
-        autoSubmitted?: boolean | undefined;
-        startedAt?: Date | undefined;
-        submittedAt?: string | null | undefined;
-    }[] | undefined;
-}, {
-    id: number;
-    createdAt: Date;
-    questions: {
-        questionText: string;
-        questionType: "mcq" | "short" | "long";
-        questionId: number;
-        optionA?: string | null | undefined;
-        optionB?: string | null | undefined;
-        optionC?: string | null | undefined;
-        optionD?: string | null | undefined;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        marks?: number | null | undefined;
-        tags?: string[] | undefined;
-        difficulty?: string | null | undefined;
-    }[];
-    title: string;
-    totalMarks: number;
-    mode?: string | undefined;
-    timeLimitMinutes?: number | null | undefined;
-    attempts?: {
-        status: string;
-        id: number;
-        createdAt: Date;
-        totalMarks: number;
-        score: number;
-        mcqScore?: number | undefined;
-        shortScore?: number | undefined;
-        longScore?: number | undefined;
-        autoSubmitted?: boolean | undefined;
-        startedAt?: Date | undefined;
-        submittedAt?: string | null | undefined;
-    }[] | undefined;
-}>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Submit test answers and get results
  */
 export declare const SubmitTestParams: zod.ZodObject<{
-    testId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    testId: number;
-}, {
-    testId: number;
-}>;
+    testId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const SubmitTestBody: zod.ZodObject<{
     answers: zod.ZodArray<zod.ZodObject<{
         questionId: zod.ZodNumber;
         selectedOption: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         writtenAnswer: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    }, "strip", zod.ZodTypeAny, {
-        questionId: number;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-    }, {
-        questionId: number;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-    }>, "many">;
+    }, zod.z.core.$strip>>;
     draftId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
-}, "strip", zod.ZodTypeAny, {
-    answers: {
-        questionId: number;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-    }[];
-    draftId?: number | null | undefined;
-}, {
-    answers: {
-        questionId: number;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-    }[];
-    draftId?: number | null | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const SubmitTestResponse: zod.ZodObject<{
     testId: zod.ZodNumber;
     attemptId: zod.ZodNumber;
@@ -3894,177 +1702,39 @@ export declare const SubmitTestResponse: zod.ZodObject<{
         keywordTotal: zod.ZodOptional<zod.ZodNumber>;
         selectedOption: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         writtenAnswer: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    }, "strip", zod.ZodTypeAny, {
-        questionType: string;
-        questionId: number;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-        isCorrect?: boolean | null | undefined;
-        marksAwarded?: number | undefined;
-        marksPossible?: number | undefined;
-        gradedBy?: string | undefined;
-        needsGrading?: boolean | undefined;
-        keywordMatch?: number | undefined;
-        keywordTotal?: number | undefined;
-    }, {
-        questionType: string;
-        questionId: number;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-        isCorrect?: boolean | null | undefined;
-        marksAwarded?: number | undefined;
-        marksPossible?: number | undefined;
-        gradedBy?: string | undefined;
-        needsGrading?: boolean | undefined;
-        keywordMatch?: number | undefined;
-        keywordTotal?: number | undefined;
-    }>, "many">;
-}, "strip", zod.ZodTypeAny, {
-    totalMarks: number;
-    score: number;
-    testId: number;
-    attemptId: number;
-    results: {
-        questionType: string;
-        questionId: number;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-        isCorrect?: boolean | null | undefined;
-        marksAwarded?: number | undefined;
-        marksPossible?: number | undefined;
-        gradedBy?: string | undefined;
-        needsGrading?: boolean | undefined;
-        keywordMatch?: number | undefined;
-        keywordTotal?: number | undefined;
-    }[];
-    mode?: string | undefined;
-    mcqScore?: number | undefined;
-    shortScore?: number | undefined;
-    longScore?: number | undefined;
-    autoSubmitted?: boolean | undefined;
-    writtenScore?: number | undefined;
-}, {
-    totalMarks: number;
-    score: number;
-    testId: number;
-    attemptId: number;
-    results: {
-        questionType: string;
-        questionId: number;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-        isCorrect?: boolean | null | undefined;
-        marksAwarded?: number | undefined;
-        marksPossible?: number | undefined;
-        gradedBy?: string | undefined;
-        needsGrading?: boolean | undefined;
-        keywordMatch?: number | undefined;
-        keywordTotal?: number | undefined;
-    }[];
-    mode?: string | undefined;
-    mcqScore?: number | undefined;
-    shortScore?: number | undefined;
-    longScore?: number | undefined;
-    autoSubmitted?: boolean | undefined;
-    writtenScore?: number | undefined;
-}>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
 /**
  * @summary Autosave an in-progress attempt
  */
 export declare const SaveTestDraftParams: zod.ZodObject<{
-    testId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    testId: number;
-}, {
-    testId: number;
-}>;
+    testId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const SaveTestDraftBody: zod.ZodObject<{
     attemptId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     answers: zod.ZodArray<zod.ZodObject<{
         questionId: zod.ZodNumber;
         selectedOption: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         writtenAnswer: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    }, "strip", zod.ZodTypeAny, {
-        questionId: number;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-    }, {
-        questionId: number;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-    }>, "many">;
-}, "strip", zod.ZodTypeAny, {
-    answers: {
-        questionId: number;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-    }[];
-    attemptId?: number | null | undefined;
-}, {
-    answers: {
-        questionId: number;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-    }[];
-    attemptId?: number | null | undefined;
-}>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
 export declare const SaveTestDraftResponse: zod.ZodObject<{
     attemptId: zod.ZodNumber;
-    startedAt: zod.ZodDate;
-}, "strip", zod.ZodTypeAny, {
-    startedAt: Date;
-    attemptId: number;
-}, {
-    startedAt: Date;
-    attemptId: number;
-}>;
+    startedAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
 /**
  * @summary Self-grade written answers of an attempt
  */
 export declare const SelfGradeTestParams: zod.ZodObject<{
-    testId: zod.ZodNumber;
-    attemptId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    testId: number;
-    attemptId: number;
-}, {
-    testId: number;
-    attemptId: number;
-}>;
+    testId: zod.z.ZodCoercedNumber<unknown>;
+    attemptId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const SelfGradeTestBody: zod.ZodObject<{
     answers: zod.ZodArray<zod.ZodObject<{
         questionId: zod.ZodNumber;
         marksAwarded: zod.ZodNumber;
-    }, "strip", zod.ZodTypeAny, {
-        questionId: number;
-        marksAwarded: number;
-    }, {
-        questionId: number;
-        marksAwarded: number;
-    }>, "many">;
-}, "strip", zod.ZodTypeAny, {
-    answers: {
-        questionId: number;
-        marksAwarded: number;
-    }[];
-}, {
-    answers: {
-        questionId: number;
-        marksAwarded: number;
-    }[];
-}>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
 export declare const SelfGradeTestResponse: zod.ZodObject<{
     attemptId: zod.ZodNumber;
     score: zod.ZodNumber;
@@ -4088,86 +1758,8 @@ export declare const SelfGradeTestResponse: zod.ZodObject<{
         keywordTotal: zod.ZodOptional<zod.ZodNumber>;
         selectedOption: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
         writtenAnswer: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    }, "strip", zod.ZodTypeAny, {
-        questionType: string;
-        questionId: number;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-        isCorrect?: boolean | null | undefined;
-        marksAwarded?: number | undefined;
-        marksPossible?: number | undefined;
-        gradedBy?: string | undefined;
-        needsGrading?: boolean | undefined;
-        keywordMatch?: number | undefined;
-        keywordTotal?: number | undefined;
-    }, {
-        questionType: string;
-        questionId: number;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-        isCorrect?: boolean | null | undefined;
-        marksAwarded?: number | undefined;
-        marksPossible?: number | undefined;
-        gradedBy?: string | undefined;
-        needsGrading?: boolean | undefined;
-        keywordMatch?: number | undefined;
-        keywordTotal?: number | undefined;
-    }>, "many">;
-}, "strip", zod.ZodTypeAny, {
-    totalMarks: number;
-    score: number;
-    attemptId: number;
-    results: {
-        questionType: string;
-        questionId: number;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-        isCorrect?: boolean | null | undefined;
-        marksAwarded?: number | undefined;
-        marksPossible?: number | undefined;
-        gradedBy?: string | undefined;
-        needsGrading?: boolean | undefined;
-        keywordMatch?: number | undefined;
-        keywordTotal?: number | undefined;
-    }[];
-    mcqScore?: number | undefined;
-    shortScore?: number | undefined;
-    longScore?: number | undefined;
-    writtenScore?: number | undefined;
-}, {
-    totalMarks: number;
-    score: number;
-    attemptId: number;
-    results: {
-        questionType: string;
-        questionId: number;
-        correctOption?: string | null | undefined;
-        explanation?: string | null | undefined;
-        modelAnswer?: string | null | undefined;
-        selectedOption?: string | null | undefined;
-        writtenAnswer?: string | null | undefined;
-        isCorrect?: boolean | null | undefined;
-        marksAwarded?: number | undefined;
-        marksPossible?: number | undefined;
-        gradedBy?: string | undefined;
-        needsGrading?: boolean | undefined;
-        keywordMatch?: number | undefined;
-        keywordTotal?: number | undefined;
-    }[];
-    mcqScore?: number | undefined;
-    shortScore?: number | undefined;
-    longScore?: number | undefined;
-    writtenScore?: number | undefined;
-}>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
 /**
  * @summary List revision questions that are due now
  */
@@ -4177,206 +1769,87 @@ export declare const GetDueRevisionsResponseItem: zod.ZodObject<{
     questionType: zod.ZodOptional<zod.ZodString>;
     questionText: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     sectionName: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    dueAt: zod.ZodDate;
+    dueAt: zod.z.ZodCoercedDate<unknown>;
     intervalDays: zod.ZodOptional<zod.ZodNumber>;
     repetitions: zod.ZodOptional<zod.ZodNumber>;
     easeFactor: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    questionText?: string | null | undefined;
-    questionType?: string | undefined;
-    sectionName?: string | null | undefined;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    questionText?: string | null | undefined;
-    questionType?: string | undefined;
-    sectionName?: string | null | undefined;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const GetDueRevisionsResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     questionId: zod.ZodNumber;
     questionType: zod.ZodOptional<zod.ZodString>;
     questionText: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     sectionName: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-    dueAt: zod.ZodDate;
+    dueAt: zod.z.ZodCoercedDate<unknown>;
     intervalDays: zod.ZodOptional<zod.ZodNumber>;
     repetitions: zod.ZodOptional<zod.ZodNumber>;
     easeFactor: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    questionText?: string | null | undefined;
-    questionType?: string | undefined;
-    sectionName?: string | null | undefined;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    questionText?: string | null | undefined;
-    questionType?: string | undefined;
-    sectionName?: string | null | undefined;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}>, "many">;
+}, zod.z.core.$strip>>;
 /**
  * @summary Schedule questions for revision
  */
 export declare const ScheduleRevisionBody: zod.ZodObject<{
-    questionIds: zod.ZodArray<zod.ZodNumber, "many">;
-}, "strip", zod.ZodTypeAny, {
-    questionIds: number[];
-}, {
-    questionIds: number[];
-}>;
+    questionIds: zod.ZodArray<zod.ZodNumber>;
+}, zod.z.core.$strip>;
 export declare const ScheduleRevisionResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     questionId: zod.ZodNumber;
-    dueAt: zod.ZodDate;
+    dueAt: zod.z.ZodCoercedDate<unknown>;
     intervalDays: zod.ZodOptional<zod.ZodNumber>;
     repetitions: zod.ZodOptional<zod.ZodNumber>;
     easeFactor: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const ScheduleRevisionResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     questionId: zod.ZodNumber;
-    dueAt: zod.ZodDate;
+    dueAt: zod.z.ZodCoercedDate<unknown>;
     intervalDays: zod.ZodOptional<zod.ZodNumber>;
     repetitions: zod.ZodOptional<zod.ZodNumber>;
     easeFactor: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}>, "many">;
+}, zod.z.core.$strip>>;
 /**
  * @summary Mark a revision complete and reschedule
  */
 export declare const CompleteRevisionParams: zod.ZodObject<{
-    revisionId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    revisionId: number;
-}, {
-    revisionId: number;
-}>;
+    revisionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const CompleteRevisionBody: zod.ZodObject<{
-    grade: zod.ZodEnum<["again", "hard", "good", "easy"]>;
-}, "strip", zod.ZodTypeAny, {
-    grade: "easy" | "hard" | "again" | "good";
-}, {
-    grade: "easy" | "hard" | "again" | "good";
-}>;
+    grade: zod.ZodEnum<{
+        easy: "easy";
+        hard: "hard";
+        again: "again";
+        good: "good";
+    }>;
+}, zod.z.core.$strip>;
 export declare const CompleteRevisionResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     questionId: zod.ZodNumber;
-    dueAt: zod.ZodDate;
+    dueAt: zod.z.ZodCoercedDate<unknown>;
     intervalDays: zod.ZodOptional<zod.ZodNumber>;
     repetitions: zod.ZodOptional<zod.ZodNumber>;
     easeFactor: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}, {
-    id: number;
-    questionId: number;
-    dueAt: Date;
-    intervalDays?: number | undefined;
-    repetitions?: number | undefined;
-    easeFactor?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary List daily goals
  */
 export declare const ListGoalsQueryParams: zod.ZodObject<{
-    year: zod.ZodOptional<zod.ZodNumber>;
-    month: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    year?: number | undefined;
-    month?: number | undefined;
-}, {
-    year?: number | undefined;
-    month?: number | undefined;
-}>;
+    year: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    month: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
 export declare const ListGoalsResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     goalDate: zod.ZodString;
     questionsTarget: zod.ZodOptional<zod.ZodNumber>;
     minutesTarget: zod.ZodOptional<zod.ZodNumber>;
     testsTarget: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    goalDate: string;
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}, {
-    id: number;
-    goalDate: string;
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const ListGoalsResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     goalDate: zod.ZodString;
     questionsTarget: zod.ZodOptional<zod.ZodNumber>;
     minutesTarget: zod.ZodOptional<zod.ZodNumber>;
     testsTarget: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    goalDate: string;
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}, {
-    id: number;
-    goalDate: string;
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}>, "many">;
+}, zod.z.core.$strip>>;
 /**
  * @summary Create or update today's goal
  */
@@ -4384,100 +1857,46 @@ export declare const SetTodayGoalBody: zod.ZodObject<{
     questionsTarget: zod.ZodOptional<zod.ZodNumber>;
     minutesTarget: zod.ZodOptional<zod.ZodNumber>;
     testsTarget: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}, {
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const SetTodayGoalResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     goalDate: zod.ZodString;
     questionsTarget: zod.ZodOptional<zod.ZodNumber>;
     minutesTarget: zod.ZodOptional<zod.ZodNumber>;
     testsTarget: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    goalDate: string;
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}, {
-    id: number;
-    goalDate: string;
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Update a goal
  */
 export declare const UpdateGoalParams: zod.ZodObject<{
-    goalId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    goalId: number;
-}, {
-    goalId: number;
-}>;
+    goalId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const UpdateGoalBody: zod.ZodObject<{
     questionsTarget: zod.ZodOptional<zod.ZodNumber>;
     minutesTarget: zod.ZodOptional<zod.ZodNumber>;
     testsTarget: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}, {
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const UpdateGoalResponse: zod.ZodObject<{
     id: zod.ZodNumber;
     goalDate: zod.ZodString;
     questionsTarget: zod.ZodOptional<zod.ZodNumber>;
     minutesTarget: zod.ZodOptional<zod.ZodNumber>;
     testsTarget: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    id: number;
-    goalDate: string;
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}, {
-    id: number;
-    goalDate: string;
-    questionsTarget?: number | undefined;
-    minutesTarget?: number | undefined;
-    testsTarget?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Delete a goal
  */
 export declare const DeleteGoalParams: zod.ZodObject<{
-    goalId: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    goalId: number;
-}, {
-    goalId: number;
-}>;
+    goalId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
 export declare const DeleteGoalResponse: zod.ZodUnknown;
 /**
  * @summary Monthly study calendar with daily totals and goals
  */
 export declare const GetLearningCalendarQueryParams: zod.ZodObject<{
-    year: zod.ZodOptional<zod.ZodNumber>;
-    month: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    year?: number | undefined;
-    month?: number | undefined;
-}, {
-    year?: number | undefined;
-    month?: number | undefined;
-}>;
+    year: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    month: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
 export declare const GetLearningCalendarResponse: zod.ZodObject<{
     year: zod.ZodNumber;
     month: zod.ZodNumber;
@@ -4498,178 +1917,42 @@ export declare const GetLearningCalendarResponse: zod.ZodObject<{
             questionsTarget: zod.ZodOptional<zod.ZodNumber>;
             minutesTarget: zod.ZodOptional<zod.ZodNumber>;
             testsTarget: zod.ZodOptional<zod.ZodNumber>;
-        }, "strip", zod.ZodTypeAny, {
-            id?: number | undefined;
-            goalDate?: string | undefined;
-            questionsTarget?: number | undefined;
-            minutesTarget?: number | undefined;
-            testsTarget?: number | undefined;
-        }, {
-            id?: number | undefined;
-            goalDate?: string | undefined;
-            questionsTarget?: number | undefined;
-            minutesTarget?: number | undefined;
-            testsTarget?: number | undefined;
-        }>>>;
+        }, zod.z.core.$strip>>>;
         goalMet: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
-    }, "strip", zod.ZodTypeAny, {
-        date: string;
-        events: number;
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-        questionsAdded?: number | undefined;
-        testsTaken?: number | undefined;
-        flashcardsReviewed?: number | undefined;
-        revisionsCompleted?: number | undefined;
-        goal?: {
-            id?: number | undefined;
-            goalDate?: string | undefined;
-            questionsTarget?: number | undefined;
-            minutesTarget?: number | undefined;
-            testsTarget?: number | undefined;
-        } | null | undefined;
-        goalMet?: boolean | null | undefined;
-    }, {
-        date: string;
-        events: number;
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-        questionsAdded?: number | undefined;
-        testsTaken?: number | undefined;
-        flashcardsReviewed?: number | undefined;
-        revisionsCompleted?: number | undefined;
-        goal?: {
-            id?: number | undefined;
-            goalDate?: string | undefined;
-            questionsTarget?: number | undefined;
-            minutesTarget?: number | undefined;
-            testsTarget?: number | undefined;
-        } | null | undefined;
-        goalMet?: boolean | null | undefined;
-    }>, "many">;
-}, "strip", zod.ZodTypeAny, {
-    year: number;
-    month: number;
-    days: {
-        date: string;
-        events: number;
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-        questionsAdded?: number | undefined;
-        testsTaken?: number | undefined;
-        flashcardsReviewed?: number | undefined;
-        revisionsCompleted?: number | undefined;
-        goal?: {
-            id?: number | undefined;
-            goalDate?: string | undefined;
-            questionsTarget?: number | undefined;
-            minutesTarget?: number | undefined;
-            testsTarget?: number | undefined;
-        } | null | undefined;
-        goalMet?: boolean | null | undefined;
-    }[];
-    currentStreak?: number | undefined;
-    bestStreak?: number | undefined;
-}, {
-    year: number;
-    month: number;
-    days: {
-        date: string;
-        events: number;
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-        questionsAdded?: number | undefined;
-        testsTaken?: number | undefined;
-        flashcardsReviewed?: number | undefined;
-        revisionsCompleted?: number | undefined;
-        goal?: {
-            id?: number | undefined;
-            goalDate?: string | undefined;
-            questionsTarget?: number | undefined;
-            minutesTarget?: number | undefined;
-            testsTarget?: number | undefined;
-        } | null | undefined;
-        goalMet?: boolean | null | undefined;
-    }[];
-    currentStreak?: number | undefined;
-    bestStreak?: number | undefined;
-}>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
 /**
  * @summary Recent study activity timeline
  */
 export declare const GetLearningTimelineQueryParams: zod.ZodObject<{
-    limit: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    limit?: number | undefined;
-}, {
-    limit?: number | undefined;
-}>;
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
 export declare const GetLearningTimelineResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
     type: zod.ZodString;
     count: zod.ZodOptional<zod.ZodNumber>;
     minutes: zod.ZodOptional<zod.ZodNumber>;
     activityDate: zod.ZodString;
-    createdAt: zod.ZodDate;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
     questionText: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     testTitle: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-}, "strip", zod.ZodTypeAny, {
-    type: string;
-    id: number;
-    createdAt: Date;
-    activityDate: string;
-    questionText?: string | null | undefined;
-    minutes?: number | undefined;
-    count?: number | undefined;
-    testTitle?: string | null | undefined;
-}, {
-    type: string;
-    id: number;
-    createdAt: Date;
-    activityDate: string;
-    questionText?: string | null | undefined;
-    minutes?: number | undefined;
-    count?: number | undefined;
-    testTitle?: string | null | undefined;
-}>;
+}, zod.z.core.$strip>;
 export declare const GetLearningTimelineResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
     type: zod.ZodString;
     count: zod.ZodOptional<zod.ZodNumber>;
     minutes: zod.ZodOptional<zod.ZodNumber>;
     activityDate: zod.ZodString;
-    createdAt: zod.ZodDate;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
     questionText: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     testTitle: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
-}, "strip", zod.ZodTypeAny, {
-    type: string;
-    id: number;
-    createdAt: Date;
-    activityDate: string;
-    questionText?: string | null | undefined;
-    minutes?: number | undefined;
-    count?: number | undefined;
-    testTitle?: string | null | undefined;
-}, {
-    type: string;
-    id: number;
-    createdAt: Date;
-    activityDate: string;
-    questionText?: string | null | undefined;
-    minutes?: number | undefined;
-    count?: number | undefined;
-    testTitle?: string | null | undefined;
-}>, "many">;
+}, zod.z.core.$strip>>;
 /**
  * @summary Yearly activity heatmap
  */
 export declare const GetLearningHeatmapQueryParams: zod.ZodObject<{
-    year: zod.ZodOptional<zod.ZodNumber>;
-}, "strip", zod.ZodTypeAny, {
-    year?: number | undefined;
-}, {
-    year?: number | undefined;
-}>;
+    year: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
 export declare const GetLearningHeatmapResponse: zod.ZodObject<{
     year: zod.ZodNumber;
     days: zod.ZodArray<zod.ZodObject<{
@@ -4677,57 +1960,24 @@ export declare const GetLearningHeatmapResponse: zod.ZodObject<{
         events: zod.ZodNumber;
         minutes: zod.ZodOptional<zod.ZodNumber>;
         questionsSolved: zod.ZodOptional<zod.ZodNumber>;
-    }, "strip", zod.ZodTypeAny, {
-        date: string;
-        events: number;
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-    }, {
-        date: string;
-        events: number;
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-    }>, "many">;
-}, "strip", zod.ZodTypeAny, {
-    year: number;
-    days: {
-        date: string;
-        events: number;
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-    }[];
-}, {
-    year: number;
-    days: {
-        date: string;
-        events: number;
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-    }[];
-}>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
 /**
  * @summary Current and best study streak
  */
 export declare const GetLearningStreakResponse: zod.ZodObject<{
     currentStreak: zod.ZodNumber;
     bestStreak: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    currentStreak: number;
-    bestStreak: number;
-}, {
-    currentStreak: number;
-    bestStreak: number;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Weekly or monthly study report
  */
 export declare const GetLearningReportQueryParams: zod.ZodObject<{
-    period: zod.ZodOptional<zod.ZodEnum<["week", "month"]>>;
-}, "strip", zod.ZodTypeAny, {
-    period?: "month" | "week" | undefined;
-}, {
-    period?: "month" | "week" | undefined;
-}>;
+    period: zod.ZodOptional<zod.ZodEnum<{
+        month: "month";
+        week: "week";
+    }>>;
+}, zod.z.core.$strip>;
 export declare const GetLearningReportResponse: zod.ZodObject<{
     period: zod.ZodString;
     from: zod.ZodString;
@@ -4742,23 +1992,7 @@ export declare const GetLearningReportResponse: zod.ZodObject<{
         flashcardsReviewed: zod.ZodOptional<zod.ZodNumber>;
         revisionsCompleted: zod.ZodOptional<zod.ZodNumber>;
         events: zod.ZodOptional<zod.ZodNumber>;
-    }, "strip", zod.ZodTypeAny, {
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-        questionsAdded?: number | undefined;
-        testsTaken?: number | undefined;
-        flashcardsReviewed?: number | undefined;
-        revisionsCompleted?: number | undefined;
-        events?: number | undefined;
-    }, {
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-        questionsAdded?: number | undefined;
-        testsTaken?: number | undefined;
-        flashcardsReviewed?: number | undefined;
-        revisionsCompleted?: number | undefined;
-        events?: number | undefined;
-    }>;
+    }, zod.z.core.$strip>;
     topicStats: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
         sectionId: zod.ZodNumber;
         sectionName: zod.ZodString;
@@ -4770,122 +2004,20 @@ export declare const GetLearningReportResponse: zod.ZodObject<{
         accuracy: zod.ZodNumber;
         lastAttemptDaysAgo: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         mastery: zod.ZodNumber;
-        label: zod.ZodEnum<["weak", "strong", "neutral"]>;
-    }, "strip", zod.ZodTypeAny, {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }, {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }>, "many">>;
+        label: zod.ZodEnum<{
+            weak: "weak";
+            strong: "strong";
+            neutral: "neutral";
+        }>;
+    }, zod.z.core.$strip>>>;
     tests: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
         testId: zod.ZodOptional<zod.ZodNumber>;
         title: zod.ZodOptional<zod.ZodString>;
         score: zod.ZodOptional<zod.ZodNumber>;
         totalMarks: zod.ZodOptional<zod.ZodNumber>;
-        submittedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-    }, "strip", zod.ZodTypeAny, {
-        title?: string | undefined;
-        totalMarks?: number | undefined;
-        score?: number | undefined;
-        submittedAt?: Date | null | undefined;
-        testId?: number | undefined;
-    }, {
-        title?: string | undefined;
-        totalMarks?: number | undefined;
-        score?: number | undefined;
-        submittedAt?: Date | null | undefined;
-        testId?: number | undefined;
-    }>, "many">>;
-}, "strip", zod.ZodTypeAny, {
-    period: string;
-    from: string;
-    to: string;
-    totals: {
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-        questionsAdded?: number | undefined;
-        testsTaken?: number | undefined;
-        flashcardsReviewed?: number | undefined;
-        revisionsCompleted?: number | undefined;
-        events?: number | undefined;
-    };
-    currentStreak?: number | undefined;
-    bestStreak?: number | undefined;
-    topicStats?: {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }[] | undefined;
-    tests?: {
-        title?: string | undefined;
-        totalMarks?: number | undefined;
-        score?: number | undefined;
-        submittedAt?: Date | null | undefined;
-        testId?: number | undefined;
-    }[] | undefined;
-}, {
-    period: string;
-    from: string;
-    to: string;
-    totals: {
-        minutes?: number | undefined;
-        questionsSolved?: number | undefined;
-        questionsAdded?: number | undefined;
-        testsTaken?: number | undefined;
-        flashcardsReviewed?: number | undefined;
-        revisionsCompleted?: number | undefined;
-        events?: number | undefined;
-    };
-    currentStreak?: number | undefined;
-    bestStreak?: number | undefined;
-    topicStats?: {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }[] | undefined;
-    tests?: {
-        title?: string | undefined;
-        totalMarks?: number | undefined;
-        score?: number | undefined;
-        submittedAt?: Date | null | undefined;
-        testId?: number | undefined;
-    }[] | undefined;
-}>;
+        submittedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+    }, zod.z.core.$strip>>>;
+}, zod.z.core.$strip>;
 /**
  * @summary Overall answer accuracy
  */
@@ -4893,15 +2025,7 @@ export declare const GetAnalyticsAccuracyResponse: zod.ZodObject<{
     attempts: zod.ZodNumber;
     correct: zod.ZodOptional<zod.ZodNumber>;
     accuracy: zod.ZodNumber;
-}, "strip", zod.ZodTypeAny, {
-    attempts: number;
-    accuracy: number;
-    correct?: number | undefined;
-}, {
-    attempts: number;
-    accuracy: number;
-    correct?: number | undefined;
-}>;
+}, zod.z.core.$strip>;
 /**
  * @summary Per-topic accuracy with weak/strong signals
  */
@@ -4916,32 +2040,12 @@ export declare const GetAnalyticsTopicsResponseItem: zod.ZodObject<{
     accuracy: zod.ZodNumber;
     lastAttemptDaysAgo: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     mastery: zod.ZodNumber;
-    label: zod.ZodEnum<["weak", "strong", "neutral"]>;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-    attempts: number;
-    sectionName: string;
-    accuracy: number;
-    mastery: number;
-    label: "weak" | "strong" | "neutral";
-    chapterName?: string | undefined;
-    subjectName?: string | undefined;
-    className?: string | undefined;
-    correct?: number | undefined;
-    lastAttemptDaysAgo?: number | null | undefined;
-}, {
-    sectionId: number;
-    attempts: number;
-    sectionName: string;
-    accuracy: number;
-    mastery: number;
-    label: "weak" | "strong" | "neutral";
-    chapterName?: string | undefined;
-    subjectName?: string | undefined;
-    className?: string | undefined;
-    correct?: number | undefined;
-    lastAttemptDaysAgo?: number | null | undefined;
-}>;
+    label: zod.ZodEnum<{
+        weak: "weak";
+        strong: "strong";
+        neutral: "neutral";
+    }>;
+}, zod.z.core.$strip>;
 export declare const GetAnalyticsTopicsResponse: zod.ZodArray<zod.ZodObject<{
     sectionId: zod.ZodNumber;
     sectionName: zod.ZodString;
@@ -4953,32 +2057,12 @@ export declare const GetAnalyticsTopicsResponse: zod.ZodArray<zod.ZodObject<{
     accuracy: zod.ZodNumber;
     lastAttemptDaysAgo: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     mastery: zod.ZodNumber;
-    label: zod.ZodEnum<["weak", "strong", "neutral"]>;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-    attempts: number;
-    sectionName: string;
-    accuracy: number;
-    mastery: number;
-    label: "weak" | "strong" | "neutral";
-    chapterName?: string | undefined;
-    subjectName?: string | undefined;
-    className?: string | undefined;
-    correct?: number | undefined;
-    lastAttemptDaysAgo?: number | null | undefined;
-}, {
-    sectionId: number;
-    attempts: number;
-    sectionName: string;
-    accuracy: number;
-    mastery: number;
-    label: "weak" | "strong" | "neutral";
-    chapterName?: string | undefined;
-    subjectName?: string | undefined;
-    className?: string | undefined;
-    correct?: number | undefined;
-    lastAttemptDaysAgo?: number | null | undefined;
-}>, "many">;
+    label: zod.ZodEnum<{
+        weak: "weak";
+        strong: "strong";
+        neutral: "neutral";
+    }>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Per-topic mastery scores (ascending)
  */
@@ -4993,32 +2077,12 @@ export declare const GetAnalyticsMasteryResponseItem: zod.ZodObject<{
     accuracy: zod.ZodNumber;
     lastAttemptDaysAgo: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     mastery: zod.ZodNumber;
-    label: zod.ZodEnum<["weak", "strong", "neutral"]>;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-    attempts: number;
-    sectionName: string;
-    accuracy: number;
-    mastery: number;
-    label: "weak" | "strong" | "neutral";
-    chapterName?: string | undefined;
-    subjectName?: string | undefined;
-    className?: string | undefined;
-    correct?: number | undefined;
-    lastAttemptDaysAgo?: number | null | undefined;
-}, {
-    sectionId: number;
-    attempts: number;
-    sectionName: string;
-    accuracy: number;
-    mastery: number;
-    label: "weak" | "strong" | "neutral";
-    chapterName?: string | undefined;
-    subjectName?: string | undefined;
-    className?: string | undefined;
-    correct?: number | undefined;
-    lastAttemptDaysAgo?: number | null | undefined;
-}>;
+    label: zod.ZodEnum<{
+        weak: "weak";
+        strong: "strong";
+        neutral: "neutral";
+    }>;
+}, zod.z.core.$strip>;
 export declare const GetAnalyticsMasteryResponse: zod.ZodArray<zod.ZodObject<{
     sectionId: zod.ZodNumber;
     sectionName: zod.ZodString;
@@ -5030,32 +2094,12 @@ export declare const GetAnalyticsMasteryResponse: zod.ZodArray<zod.ZodObject<{
     accuracy: zod.ZodNumber;
     lastAttemptDaysAgo: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     mastery: zod.ZodNumber;
-    label: zod.ZodEnum<["weak", "strong", "neutral"]>;
-}, "strip", zod.ZodTypeAny, {
-    sectionId: number;
-    attempts: number;
-    sectionName: string;
-    accuracy: number;
-    mastery: number;
-    label: "weak" | "strong" | "neutral";
-    chapterName?: string | undefined;
-    subjectName?: string | undefined;
-    className?: string | undefined;
-    correct?: number | undefined;
-    lastAttemptDaysAgo?: number | null | undefined;
-}, {
-    sectionId: number;
-    attempts: number;
-    sectionName: string;
-    accuracy: number;
-    mastery: number;
-    label: "weak" | "strong" | "neutral";
-    chapterName?: string | undefined;
-    subjectName?: string | undefined;
-    className?: string | undefined;
-    correct?: number | undefined;
-    lastAttemptDaysAgo?: number | null | undefined;
-}>, "many">;
+    label: zod.ZodEnum<{
+        weak: "weak";
+        strong: "strong";
+        neutral: "neutral";
+    }>;
+}, zod.z.core.$strip>>;
 /**
  * @summary Aggregated analytics dashboard summary
  */
@@ -5064,15 +2108,7 @@ export declare const GetAnalyticsDashboardResponse: zod.ZodObject<{
         attempts: zod.ZodNumber;
         correct: zod.ZodOptional<zod.ZodNumber>;
         accuracy: zod.ZodNumber;
-    }, "strip", zod.ZodTypeAny, {
-        attempts: number;
-        accuracy: number;
-        correct?: number | undefined;
-    }, {
-        attempts: number;
-        accuracy: number;
-        correct?: number | undefined;
-    }>;
+    }, zod.z.core.$strip>;
     solvedCount: zod.ZodNumber;
     wrongCount: zod.ZodNumber;
     currentStreak: zod.ZodNumber;
@@ -5090,32 +2126,12 @@ export declare const GetAnalyticsDashboardResponse: zod.ZodObject<{
         accuracy: zod.ZodNumber;
         lastAttemptDaysAgo: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         mastery: zod.ZodNumber;
-        label: zod.ZodEnum<["weak", "strong", "neutral"]>;
-    }, "strip", zod.ZodTypeAny, {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }, {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }>, "many">>;
+        label: zod.ZodEnum<{
+            weak: "weak";
+            strong: "strong";
+            neutral: "neutral";
+        }>;
+    }, zod.z.core.$strip>>>;
     masteryBySection: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
         sectionId: zod.ZodNumber;
         sectionName: zod.ZodString;
@@ -5127,140 +2143,606 @@ export declare const GetAnalyticsDashboardResponse: zod.ZodObject<{
         accuracy: zod.ZodNumber;
         lastAttemptDaysAgo: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
         mastery: zod.ZodNumber;
-        label: zod.ZodEnum<["weak", "strong", "neutral"]>;
-    }, "strip", zod.ZodTypeAny, {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }, {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }>, "many">>;
+        label: zod.ZodEnum<{
+            weak: "weak";
+            strong: "strong";
+            neutral: "neutral";
+        }>;
+    }, zod.z.core.$strip>>>;
     recentTests: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
         testId: zod.ZodOptional<zod.ZodNumber>;
         title: zod.ZodOptional<zod.ZodString>;
         score: zod.ZodOptional<zod.ZodNumber>;
         totalMarks: zod.ZodOptional<zod.ZodNumber>;
-        submittedAt: zod.ZodOptional<zod.ZodNullable<zod.ZodDate>>;
-    }, "strip", zod.ZodTypeAny, {
-        title?: string | undefined;
-        totalMarks?: number | undefined;
-        score?: number | undefined;
-        submittedAt?: Date | null | undefined;
-        testId?: number | undefined;
-    }, {
-        title?: string | undefined;
-        totalMarks?: number | undefined;
-        score?: number | undefined;
-        submittedAt?: Date | null | undefined;
-        testId?: number | undefined;
-    }>, "many">>;
-}, "strip", zod.ZodTypeAny, {
-    currentStreak: number;
-    bestStreak: number;
-    accuracy: {
-        attempts: number;
-        accuracy: number;
-        correct?: number | undefined;
-    };
-    solvedCount: number;
-    wrongCount: number;
-    dueRevisions: number;
-    questionsSolvedThisWeek?: number | undefined;
-    weakTopics?: {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }[] | undefined;
-    masteryBySection?: {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }[] | undefined;
-    recentTests?: {
-        title?: string | undefined;
-        totalMarks?: number | undefined;
-        score?: number | undefined;
-        submittedAt?: Date | null | undefined;
-        testId?: number | undefined;
-    }[] | undefined;
-}, {
-    currentStreak: number;
-    bestStreak: number;
-    accuracy: {
-        attempts: number;
-        accuracy: number;
-        correct?: number | undefined;
-    };
-    solvedCount: number;
-    wrongCount: number;
-    dueRevisions: number;
-    questionsSolvedThisWeek?: number | undefined;
-    weakTopics?: {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }[] | undefined;
-    masteryBySection?: {
-        sectionId: number;
-        attempts: number;
-        sectionName: string;
-        accuracy: number;
-        mastery: number;
-        label: "weak" | "strong" | "neutral";
-        chapterName?: string | undefined;
-        subjectName?: string | undefined;
-        className?: string | undefined;
-        correct?: number | undefined;
-        lastAttemptDaysAgo?: number | null | undefined;
-    }[] | undefined;
-    recentTests?: {
-        title?: string | undefined;
-        totalMarks?: number | undefined;
-        score?: number | undefined;
-        submittedAt?: Date | null | undefined;
-        testId?: number | undefined;
-    }[] | undefined;
-}>;
+        submittedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+    }, zod.z.core.$strip>>>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Get book store status for a subject
+ */
+export declare const GetBookStoreStatusParams: zod.ZodObject<{
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const GetBookStoreStatusResponse: zod.ZodObject<{
+    store: zod.ZodOptional<zod.ZodObject<{
+        id: zod.ZodNumber;
+        subjectId: zod.ZodNumber;
+        geminiStoreName: zod.ZodString;
+        status: zod.ZodEnum<{
+            error: "error";
+            pending: "pending";
+            ready: "ready";
+        }>;
+        indexedPages: zod.ZodNumber;
+        textbookTitle: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        errorMessage: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+        updatedAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
+    status: zod.ZodOptional<zod.ZodEnum<{
+        error: "error";
+        pending: "pending";
+        ready: "ready";
+        not_created: "not_created";
+    }>>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Create a new book store for a subject
+ */
+export declare const CreateBookStoreParams: zod.ZodObject<{
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const CreateBookStoreBody: zod.ZodObject<{
+    textbookTitle: zod.ZodOptional<zod.ZodString>;
+}, zod.z.core.$strip>;
+export declare const CreateBookStoreResponse: zod.ZodObject<{
+    id: zod.ZodNumber;
+    subjectId: zod.ZodNumber;
+    geminiStoreName: zod.ZodString;
+    status: zod.ZodEnum<{
+        error: "error";
+        pending: "pending";
+        ready: "ready";
+    }>;
+    indexedPages: zod.ZodNumber;
+    textbookTitle: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    errorMessage: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+    updatedAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Upload and index a textbook into the subject's book store
+ */
+export declare const IndexBookParams: zod.ZodObject<{
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const IndexBookBody: zod.ZodObject<{
+    bookTitle: zod.ZodString;
+    fileName: zod.ZodString;
+    textbookContent: zod.ZodString;
+    licenseConfirmed: zod.ZodBoolean;
+}, zod.z.core.$strip>;
+export declare const IndexBookResponse: zod.ZodObject<{
+    store: zod.ZodOptional<zod.ZodObject<{
+        id: zod.ZodNumber;
+        subjectId: zod.ZodNumber;
+        geminiStoreName: zod.ZodString;
+        status: zod.ZodEnum<{
+            error: "error";
+            pending: "pending";
+            ready: "ready";
+        }>;
+        indexedPages: zod.ZodNumber;
+        textbookTitle: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        errorMessage: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+        updatedAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
+    operationName: zod.ZodOptional<zod.ZodString>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Check indexing operation status
+ */
+export declare const GetIndexingStatusParams: zod.ZodObject<{
+    storeId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const GetIndexingStatusQueryParams: zod.ZodObject<{
+    operationName: zod.z.ZodCoercedString<unknown>;
+}, zod.z.core.$strip>;
+export declare const GetIndexingStatusResponse: zod.ZodObject<{
+    done: zod.ZodBoolean;
+    error: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Generate a textbook-grounded explanation with citations
+ */
+export declare const ExplainFromBookBody: zod.ZodObject<{
+    questionText: zod.ZodString;
+    subjectId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    questionId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+}, zod.z.core.$strip>;
+export declare const ExplainFromBookResponse: zod.ZodObject<{
+    explanation: zod.ZodString;
+    citations: zod.ZodArray<zod.ZodObject<{
+        page: zod.ZodNumber;
+        filename: zod.ZodString;
+        snippet: zod.ZodString;
+    }, zod.z.core.$strip>>;
+    subjectId: zod.ZodOptional<zod.ZodNumber>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Queue a question for verification against the textbook
+ */
+export declare const VerifyQuestionBody: zod.ZodObject<{
+    questionId: zod.ZodNumber;
+}, zod.z.core.$strip>;
+export declare const VerifyQuestionResponse: zod.ZodObject<{
+    id: zod.ZodNumber;
+    questionId: zod.ZodNumber;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
+    aiAnswer: zod.ZodString;
+    sourcePage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    sourceFilename: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    confidence: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    agreesWithStored: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
+    status: zod.ZodEnum<{
+        pending: "pending";
+        accepted: "accepted";
+        kept_mine: "kept_mine";
+        dismissed: "dismissed";
+    }>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+    resolvedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+}, zod.z.core.$strip>;
+/**
+ * @summary List AI verifications (review queue)
+ */
+export declare const ListAIVerificationsQueryParams: zod.ZodObject<{
+    status: zod.ZodOptional<zod.ZodEnum<{
+        pending: "pending";
+        accepted: "accepted";
+        kept_mine: "kept_mine";
+        dismissed: "dismissed";
+    }>>;
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    offset: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
+export declare const ListAIVerificationsResponse: zod.ZodObject<{
+    verifications: zod.ZodArray<zod.ZodObject<{
+        id: zod.ZodNumber;
+        questionId: zod.ZodNumber;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
+        aiAnswer: zod.ZodString;
+        sourcePage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+        sourceFilename: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        confidence: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+        agreesWithStored: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
+        status: zod.ZodEnum<{
+            pending: "pending";
+            accepted: "accepted";
+            kept_mine: "kept_mine";
+            dismissed: "dismissed";
+        }>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+        resolvedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+        questionText: zod.ZodOptional<zod.ZodString>;
+        storedAnswer: zod.ZodOptional<zod.ZodString>;
+        subjectName: zod.ZodOptional<zod.ZodString>;
+        chapterName: zod.ZodOptional<zod.ZodString>;
+    }, zod.z.core.$strip>>;
+    total: zod.ZodNumber;
+    limit: zod.ZodNumber;
+    offset: zod.ZodNumber;
+}, zod.z.core.$strip>;
+/**
+ * @summary Get a specific AI verification
+ */
+export declare const GetAIVerificationParams: zod.ZodObject<{
+    verificationId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const GetAIVerificationResponse: zod.ZodObject<{
+    id: zod.ZodNumber;
+    questionId: zod.ZodNumber;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
+    aiAnswer: zod.ZodString;
+    sourcePage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    sourceFilename: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    confidence: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    agreesWithStored: zod.ZodOptional<zod.ZodNullable<zod.ZodBoolean>>;
+    status: zod.ZodEnum<{
+        pending: "pending";
+        accepted: "accepted";
+        kept_mine: "kept_mine";
+        dismissed: "dismissed";
+    }>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+    resolvedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+    questionText: zod.ZodOptional<zod.ZodString>;
+    storedAnswer: zod.ZodOptional<zod.ZodString>;
+    question: zod.ZodOptional<zod.ZodObject<{
+        id: zod.ZodNumber;
+        sectionId: zod.ZodNumber;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
+        questionText: zod.ZodString;
+        optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        optionC: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        optionD: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        correctOption: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        explanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        modelAnswer: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        marks: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+        referenceSource: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+        referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+        difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+            easy: "easy";
+            medium: "medium";
+            hard: "hard";
+        }>>>;
+        bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+        bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        isArchived: zod.ZodBoolean;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Accept AI verification suggestion
+ */
+export declare const AcceptAIVerificationParams: zod.ZodObject<{
+    verificationId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const AcceptAIVerificationResponse: zod.ZodObject<{
+    success: zod.ZodBoolean;
+}, zod.z.core.$strip>;
+/**
+ * @summary Dismiss AI verification (keep original answer)
+ */
+export declare const DismissAIVerificationParams: zod.ZodObject<{
+    verificationId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const DismissAIVerificationResponse: zod.ZodObject<{
+    success: zod.ZodBoolean;
+}, zod.z.core.$strip>;
+/**
+ * @summary Generate AI questions from textbook pages
+ */
+export declare const GenerateAIQuestionsParams: zod.ZodObject<{
+    chapterId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const generateAIQuestionsBodyCountMax = 20;
+export declare const GenerateAIQuestionsBody: zod.ZodObject<{
+    pageRange: zod.ZodString;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
+    count: zod.ZodNumber;
+    topicFocus: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+}, zod.z.core.$strip>;
+export declare const GenerateAIQuestionsResponse: zod.ZodObject<{
+    drafts: zod.ZodArray<zod.ZodObject<{
+        id: zod.ZodNumber;
+        chapterId: zod.ZodNumber;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
+        payloadJson: zod.ZodObject<{}, zod.z.core.$loose>;
+        sourcePage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+        topicFocus: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        approvedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+        dismissedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
+/**
+ * @summary List AI-generated question drafts for a chapter
+ */
+export declare const ListAIGeneratedQuestionsParams: zod.ZodObject<{
+    chapterId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const ListAIGeneratedQuestionsQueryParams: zod.ZodObject<{
+    status: zod.ZodOptional<zod.ZodEnum<{
+        pending: "pending";
+        dismissed: "dismissed";
+        approved: "approved";
+    }>>;
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    offset: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
+export declare const ListAIGeneratedQuestionsResponse: zod.ZodObject<{
+    drafts: zod.ZodArray<zod.ZodObject<{
+        id: zod.ZodNumber;
+        chapterId: zod.ZodNumber;
+        questionType: zod.ZodEnum<{
+            mcq: "mcq";
+            short: "short";
+            long: "long";
+        }>;
+        payloadJson: zod.ZodObject<{}, zod.z.core.$loose>;
+        sourcePage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+        topicFocus: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        approvedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+        dismissedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
+    total: zod.ZodNumber;
+    limit: zod.ZodNumber;
+    offset: zod.ZodNumber;
+}, zod.z.core.$strip>;
+/**
+ * @summary Get a specific AI-generated question draft
+ */
+export declare const GetAIGeneratedQuestionParams: zod.ZodObject<{
+    questionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const GetAIGeneratedQuestionResponse: zod.ZodObject<{
+    id: zod.ZodNumber;
+    chapterId: zod.ZodNumber;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
+    payloadJson: zod.ZodObject<{}, zod.z.core.$loose>;
+    sourcePage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    topicFocus: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    approvedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+    dismissedAt: zod.ZodOptional<zod.ZodNullable<zod.z.ZodCoercedDate<unknown>>>;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Approve and save AI-generated question as real question
+ */
+export declare const ApproveAIGeneratedQuestionParams: zod.ZodObject<{
+    questionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const ApproveAIGeneratedQuestionResponse: zod.ZodObject<{
+    id: zod.ZodNumber;
+    sectionId: zod.ZodNumber;
+    questionType: zod.ZodEnum<{
+        mcq: "mcq";
+        short: "short";
+        long: "long";
+    }>;
+    questionText: zod.ZodString;
+    optionA: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    optionB: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    optionC: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    optionD: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    correctOption: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    explanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    modelAnswer: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    marks: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    referenceSource: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    referenceYear: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    referenceType: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    referenceNote: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    tags: zod.ZodOptional<zod.ZodArray<zod.ZodString>>;
+    difficulty: zod.ZodOptional<zod.ZodNullable<zod.ZodEnum<{
+        easy: "easy";
+        medium: "medium";
+        hard: "hard";
+    }>>>;
+    bookPage: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    bookExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    aiExplanation: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    imageUrl: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    isArchived: zod.ZodBoolean;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Dismiss AI-generated question draft
+ */
+export declare const DismissAIGeneratedQuestionParams: zod.ZodObject<{
+    questionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const DismissAIGeneratedQuestionResponse: zod.ZodObject<{
+    success: zod.ZodBoolean;
+}, zod.z.core.$strip>;
+/**
+ * @summary Get AI grading suggestion for a written answer
+ */
+export declare const AiGradeAnswerParams: zod.ZodObject<{
+    attemptId: zod.z.ZodCoercedNumber<unknown>;
+    answerId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const AiGradeAnswerBody: zod.ZodObject<{}, zod.z.core.$loose>;
+export declare const AiGradeAnswerResponse: zod.ZodObject<{
+    suggestion: zod.ZodObject<{
+        marksAwarded: zod.ZodNumber;
+        feedback: zod.ZodString;
+        missedPoints: zod.ZodArray<zod.ZodString>;
+        citations: zod.ZodArray<zod.ZodObject<{
+            page: zod.ZodNumber;
+            filename: zod.ZodString;
+            snippet: zod.ZodString;
+        }, zod.z.core.$strip>>;
+    }, zod.z.core.$strip>;
+    answerId: zod.ZodOptional<zod.ZodNumber>;
+    note: zod.ZodOptional<zod.ZodString>;
+}, zod.z.core.$strip>;
+/**
+ * @summary List user's AI chat sessions
+ */
+export declare const ListAIChatSessionsQueryParams: zod.ZodObject<{
+    subjectId: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    offset: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
+export declare const ListAIChatSessionsResponse: zod.ZodObject<{
+    sessions: zod.ZodArray<zod.ZodObject<{
+        id: zod.ZodNumber;
+        subjectId: zod.ZodNumber;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+        subjectName: zod.ZodString;
+        messageCount: zod.ZodNumber;
+    }, zod.z.core.$strip>>;
+    total: zod.ZodNumber;
+    limit: zod.ZodNumber;
+    offset: zod.ZodNumber;
+}, zod.z.core.$strip>;
+/**
+ * @summary Create a new AI chat session
+ */
+export declare const CreateAIChatSessionBody: zod.ZodObject<{
+    subjectId: zod.ZodNumber;
+}, zod.z.core.$strip>;
+export declare const CreateAIChatSessionResponse: zod.ZodObject<{
+    id: zod.ZodNumber;
+    userId: zod.ZodNumber;
+    subjectId: zod.ZodNumber;
+    createdAt: zod.z.ZodCoercedDate<unknown>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Get an AI chat session with messages
+ */
+export declare const GetAIChatSessionParams: zod.ZodObject<{
+    sessionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const GetAIChatSessionQueryParams: zod.ZodObject<{
+    limit: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+    offset: zod.ZodOptional<zod.z.ZodCoercedNumber<unknown>>;
+}, zod.z.core.$strip>;
+export declare const GetAIChatSessionResponse: zod.ZodObject<{
+    session: zod.ZodObject<{
+        id: zod.ZodNumber;
+        userId: zod.ZodNumber;
+        subjectId: zod.ZodNumber;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>;
+    messages: zod.ZodArray<zod.ZodObject<{
+        id: zod.ZodNumber;
+        sessionId: zod.ZodNumber;
+        role: zod.ZodEnum<{
+            user: "user";
+            assistant: "assistant";
+        }>;
+        content: zod.ZodString;
+        citationsJson: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
+            page: zod.ZodNumber;
+            filename: zod.ZodString;
+            snippet: zod.ZodString;
+        }, zod.z.core.$strip>>>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Send a message in an AI chat session
+ */
+export declare const SendAIChatMessageParams: zod.ZodObject<{
+    sessionId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const SendAIChatMessageBody: zod.ZodObject<{
+    content: zod.ZodString;
+}, zod.z.core.$strip>;
+export declare const SendAIChatMessageResponse: zod.ZodObject<{
+    userMessage: zod.ZodObject<{
+        id: zod.ZodNumber;
+        sessionId: zod.ZodNumber;
+        role: zod.ZodEnum<{
+            user: "user";
+            assistant: "assistant";
+        }>;
+        content: zod.ZodString;
+        citationsJson: zod.ZodOptional<zod.ZodArray<zod.ZodObject<{
+            page: zod.ZodNumber;
+            filename: zod.ZodString;
+            snippet: zod.ZodString;
+        }, zod.z.core.$strip>>>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>;
+    assistantMessage: zod.ZodObject<{
+        id: zod.ZodNumber;
+        sessionId: zod.ZodNumber;
+        role: zod.ZodEnum<{
+            user: "user";
+            assistant: "assistant";
+        }>;
+        content: zod.ZodString;
+        citations: zod.ZodArray<zod.ZodObject<{
+            page: zod.ZodNumber;
+            filename: zod.ZodString;
+            snippet: zod.ZodString;
+        }, zod.z.core.$strip>>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+    }, zod.z.core.$strip>;
+}, zod.z.core.$strip>;
+/**
+ * @summary List stored file assets for a subject
+ */
+export declare const ListSubjectAssetsParams: zod.ZodObject<{
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const ListSubjectAssetsResponse: zod.ZodObject<{
+    assets: zod.ZodArray<zod.ZodObject<{
+        id: zod.ZodNumber;
+        subjectId: zod.ZodNumber;
+        isTextbook: zod.ZodBoolean;
+        storageKey: zod.ZodString;
+        originalFilename: zod.ZodString;
+        sizeBytes: zod.ZodNumber;
+        mimeType: zod.ZodString;
+        virusScanStatus: zod.ZodEnum<{
+            error: "error";
+            pending: "pending";
+            clean: "clean";
+            infected: "infected";
+            skipped: "skipped";
+        }>;
+        processingStatus: zod.ZodEnum<{
+            error: "error";
+            pending: "pending";
+            done: "done";
+            processing: "processing";
+        }>;
+        pageCount: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+        fullTextKey: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        textPreview: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        errorMessage: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+        createdAt: zod.z.ZodCoercedDate<unknown>;
+        updatedAt: zod.ZodOptional<zod.z.ZodCoercedDate<unknown>>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
+/**
+ * @summary Answer a question using the subject's textbook
+ */
+export declare const AnswerFromBookParams: zod.ZodObject<{
+    subjectId: zod.z.ZodCoercedNumber<unknown>;
+}, zod.z.core.$strip>;
+export declare const AnswerFromBookBody: zod.ZodObject<{
+    question: zod.ZodString;
+    options: zod.ZodOptional<zod.ZodRecord<zod.ZodString, zod.ZodString>>;
+}, zod.z.core.$strip>;
+export declare const AnswerFromBookResponse: zod.ZodObject<{
+    answer: zod.ZodString;
+    sourcePages: zod.ZodArray<zod.ZodNumber>;
+    citations: zod.ZodArray<zod.ZodObject<{
+        page: zod.ZodNumber;
+        snippet: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    }, zod.z.core.$strip>>;
+}, zod.z.core.$strip>;
 //# sourceMappingURL=api.d.ts.map

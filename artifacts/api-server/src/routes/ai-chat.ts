@@ -1,13 +1,13 @@
-import { Router, type IRouter } from "express";
+﻿import { Router, type IRouter } from "express";
 import { db, aiChatSessionsTable, aiChatMessagesTable, bookStoresTable, subjectsTable } from "@workspace/db";
-import { eq, and, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc, sql } from "drizzle-orm";
 import {
-  CreateChatSessionBody,
-  ListChatSessionsQueryParams,
-  GetChatSessionParams,
-  SendChatMessageParams,
-  SendChatMessageBody,
-  ListChatMessagesQueryParams,
+  CreateAIChatSessionBody,
+  ListAIChatSessionsQueryParams,
+  GetAIChatSessionParams,
+  SendAIChatMessageParams,
+  SendAIChatMessageBody,
+  ListAIChatSessionsQueryParams as ListAIChatMessagesQueryParams,
 } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
 import { chatWithBook } from "../ai/geminiClient";
@@ -23,7 +23,7 @@ function parseId(raw: string | string[]): number {
 // POST /ai/chat/sessions - Create a new chat session
 router.post("/ai/chat/sessions", requireAuth, async (req, res): Promise<void> => {
   const user = (req as typeof req & { user: { id: number } }).user;
-  const body = CreateChatSessionBody.safeParse(req.body);
+  const body = CreateAIChatSessionBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
     return;
@@ -61,7 +61,7 @@ router.post("/ai/chat/sessions", requireAuth, async (req, res): Promise<void> =>
 // GET /ai/chat/sessions - List user's chat sessions
 router.get("/ai/chat/sessions", requireAuth, async (req, res): Promise<void> => {
   const user = (req as typeof req & { user: { id: number } }).user;
-  const params = ListChatSessionsQueryParams.safeParse(req.query);
+  const params = ListAIChatSessionsQueryParams.safeParse(req.query);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
@@ -107,7 +107,7 @@ router.get("/ai/chat/sessions", requireAuth, async (req, res): Promise<void> => 
 // GET /ai/chat/sessions/:sessionId - Get a chat session with messages
 router.get("/ai/chat/sessions/:sessionId", requireAuth, async (req, res): Promise<void> => {
   const user = (req as typeof req & { user: { id: number } }).user;
-  const params = GetChatSessionParams.safeParse({ sessionId: parseId(req.params.sessionId) });
+  const params = GetAIChatSessionParams.safeParse({ sessionId: parseId(req.params.sessionId) });
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
@@ -123,7 +123,7 @@ router.get("/ai/chat/sessions/:sessionId", requireAuth, async (req, res): Promis
     return;
   }
 
-  const queryParams = ListChatMessagesQueryParams.safeParse(req.query);
+  const queryParams = ListAIChatMessagesQueryParams.safeParse(req.query);
   const limit = queryParams.success ? queryParams.data.limit ?? 50 : 50;
   const offset = queryParams.success ? queryParams.data.offset ?? 0 : 0;
 
@@ -141,13 +141,13 @@ router.get("/ai/chat/sessions/:sessionId", requireAuth, async (req, res): Promis
 // POST /ai/chat/sessions/:sessionId/messages - Send a message and get AI response
 router.post("/ai/chat/sessions/:sessionId/messages", requireAuth, async (req, res): Promise<void> => {
   const user = (req as typeof req & { user: { id: number } }).user;
-  const params = SendChatMessageParams.safeParse({ sessionId: parseId(req.params.sessionId) });
+  const params = SendAIChatMessageParams.safeParse({ sessionId: parseId(req.params.sessionId) });
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
   }
 
-  const body = SendChatMessageBody.safeParse(req.body);
+  const body = SendAIChatMessageBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
     return;

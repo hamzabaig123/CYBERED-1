@@ -1,1 +1,9 @@
 node_modules
+
+# Secrets — never commit API keys or database credentials
+.env
+.env.*
+!.env.example
+
+# Ingested textbook PDFs and their extracted text (local storage backend)
+data/

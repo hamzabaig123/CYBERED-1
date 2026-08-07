@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 /**
  * Storage abstraction for textbook files. `storage_key` is a flat, portable
@@ -61,7 +62,20 @@ export class LocalStorage implements TextbookStorage {
   }
 }
 
-export const DEFAULT_STORAGE_DIR = path.resolve(process.cwd(), "data", "textbooks");
+/**
+ * Default storage root, anchored to the workspace rather than `process.cwd()`
+ * so the ingestion script and the API server (different working directories)
+ * always resolve the same folder. Storage keys already start with "textbooks/",
+ * so PDFs land in <workspace>/data/textbooks/<subjectId>/.
+ * Override the root with FILE_STORAGE_DIR.
+ */
+export const DEFAULT_STORAGE_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+  "..",
+  "data",
+);
 
 /**
  * Build the storage backend from environment. `STORAGE_BACKEND` is reserved for

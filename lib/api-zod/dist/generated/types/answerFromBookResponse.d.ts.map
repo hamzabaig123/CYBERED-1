@@ -1,0 +1,1 @@
+{"version":3,"file":"answerFromBookResponse.d.ts","sourceRoot":"","sources":["../../../src/generated/types/answerFromBookResponse.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,cAAc,EAAE,MAAM,kBAAkB,CAAC;AAEvD,MAAM,WAAW,sBAAsB;IACrC,MAAM,EAAE,MAAM,CAAC;IACf,WAAW,EAAE,MAAM,EAAE,CAAC;IACtB,SAAS,EAAE,cAAc,EAAE,CAAC;CAC7B"}

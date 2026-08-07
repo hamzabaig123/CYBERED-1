@@ -1,8 +1,8 @@
-import { Router, type IRouter } from "express";
+﻿import { Router, type IRouter } from "express";
 import { db, bookStoresTable, subjectsTable, questionsTable, sectionsTable, chaptersTable } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
 import {
-  ExplainRequestBody,
+  ExplainFromBookBody,
   GetSubjectParams,
 } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
@@ -18,7 +18,7 @@ function parseId(raw: string | string[]): number {
 
 // POST /ai/explain - Explain a question/concept from the textbook
 router.post("/ai/explain", requireAuth, async (req, res): Promise<void> => {
-  const body = ExplainRequestBody.safeParse(req.body);
+  const body = ExplainFromBookBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
     return;

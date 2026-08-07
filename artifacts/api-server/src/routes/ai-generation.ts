@@ -1,8 +1,10 @@
 import { Router, type IRouter } from "express";
 import { db, aiGeneratedQuestionsTable, chaptersTable, bookStoresTable, subjectsTable } from "@workspace/db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import {
-  GenerateQuestionsBody,
+  GenerateAIQuestionsBody,
+  GenerateAIQuestionsParams,
+  ListAIGeneratedQuestionsParams,
   ListAIGeneratedQuestionsQueryParams,
   ApproveAIGeneratedQuestionParams,
   DismissAIGeneratedQuestionParams,
@@ -22,13 +24,13 @@ function parseId(raw: string | string[]): number {
 
 // POST /chapters/:chapterId/ai-generate-questions - Generate AI questions from textbook
 router.post("/chapters/:chapterId/ai-generate-questions", requireEditor, async (req, res): Promise<void> => {
-  const params = (await import("@workspace/api-zod")).CreateChapterParams.safeParse({ chapterId: parseId(req.params.chapterId) });
+  const params = GenerateAIQuestionsParams.safeParse({ chapterId: parseId(req.params.chapterId) });
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
   }
 
-  const body = GenerateQuestionsBody.safeParse(req.body);
+  const body = GenerateAIQuestionsBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
     return;
@@ -61,7 +63,7 @@ router.post("/chapters/:chapterId/ai-generate-questions", requireEditor, async (
       body.data.pageRange,
       body.data.questionType,
       body.data.count,
-      body.data.topicFocus
+      body.data.topicFocus ?? undefined
     );
 
     // Save as drafts
@@ -72,7 +74,7 @@ router.post("/chapters/:chapterId/ai-generate-questions", requireEditor, async (
         .values({
           chapterId: params.data.chapterId,
           questionType: body.data.questionType,
-          payloadJson: draft as Record<string, unknown>,
+          payloadJson: draft as unknown as Record<string, unknown>,
           sourcePage: draft.sourcePage,
           topicFocus: body.data.topicFocus,
         })
@@ -96,7 +98,7 @@ router.post("/chapters/:chapterId/ai-generate-questions", requireEditor, async (
 
 // GET /chapters/:chapterId/ai-generated-questions - List AI-generated question drafts
 router.get("/chapters/:chapterId/ai-generated-questions", requireAuth, async (req, res): Promise<void> => {
-  const params = (await import("@workspace/api-zod")).ListChaptersQueryParams.safeParse({ 
+  const params = ListAIGeneratedQuestionsParams.safeParse({ 
     chapterId: parseId(req.params.chapterId) 
   });
   if (!params.success) {
@@ -229,6 +231,7 @@ router.post("/ai-generated-questions/:questionId/approve", requireEditor, async 
   }
 
   const payload = draft.payloadJson as Record<string, unknown>;
+  const options = (payload.options ?? {}) as Record<string, string>;
   
   // Create the real question
   const [question] = await db
@@ -237,10 +240,10 @@ router.post("/ai-generated-questions/:questionId/approve", requireEditor, async 
       sectionId: section.id,
       questionType: draft.questionType,
       questionText: payload.question as string,
-      optionA: payload.options?.A as string,
-      optionB: payload.options?.B as string,
-      optionC: payload.options?.C as string,
-      optionD: payload.options?.D as string,
+      optionA: options.A,
+      optionB: options.B,
+      optionC: options.C,
+      optionD: options.D,
       correctOption: payload.correctOption as string,
       modelAnswer: payload.modelAnswer as string,
       explanation: payload.explanation as string,

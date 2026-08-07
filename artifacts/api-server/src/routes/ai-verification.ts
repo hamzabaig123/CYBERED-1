@@ -64,7 +64,7 @@ router.post("/ai/verify", requireEditor, async (req, res): Promise<void> => {
       .insert(aiVerificationsTable)
       .values({
         questionId: question.id,
-        questionType: question.questionType,
+        questionType: question.questionType as "mcq" | "short" | "long",
         aiAnswer: result.aiAnswer,
         sourcePage: result.sourcePage,
         sourceFilename: result.sourceFilename,
