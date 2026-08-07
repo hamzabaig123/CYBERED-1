@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Shell } from "@/components/layout/shell";
-import { useListClasses, useListSubjects, useListChapters, useListSections, useGetSection, useExploreQuestions, useCountExploredQuestions, useListSectionTags, useListFlashcards } from "@workspace/api-client-react";
-import { ChevronRight, ChevronDown, Folder, FileText, Settings2, Plus, BookOpen, Table2, Printer, Search } from "lucide-react";
+import { useListClasses, useListSubjects, useListChapters, useListSections, useGetSection, useExploreQuestions, useCountExploredQuestions, useListSectionTags, useListFlashcards, useExplainFromBook } from "@workspace/api-client-react";
+import { ChevronRight, ChevronDown, Folder, FileText, Settings2, Plus, BookOpen, Table2, Printer, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "wouter";
+import { ExplainPanel } from "@/components/ai/explain-panel";
 
 const SECTION_TYPE_LABELS: Record<string, string> = {
   mcqs: "MCQs",
@@ -444,6 +445,27 @@ function QuestionExplorer({ sectionId }: { sectionId: number }) {
 
 function QuestionCard({ q, view, sectionId }: { q: any; view: "list" | "study" | "reading"; sectionId: number }) {
   const [revealed, setRevealed] = useState(false);
+  const [explain, setExplain] = useState<{ text: string; citations: { page: number; filename: string; snippet: string }[] } | null>(null);
+  const [explaining, setExplaining] = useState(false);
+  const { mutate: explainFromBook } = useExplainFromBook();
+
+  const runExplain = () => {
+    if (explaining) return;
+    setExplain(null);
+    setExplaining(true);
+    explainFromBook(
+      { data: { questionText: q.questionText, questionId: q.id } },
+      {
+        onSuccess: (res) => {
+          setExplain({ explanation: res.explanation, citations: res.citations ?? [] });
+          setExplaining(false);
+        },
+        onError: () => {
+          setExplaining(false);
+        },
+      }
+    );
+  };
 
   if (view === "reading") {
     return (

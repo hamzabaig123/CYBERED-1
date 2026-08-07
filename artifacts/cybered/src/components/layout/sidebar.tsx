@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { Terminal, Database, BookOpen, PenTool, Users, LayoutDashboard, Shield, LogOut, AlertCircle, Activity } from "lucide-react";
+import { Terminal, Database, BookOpen, PenTool, Users, LayoutDashboard, Shield, LogOut, AlertCircle, Activity, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 const navItems = [
@@ -9,6 +9,7 @@ const navItems = [
   { href: "/search", label: "Search", icon: BookOpen },
   { href: "/tests", label: "Test Console", icon: PenTool },
   { href: "/learning-hub", label: "Learning Hub", icon: Activity },
+  { href: "/ai/verifications", label: "AI Verification", icon: Sparkles },
   { href: "/security", label: "Security", icon: Shield },
 ];
 
