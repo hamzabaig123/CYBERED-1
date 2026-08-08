@@ -9,6 +9,7 @@ export interface TextbookStorage {
     getObject(key: string): Promise<Buffer>;
     deleteObject(key: string): Promise<void>;
     exists(key: string): Promise<boolean>;
+    getPresignedUploadUrl?(key: string, expirySeconds: number): Promise<string | null>;
 }
 /** Normalize a storage key into a safe, forward-slash path. Rejects traversal. */
 export declare function normalizeKey(key: string): string;
@@ -20,6 +21,7 @@ export declare class LocalStorage implements TextbookStorage {
     getObject(key: string): Promise<Buffer>;
     deleteObject(key: string): Promise<void>;
     exists(key: string): Promise<boolean>;
+    getPresignedUploadUrl(key: string, _expirySeconds: number): Promise<string | null>;
 }
 /**
  * Default storage root, anchored to the workspace rather than `process.cwd()`

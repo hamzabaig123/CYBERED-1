@@ -456,10 +456,10 @@ function QuestionCard({ q, view, sectionId }: { q: any; view: "list" | "study" |
     explainFromBook(
       { data: { questionText: q.questionText, questionId: q.id } },
       {
-        onSuccess: (res) => {
-          setExplain({ explanation: res.explanation, citations: res.citations ?? [] });
-          setExplaining(false);
-        },
+onSuccess: (res) => {
+            setExplain({ text: res.explanation, citations: res.citations ?? [] });
+            setExplaining(false);
+          },
         onError: () => {
           setExplaining(false);
         },

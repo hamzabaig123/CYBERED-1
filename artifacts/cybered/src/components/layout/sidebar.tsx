@@ -6,10 +6,10 @@ import { useAuth } from "@/hooks/use-auth";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/curriculum", label: "Curriculum", icon: Database },
+  { href: "/ai-engine", label: "AI Engine", icon: Sparkles },
   { href: "/search", label: "Search", icon: BookOpen },
   { href: "/tests", label: "Test Console", icon: PenTool },
   { href: "/learning-hub", label: "Learning Hub", icon: Activity },
-  { href: "/ai/verifications", label: "AI Verification", icon: Sparkles },
   { href: "/security", label: "Security", icon: Shield },
 ];
 

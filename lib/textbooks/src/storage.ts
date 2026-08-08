@@ -13,6 +13,7 @@ export interface TextbookStorage {
   getObject(key: string): Promise<Buffer>;
   deleteObject(key: string): Promise<void>;
   exists(key: string): Promise<boolean>;
+  getPresignedUploadUrl?(key: string, expirySeconds: number): Promise<string | null>;
 }
 
 /** Normalize a storage key into a safe, forward-slash path. Rejects traversal. */
@@ -59,6 +60,11 @@ export class LocalStorage implements TextbookStorage {
     } catch {
       return false;
     }
+  }
+
+  async getPresignedUploadUrl(key: string, _expirySeconds: number): Promise<string | null> {
+    const baseUrl = process.env["API_BASE_URL"] ?? "http://localhost:3000";
+    return `${baseUrl}/api/files/direct-upload/${encodeURIComponent(key)}`;
   }
 }
 

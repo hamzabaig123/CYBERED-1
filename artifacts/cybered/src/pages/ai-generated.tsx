@@ -210,7 +210,7 @@ export default function GeneratedQuestionsReviewPage() {
 
 function DraftCard({ draft, onApprove, onDismiss }: any) {
   const p = draft.payloadJson ?? {};
-  const isMcq = draft.questionType === "mcq";
+  const isMcqType = draft.questionType === "mcq";
   const resolvedStatus = draft.approvedAt
     ? "approved"
     : draft.dismissedAt
@@ -263,7 +263,7 @@ function DraftCard({ draft, onApprove, onDismiss }: any) {
         </div>
       ) : null}
 
-      {isMcq(p) && p.correctOption && !isMcqOptions(p) && (
+      {isMcqType && p.correctOption && !isMcqOptions(p) && (
         <div className="mb-3">
           <Badge variant="outline" className="text-[10px] text-teal border-teal/40">
             Correct: {p.correctOption}

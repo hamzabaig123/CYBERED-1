@@ -18,9 +18,11 @@ import LearningHub from '@/pages/learning-hub';
 import QuestionEdit from '@/pages/question-edit';
 import Security from '@/pages/security';
 import BookLibrary from '@/pages/book-library';
+import BookDetail from '@/pages/book-detail';
 import AskBook from '@/pages/ask-book';
 import AIVerifications from '@/pages/ai-verifications';
 import AIGenerated from '@/pages/ai-generated';
+import AIKnowledgeEngine from '@/pages/ai-knowledge-engine';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,9 +72,12 @@ function Router() {
       <Route path="/tests/:id"><ProtectedRoute component={TestView} /></Route>
       <Route path="/learning-hub"><ProtectedRoute component={LearningHub} /></Route>
       <Route path="/subjects/:id/library"><ProtectedRoute component={BookLibrary} /></Route>
+      <Route path="/subjects/:id/books/:bookId"><ProtectedRoute component={BookDetail} /></Route>
       <Route path="/subjects/:id/ai-chat"><ProtectedRoute component={AskBook} /></Route>
       <Route path="/ai/verifications"><ProtectedRoute component={AIVerifications} /></Route>
       <Route path="/chapters/:id/ai-generated"><ProtectedRoute component={AIGenerated} /></Route>
+      <Route path="/subjects/:id/ai-engine"><ProtectedRoute component={AIKnowledgeEngine} /></Route>
+      <Route path="/ai-engine"><ProtectedRoute component={AIKnowledgeEngine} /></Route>
       
       <Route>
         <div className="min-h-screen bg-black text-primary font-mono flex items-center justify-center flex-col gap-4 crt-overlay">

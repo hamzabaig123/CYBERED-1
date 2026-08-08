@@ -17,6 +17,7 @@ import aiGenerationRouter from "./ai-generation";
 import aiGradingRouter from "./ai-grading";
 import aiChatRouter from "./ai-chat";
 import textbooksRouter from "./textbooks";
+import filesRouter from "./files";
 
 const router: IRouter = Router();
 
@@ -38,5 +39,6 @@ router.use(aiGenerationRouter);
 router.use(aiGradingRouter);
 router.use(aiChatRouter);
 router.use(textbooksRouter);
+router.use(filesRouter);
 
 export default router;

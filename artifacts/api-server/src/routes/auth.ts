@@ -38,12 +38,15 @@ router.post("/auth/register", async (req, res): Promise<void> => {
 
   const { username, email, password } = parsed.data;
 
+  console.log('[REGISTER] Attempt for email:', email, 'username:', username);
+
   const [existing] = await db
     .select()
     .from(usersTable)
     .where(eq(usersTable.email, email));
 
   if (existing) {
+    console.log('[REGISTER] Email already exists');
     res.status(400).json({ error: "Email already registered" });
     return;
   }
@@ -53,6 +56,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
   const isFirstUser = allUsers.length === 0;
 
   const passwordHash = await bcrypt.hash(password, 12);
+  console.log('[REGISTER] Password hashed, length:', passwordHash.length);
 
   const [user] = await db
     .insert(usersTable)
@@ -63,6 +67,8 @@ router.post("/auth/register", async (req, res): Promise<void> => {
       role: isFirstUser ? "admin" : "viewer",
     })
     .returning();
+
+  console.log('[REGISTER] User created:', user.id, user.email);
 
   req.log.info({ userId: user.id }, "User registered");
   await writeAudit(req, { userId: user.id, action: "REGISTER", entityType: "user", entityId: user.id, detail: `User ${user.username} registered` });
@@ -103,10 +109,17 @@ router.post("/auth/login", async (req, res): Promise<void> => {
 
   const { email, password } = parsed.data;
 
+  console.log('[LOGIN] Attempt for email:', email);
+
   const [user] = await db
     .select()
     .from(usersTable)
     .where(eq(usersTable.email, email));
+
+  console.log('[LOGIN] User found:', !!user);
+  if (user) {
+    console.log('[LOGIN] User ID:', user.id, 'has passwordHash:', !!user.passwordHash);
+  }
 
   if (!user) {
     await writeAudit(req, { userId: null, action: "LOGIN_FAILED", detail: `No account for email ${email}` });
@@ -122,6 +135,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   }
 
   const valid = await bcrypt.compare(password, user.passwordHash);
+  console.log('[LOGIN] Password valid:', valid);
   if (!valid) {
     const attempts = parseInt(user.failedLoginAttempts, 10) + 1;
     const updates: Partial<typeof usersTable.$inferSelect> = {

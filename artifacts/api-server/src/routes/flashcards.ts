@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { db, flashcardsTable } from "@workspace/db";
+import { db, flashcardsTable, sectionsTable, chaptersTable, subjectsTable } from "@workspace/db";
 import { eq, and, desc, SQL } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 import {
@@ -15,6 +15,15 @@ import {
 } from "@workspace/api-zod";
 import { requireAuth, requireEditor } from "../middlewares/auth";
 import { writeAudit } from "../lib/audit";
+import { z } from "zod";
+
+const CreateFlashcardFromExplanationBody = z.object({
+  subjectId: z.number(),
+  question: z.string(),
+  answer: z.string(),
+  sourcePage: z.number(),
+  sourceCitation: z.string(),
+});
 
 const router: IRouter = Router();
 
@@ -76,6 +85,67 @@ router.post("/sections/:sectionId/flashcards", requireEditor, async (req, res): 
     .returning();
 
   await writeAudit(req, { action: "CREATE_FLASHCARD", entityType: "flashcard", entityId: row.id });
+  res.status(201).json(row);
+});
+
+// POST /ai/explain/flashcard - Create flashcard from AI explanation
+router.post("/ai/explain/flashcard", requireAuth, async (req, res): Promise<void> => {
+  const user = (req as typeof req & { user: { id: number } }).user;
+  const body = CreateFlashcardFromExplanationBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+
+  const { subjectId, question, answer, sourcePage, sourceCitation } = body.data;
+
+  // Find or create a default section for AI explanations
+  const [subject] = await db.select().from(subjectsTable).where(eq(subjectsTable.id, subjectId));
+  if (!subject) {
+    res.status(404).json({ error: "Subject not found" });
+    return;
+  }
+
+  let [section] = await db
+    .select({ id: sectionsTable.id })
+    .from(sectionsTable)
+    .innerJoin(chaptersTable, eq(sectionsTable.chapterId, chaptersTable.id))
+    .where(and(eq(chaptersTable.subjectId, subjectId), eq(sectionsTable.name, "AI Explanations")));
+
+  if (!section) {
+    // Create a chapter for AI content if it doesn't exist
+    let [chapter] = await db
+      .select()
+      .from(chaptersTable)
+      .where(and(eq(chaptersTable.subjectId, subjectId), eq(chaptersTable.name, "AI Content")));
+
+    if (!chapter) {
+      [chapter] = await db
+        .insert(chaptersTable)
+        .values({ subjectId, name: "AI Content", orderIndex: 999 })
+        .returning();
+    }
+
+    [section] = await db
+      .insert(sectionsTable)
+      .values({ chapterId: chapter.id, name: "AI Explanations", sectionType: "flashcards", orderIndex: 999 })
+      .returning();
+  }
+
+  const sectionId = section.id;
+
+  const [row] = await db
+    .insert(flashcardsTable)
+    .values({
+      sectionId,
+      front: question,
+      back: answer,
+      referenceSource: sourceCitation,
+      referenceYear: null,
+    })
+    .returning();
+
+  await writeAudit(req, { action: "CREATE_FLASHCARD_FROM_EXPLANATION", entityType: "flashcard", entityId: row.id });
   res.status(201).json(row);
 });
 

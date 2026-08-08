@@ -68,6 +68,7 @@ export * from './fileAsset';
 export * from './fileAssetListResponse';
 export * from './fileAssetProcessingStatus';
 export * from './fileAssetVirusScanStatus';
+export * from './file-upload';
 export * from './flashcard';
 export * from './flashcardInput';
 export * from './flashcardPage';
