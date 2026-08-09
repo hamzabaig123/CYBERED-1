@@ -36,13 +36,11 @@ const BOOK_MAPPINGS = [
     subjectName: "Urdu",
     description: "Class XI Urdu (Urdu Medium) - Gulzar-E-Urdu"
   },
-  // Islamiyat - needs clarification on subject mapping
-  // Uncomment once you decide where it should go
-  // { 
-  //   file: "Islamiyat XI- XII Class XI (Sindhi Medium) STBB.pdf", 
-  //   subjectName: "Islamiyat",
-  //   description: "Class XI-XII Islamiyat (Sindhi Medium)"
-  // },
+  { 
+    file: "Islamiyat XI- XII Class XI (Sindhi Medium) STBB.pdf", 
+    subjectName: "Islamiyat",
+    description: "Class XI-XII Islamiyat (Sindhi Medium)"
+  },
 ];
 
 interface Subject {
