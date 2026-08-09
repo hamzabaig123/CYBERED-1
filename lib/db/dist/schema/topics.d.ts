@@ -154,17 +154,8 @@ export declare const insertTopicSchema: z.ZodObject<{
 }>;
 export type InsertTopic = z.infer<typeof insertTopicSchema>;
 export type TopicRow = typeof topicsTable.$inferSelect;
-/**
- * Get all descendant topic IDs for a given topic.
- * Returns an array of topic IDs (including the starting topic).
- *
- * Usage in SQL:
- * with recursive topic_tree as (
- *   select id, parent_id from topics where id = ?
- *   union all
- *   select t.id, t.parent_id from topics t
- *   join topic_tree tt on t.parent_id = tt.id
- * ) select id from topic_tree;
- */
-export declare function getDescendantTopicIds(topicId: number): number[];
+export type TopicDescendant = typeof topicsTable.$inferSelect & {
+    depth: number;
+    path: number[];
+};
 //# sourceMappingURL=topics.d.ts.map

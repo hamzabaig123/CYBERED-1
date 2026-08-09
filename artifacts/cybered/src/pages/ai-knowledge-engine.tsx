@@ -2553,7 +2553,7 @@ function AskBookChatTab({ subjectId, subject, store, readyAsset, totalPages, onU
               />
             ))
           )}
-          {sending && (
+          {streaming && (
             <div className="flex gap-2">
               <div className="h-7 w-7 flex-shrink-0 bg-blue-400/10 border border-blue-400/30 flex items-center justify-center">
                 <Sparkles className="h-3.5 w-3.5 text-blue-400 animate-pulse" />

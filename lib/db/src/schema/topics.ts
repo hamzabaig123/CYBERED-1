@@ -7,13 +7,18 @@ import { subjectsTable } from "./curriculum";
 // Self-referencing topics table: replaces fixed chapters with flexible tree structure
 // Every topic stores subjectId directly (not just through parent chain) for fast queries
 //
-// NOTE: Self-referencing FK is handled via ts-reset or manual SQL migration
-// The parentId column references topics(id) but Drizzle can't express this in TypeScript
+// Architecture:
+// Class → Subject → Topic (infinite nesting) → Section
+//
+// Design decisions:
+// 1. subjectId is stored on every topic (not just through parent chain) for fast queries
+// 2. parentId is nullable (null = top-level under subject)
+// 3. Self-referencing FK to topics(id) is handled via SQL migration
 
 export const topicsTable = pgTable("topics", {
   id: serial("id").primaryKey(),
   subjectId: integer("subject_id").notNull().references(() => subjectsTable.id),
-  parentId: integer("parent_id"), // Self-referencing topics(id) - nullable for top-level topics
+  parentId: integer("parent_id"), // Self-referencing FK to topics(id) - set via SQL migration
   name: text("name").notNull(),
   orderIndex: integer("order_index").notNull().default(0),
   isArchived: boolean("is_archived").notNull().default(false),
@@ -29,21 +34,33 @@ export const insertTopicSchema = createInsertSchema(topicsTable).omit({
 export type InsertTopic = z.infer<typeof insertTopicSchema>;
 export type TopicRow = typeof topicsTable.$inferSelect;
 
-// ── Topic Hierarchy Helpers ────────────────────────────────────────────────────
+// ── Recursive CTE Helper for getting all descendants ───────────────────────────
+//
+// SQL implementation example:
+// 
+// SELECT * FROM get_topic_descendants(123);
+// -- Returns all topic IDs in the tree rooted at topic 123
+//
+// CREATE OR REPLACE FUNCTION get_topic_descendants(topic_id_param INTEGER)
+// RETURNS TABLE(
+//   id INTEGER, name TEXT, parent_id INTEGER, order_index INTEGER
+// ) AS $$
+// BEGIN
+//   RETURN QUERY
+//   WITH RECURSIVE topic_tree AS (
+//     SELECT id, name, parent_id, order_index, ARRAY[id] as path, 0 as depth
+//     FROM topics WHERE id = topic_id_param
+//     UNION ALL
+//     SELECT t.id, t.name, t.parent_id, t.order_index, 
+//            tt.path || t.id, tt.depth + 1
+//     FROM topics t
+//     JOIN topic_tree tt ON t.parent_id = tt.parent_id
+//   )
+//   SELECT * FROM topic_tree ORDER BY path;
+// END;
+// $$ LANGUAGE plpgsql;
 
-/**
- * Get all descendant topic IDs for a given topic.
- * Returns an array of topic IDs (including the starting topic).
- * 
- * Usage in SQL:
- * with recursive topic_tree as (
- *   select id, parent_id from topics where id = ?
- *   union all
- *   select t.id, t.parent_id from topics t
- *   join topic_tree tt on t.parent_id = tt.id
- * ) select id from topic_tree;
- */
-export function getDescendantTopicIds(topicId: number): number[] {
-  // Placeholder - actual implementation uses raw SQL query in your db helper
-  return [topicId];
-}
+export type TopicDescendant = typeof topicsTable.$inferSelect & {
+  depth: number;
+  path: number[];
+};

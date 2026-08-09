@@ -80253,9 +80253,9 @@ async function createBookStore(subjectName) {
 async function uploadToFileSearchStore(fileSearchStoreName, fileBytes, displayName) {
   const client2 = getGeminiClient();
   const operation = await client2.fileSearchStores.uploadToFileSearchStore({
-    file: new Blob([Buffer.from(fileBytes)]),
+    file: new Blob([Buffer.from(fileBytes)], { type: "application/pdf" }),
     fileSearchStoreName,
-    config: { displayName }
+    config: { displayName, mimeType: "application/pdf" }
   });
   return operation.name ?? "";
 }
@@ -81902,7 +81902,7 @@ var LocalStorage = class {
   }
   async getPresignedUploadUrl(key, _expirySeconds) {
     const baseUrl = process.env["API_BASE_URL"] ?? "http://localhost:3000";
-    return `${baseUrl}/api/files/direct-upload/${encodeURIComponent(key)}`;
+    return `${baseUrl}/api/files/direct-upload?storageKey=${encodeURIComponent(key)}`;
   }
 };
 var DEFAULT_STORAGE_DIR = path.resolve(

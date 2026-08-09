@@ -133,9 +133,9 @@ export async function uploadToFileSearchStore(
 ): Promise<string> {
   const client = getGeminiClient();
   const operation = await client.fileSearchStores.uploadToFileSearchStore({
-    file: new Blob([Buffer.from(fileBytes)]),
+    file: new Blob([Buffer.from(fileBytes)], { type: "application/pdf" }),
     fileSearchStoreName,
-    config: { displayName },
+    config: { displayName, mimeType: "application/pdf" },
   });
   return operation.name ?? "";
 }

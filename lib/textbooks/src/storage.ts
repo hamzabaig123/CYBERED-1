@@ -64,7 +64,7 @@ export class LocalStorage implements TextbookStorage {
 
   async getPresignedUploadUrl(key: string, _expirySeconds: number): Promise<string | null> {
     const baseUrl = process.env["API_BASE_URL"] ?? "http://localhost:3000";
-    return `${baseUrl}/api/files/direct-upload/${encodeURIComponent(key)}`;
+    return `${baseUrl}/api/files/direct-upload?storageKey=${encodeURIComponent(key)}`;
   }
 }
 

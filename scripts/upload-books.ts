@@ -18,7 +18,7 @@ const BOOKS_DIR = "C:\\Users\\hamza\\class 11 book";
 const BOOK_MAPPINGS = [
   { 
     file: "Math XI Class XI (English Medium) STBB.pdf", 
-    subjectName: "Mathematics",
+    subjectName: "Math",
     description: "Class XI Mathematics (English Medium)"
   },
   { 
@@ -96,8 +96,8 @@ async function getAuthToken(): Promise<string> {
   return loginData.token;
 }
 
-async function findSubject(token: string, subjectName: string): Promise<Subject | null> {
-  const res = await fetch(`${API_BASE}/subjects`, {
+async function findSubject(token: string, subjectName: string, classId: number): Promise<Subject | null> {
+  const res = await fetch(`${API_BASE}/subjects?classId=${classId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -248,8 +248,8 @@ async function main() {
     const token = await getAuthToken();
     console.log("✅ Authenticated\n");
 
-    // Get Class 11 ID (assuming it's 1, or fetch from API)
-    const classId = 1;
+    // Get Class 11 ID
+    const classId = 2; // Class 11
 
     // Process each book
     for (let i = 0; i < BOOK_MAPPINGS.length; i++) {
@@ -259,10 +259,10 @@ async function main() {
       console.log(`\n📖 Book ${i + 1}/${BOOK_MAPPINGS.length}: ${book.subjectName}`);
       console.log("-".repeat(60));
 
-      // Find or create subject
-      let subject = await findSubject(token, book.subjectName);
+      // Find subject
+      const subject = await findSubject(token, book.subjectName, classId);
       if (!subject) {
-        subject = await createSubject(token, book.subjectName, classId);
+        throw new Error(`Subject "${book.subjectName}" not found. Please create it first in the UI.`);
       }
       console.log(`  📚 Subject ID: ${subject.id} (${subject.name})`);
 
