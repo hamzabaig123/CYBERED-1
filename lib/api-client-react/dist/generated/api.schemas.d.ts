@@ -1014,6 +1014,19 @@ export declare const GenerateQuestionsInputQuestionType: {
     readonly short: "short";
     readonly long: "long";
 };
+export type GenerateQuestionsInputDifficulty = typeof GenerateQuestionsInputDifficulty[keyof typeof GenerateQuestionsInputDifficulty];
+export declare const GenerateQuestionsInputDifficulty: {
+    readonly auto: "auto";
+    readonly easier: "easier";
+    readonly harder: "harder";
+};
+export type GenerateQuestionsInputLanguage = typeof GenerateQuestionsInputLanguage[keyof typeof GenerateQuestionsInputLanguage];
+export declare const GenerateQuestionsInputLanguage: {
+    readonly auto: "auto";
+    readonly english: "english";
+    readonly urdu: "urdu";
+    readonly sindhi: "sindhi";
+};
 export interface GenerateQuestionsInput {
     pageRange: string;
     questionType: GenerateQuestionsInputQuestionType;
@@ -1024,6 +1037,8 @@ export interface GenerateQuestionsInput {
     count: number;
     /** @nullable */
     topicFocus?: string | null;
+    difficulty?: GenerateQuestionsInputDifficulty;
+    language?: GenerateQuestionsInputLanguage;
 }
 export type GeneratedQuestionDraftOptions = {
     A?: string;

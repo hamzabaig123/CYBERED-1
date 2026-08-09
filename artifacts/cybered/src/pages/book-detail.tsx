@@ -1,19 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "wouter";
 import { Shell } from "@/components/layout/shell";
-import {
-  useGetSubject,
-  useGetBookStoreStatus,
-  useExplainFromBook,
-} from "@workspace/api-client-react";
+import { useGetSubject, useGetBookStoreStatus } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { IndexingStatusBadge } from "@/components/ai/indexing-status-badge";
 import { CitationChip } from "@/components/ai/citation-chip";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { customFetch } from "@workspace/api-client-react/custom-fetch";
+import { streamExplain, type ReplyLanguage, REPLY_LANGUAGES } from "@/lib/ai-stream";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import {
   MessageSquare,
@@ -40,12 +38,6 @@ interface Citation {
   snippet: string;
 }
 
-interface ExplainResponse {
-  explanation: string;
-  citations: Citation[];
-  subjectId?: number;
-}
-
 interface FileAsset {
   id: number;
   storageKey: string;
@@ -65,7 +57,6 @@ export default function BookDetailPage() {
     query: { enabled: !isNaN(subjectId) } as any,
   });
 
-  const { mutate: explain, isPending: explaining } = useExplainFromBook();
   const { toast } = useToast();
 
   const createFlashcardMutation = useMutation({
@@ -90,10 +81,13 @@ export default function BookDetailPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [scale, setScale] = useState(1.0);
   const [question, setQuestion] = useState("");
+  const [language, setLanguage] = useState<ReplyLanguage>("auto");
   const [explanation, setExplanation] = useState<string | null>(null);
   const [citations, setCitations] = useState<Citation[]>([]);
   const [highlightedPages, setHighlightedPages] = useState<Set<number>>(new Set());
   const [showExplanation, setShowExplanation] = useState(false);
+  const [streaming, setStreaming] = useState(false);
+  const abortRef = useRef<(() => void) | null>(null);
 
   const pdfContainerRef = useRef<HTMLDivElement>(null);
   const questionInputRef = useRef<HTMLTextAreaElement>(null);
@@ -119,22 +113,40 @@ export default function BookDetailPage() {
   }, [assetId, subjectId]);
 
   const handleExplain = () => {
-    if (!question.trim() || !storeStatus?.store?.geminiStoreName) return;
-    
-    explain(
-      { data: { questionText: question.trim(), subjectId } },
+    const q = question.trim();
+    if (!q || !storeStatus?.store?.geminiStoreName) return;
+
+    abortRef.current?.();
+    setExplanation("");
+    setCitations([]);
+    setHighlightedPages(new Set());
+    setShowExplanation(true);
+    setStreaming(true);
+    setQuestion("");
+
+    abortRef.current = streamExplain(
+      { questionText: q, subjectId, language },
       {
-        onSuccess: (res: ExplainResponse) => {
+        onText: (text) => setExplanation((prev) => (prev ?? "") + text),
+        onDone: (res) => {
           setExplanation(res.explanation);
           setCitations(res.citations ?? []);
-          const pages = new Set((res.citations ?? []).map(c => c.page));
+          const pages = new Set((res.citations ?? []).map((c) => c.page));
           setHighlightedPages(pages);
-          setShowExplanation(true);
-          setQuestion("");
+          setStreaming(false);
         },
-        onError: () => toast({ title: "Explanation failed", variant: "destructive" }),
+        onError: (message) => {
+          setStreaming(false);
+          toast({ title: "Explanation failed", description: message, variant: "destructive" });
+        },
       }
     );
+  };
+
+  const handleStop = () => {
+    abortRef.current?.();
+    abortRef.current = null;
+    setStreaming(false);
   };
 
   const handleCreateFlashcard = () => {
@@ -346,7 +358,7 @@ export default function BookDetailPage() {
                   </div>
                 )}
 
-                {explaining && (
+                {streaming && (
                   <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-teal animate-pulse">
                     <Loader2 className="h-3 w-3 animate-spin" />
                     Mining textbook...
@@ -356,6 +368,23 @@ export default function BookDetailPage() {
 
               {/* Composer */}
               <div className="p-3 border-t border-border bg-muted/10 flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <Select value={language} onValueChange={(v) => setLanguage(v as ReplyLanguage)}>
+                    <SelectTrigger className="h-8 w-[150px] font-mono text-[10px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {REPLY_LANGUAGES.map((l) => (
+                        <SelectItem key={l.value} value={l.value} className="font-mono text-[10px]">
+                          {l.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <span className="font-mono text-[9px] text-muted-foreground uppercase">
+                    Reply language
+                  </span>
+                </div>
                 <Textarea
                   ref={questionInputRef}
                   className="font-mono text-xs min-h-[80px] resize-none"
@@ -366,13 +395,19 @@ export default function BookDetailPage() {
                   rows={3}
                 />
                 <div className="flex justify-end">
-                  <Button
-                    className="h-10"
-                    onClick={handleExplain}
-                    disabled={explaining || !question.trim() || createFlashcardMutation.isPending}
-                  >
-                    <Send className="mr-2 h-3.5 w-3.5" /> ASK
-                  </Button>
+                  {streaming ? (
+                    <Button variant="outline" onClick={handleStop}>
+                      <RotateCcw className="mr-2 h-3.5 w-3.5" /> STOP
+                    </Button>
+                  ) : (
+                    <Button
+                      className="h-10"
+                      onClick={handleExplain}
+                      disabled={!question.trim() || createFlashcardMutation.isPending}
+                    >
+                      <Send className="mr-2 h-3.5 w-3.5" /> ASK
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

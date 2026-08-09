@@ -2232,13 +2232,16 @@ export const GenerateAIQuestionsParams = zod.object({
 
 export const generateAIQuestionsBodyCountMax = 20;
 
-
+export const generateAIQuestionsBodyDifficultyDefault = `auto`;
+export const generateAIQuestionsBodyLanguageDefault = `auto`;
 
 export const GenerateAIQuestionsBody = zod.object({
   "pageRange": zod.string(),
   "questionType": zod.enum(['mcq', 'short', 'long']),
   "count": zod.number().min(1).max(generateAIQuestionsBodyCountMax),
-  "topicFocus": zod.string().nullish()
+  "topicFocus": zod.string().nullish(),
+  "difficulty": zod.enum(['auto', 'easier', 'harder']).default(generateAIQuestionsBodyDifficultyDefault),
+  "language": zod.enum(['auto', 'english', 'urdu', 'sindhi']).default(generateAIQuestionsBodyLanguageDefault)
 })
 
 export const GenerateAIQuestionsResponse = zod.object({

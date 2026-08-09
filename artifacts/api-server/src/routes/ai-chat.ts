@@ -10,7 +10,7 @@ import {
   ListAIChatSessionsQueryParams as ListAIChatMessagesQueryParams,
 } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
-import { chatWithBook } from "../ai/geminiClient";
+import { chatWithBook, streamChatWithBook } from "../ai/geminiClient";
 import { writeAudit } from "../lib/audit";
 
 const router: IRouter = Router();
@@ -147,11 +147,15 @@ router.post("/ai/chat/sessions/:sessionId/messages", requireAuth, async (req, re
     return;
   }
 
-  const body = SendAIChatMessageBody.safeParse(req.body);
+const body = SendAIChatMessageBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
     return;
   }
+
+  const extra = (req.body ?? {}) as { mode?: "answer" | "tutor"; language?: "auto" | "english" | "urdu" | "sindhi" };
+  const mode = extra.mode === "tutor" ? "tutor" : "answer";
+  const language = ["english", "urdu", "sindhi", "auto"].includes(extra.language ?? "") ? extra.language! : "auto";
 
   const [session] = await db
     .select()
@@ -192,12 +196,12 @@ router.post("/ai/chat/sessions/:sessionId/messages", requireAuth, async (req, re
     .orderBy(asc(aiChatMessagesTable.createdAt))
     .limit(20); // Limit history to last 20 messages
 
-  try {
+try {
     // Call AI with conversation history
     const messages = history.map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
     messages.push({ role: "user", content: body.data.content });
 
-    const result = await chatWithBook(store.geminiStoreName, messages);
+    const result = await chatWithBook(store.geminiStoreName, messages, { mode, language });
 
     // Save assistant response
     const [assistantMessage] = await db
@@ -224,9 +228,114 @@ router.post("/ai/chat/sessions/:sessionId/messages", requireAuth, async (req, re
         citations: result.citations,
       },
     });
-  } catch (error) {
+} catch (error) {
     console.error("Error in chat:", error);
     res.status(500).json({ error: "Failed to get AI response" });
+  }
+});
+
+// POST /ai/chat/sessions/:sessionId/messages/stream - Send a message, stream the AI reply (SSE)
+router.post("/ai/chat/sessions/:sessionId/messages/stream", requireAuth, async (req, res): Promise<void> => {
+  const user = (req as typeof req & { user: { id: number } }).user;
+  const params = SendAIChatMessageParams.safeParse({ sessionId: parseId(req.params.sessionId) });
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+
+  const body = SendAIChatMessageBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+
+  const extra = (req.body ?? {}) as { mode?: "answer" | "tutor"; language?: "auto" | "english" | "urdu" | "sindhi" };
+  const mode = extra.mode === "tutor" ? "tutor" : "answer";
+  const language = ["english", "urdu", "sindhi", "auto"].includes(extra.language ?? "") ? extra.language! : "auto";
+
+  const [session] = await db
+    .select()
+    .from(aiChatSessionsTable)
+    .where(and(eq(aiChatSessionsTable.id, params.data.sessionId), eq(aiChatSessionsTable.userId, user.id)));
+
+  if (!session) {
+    res.status(404).json({ error: "Chat session not found" });
+    return;
+  }
+
+  const [store] = await db
+    .select()
+    .from(bookStoresTable)
+    .where(and(eq(bookStoresTable.subjectId, session.subjectId), eq(bookStoresTable.status, "ready")));
+
+  if (!store) {
+    res.status(404).json({ error: "No ready book store for this subject" });
+    return;
+  }
+
+  const [userMessage] = await db
+    .insert(aiChatMessagesTable)
+    .values({
+      sessionId: session.id,
+      role: "user",
+      content: body.data.content,
+    })
+    .returning();
+
+  const history = await db
+    .select()
+    .from(aiChatMessagesTable)
+    .where(eq(aiChatMessagesTable.sessionId, session.id))
+    .orderBy(asc(aiChatMessagesTable.createdAt))
+    .limit(20);
+
+  const messages = history.map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+
+  const writeEvent = (data: Record<string, unknown>) => res.write(`data: ${JSON.stringify(data)}\n\n`);
+
+  try {
+    writeEvent({ type: "meta", userMessageId: userMessage.id });
+
+    let accumulated = "";
+    for await (const chunk of streamChatWithBook(store.geminiStoreName, messages, { mode, language })) {
+      if (chunk.type === "text") {
+        accumulated += chunk.text;
+        writeEvent({ type: "text", text: chunk.text });
+      } else if (chunk.type === "done") {
+        const [assistantMessage] = await db
+          .insert(aiChatMessagesTable)
+          .values({
+            sessionId: session.id,
+            role: "assistant",
+            content: accumulated,
+            citationsJson: chunk.citations,
+          })
+          .returning();
+
+        await writeAudit(req, {
+          action: "AI_CHAT_MESSAGE",
+          entityType: "ai_chat_message",
+          entityId: assistantMessage.id,
+          detail: `Streamed AI response in session ${session.id}`,
+        });
+
+        writeEvent({ type: "done", assistantMessageId: assistantMessage.id, citations: chunk.citations });
+      }
+    }
+    res.end();
+  } catch (error) {
+    console.error("Error streaming chat:", error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to get AI response" });
+      return;
+    }
+    writeEvent({ type: "error", message: "Stream interrupted. Please try again." });
+    res.end();
   }
 });
 

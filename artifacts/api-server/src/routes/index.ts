@@ -16,6 +16,8 @@ import aiVerificationRouter from "./ai-verification";
 import aiGenerationRouter from "./ai-generation";
 import aiGradingRouter from "./ai-grading";
 import aiChatRouter from "./ai-chat";
+import aiEvaluateRouter from "./ai-evaluator";
+import aiSummarizerRouter from "./ai-summary";
 import textbooksRouter from "./textbooks";
 import filesRouter from "./files";
 
@@ -38,6 +40,8 @@ router.use(aiVerificationRouter);
 router.use(aiGenerationRouter);
 router.use(aiGradingRouter);
 router.use(aiChatRouter);
+router.use(aiEvaluateRouter);
+router.use(aiSummarizerRouter);
 router.use(textbooksRouter);
 router.use(filesRouter);
 

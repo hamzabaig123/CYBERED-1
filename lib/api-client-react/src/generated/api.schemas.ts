@@ -1192,6 +1192,25 @@ export const GenerateQuestionsInputQuestionType = {
   long: 'long',
 } as const;
 
+export type GenerateQuestionsInputDifficulty = typeof GenerateQuestionsInputDifficulty[keyof typeof GenerateQuestionsInputDifficulty];
+
+
+export const GenerateQuestionsInputDifficulty = {
+  auto: 'auto',
+  easier: 'easier',
+  harder: 'harder',
+} as const;
+
+export type GenerateQuestionsInputLanguage = typeof GenerateQuestionsInputLanguage[keyof typeof GenerateQuestionsInputLanguage];
+
+
+export const GenerateQuestionsInputLanguage = {
+  auto: 'auto',
+  english: 'english',
+  urdu: 'urdu',
+  sindhi: 'sindhi',
+} as const;
+
 export interface GenerateQuestionsInput {
   pageRange: string;
   questionType: GenerateQuestionsInputQuestionType;
@@ -1202,6 +1221,8 @@ export interface GenerateQuestionsInput {
   count: number;
   /** @nullable */
   topicFocus?: string | null;
+  difficulty?: GenerateQuestionsInputDifficulty;
+  language?: GenerateQuestionsInputLanguage;
 }
 
 export type GeneratedQuestionDraftOptions = {

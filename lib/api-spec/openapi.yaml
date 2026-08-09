@@ -3937,22 +3937,51 @@ components:
         success:
           type: boolean
 
-    GenerateQuestionsInput:
-      type: object
-      required: [pageRange, questionType, count]
-      properties:
-        pageRange:
-          type: string
-        questionType:
-          type: string
-          enum: [mcq, short, long]
-        count:
-          type: number
-          minimum: 1
-          maximum: 20
-        topicFocus:
-          type: ["string", "null"]
-
+    GenerateQuestionsInput:
+
+      type: object
+
+      required: [pageRange, questionType, count]
+
+      properties:
+
+        pageRange:
+
+          type: string
+
+        questionType:
+
+          type: string
+
+          enum: [mcq, short, long]
+
+        count:
+
+          type: number
+
+          minimum: 1
+
+          maximum: 20
+
+        topicFocus:
+
+          type: ["string", "null"]
+
+        difficulty:
+
+          type: string
+
+          enum: [auto, easier, harder]
+
+          default: auto
+
+        language:
+
+          type: string
+
+          enum: [auto, english, urdu, sindhi]
+
+          default: auto
     GeneratedQuestionDraft:
       type: object
       properties:

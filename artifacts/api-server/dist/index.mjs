@@ -21065,27 +21065,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module.exports = Router21;
+    module.exports = Router23;
     module.exports.Route = Route;
-    function Router21(options) {
-      if (!(this instanceof Router21)) {
-        return new Router21(options);
+    function Router23(options) {
+      if (!(this instanceof Router23)) {
+        return new Router23(options);
       }
       const opts = options || {};
-      function router21(req, res, next) {
-        router21.handle(req, res, next);
+      function router23(req, res, next) {
+        router23.handle(req, res, next);
       }
-      Object.setPrototypeOf(router21, this);
-      router21.caseSensitive = opts.caseSensitive;
-      router21.mergeParams = opts.mergeParams;
-      router21.params = {};
-      router21.strict = opts.strict;
-      router21.stack = [];
-      return router21;
+      Object.setPrototypeOf(router23, this);
+      router23.caseSensitive = opts.caseSensitive;
+      router23.mergeParams = opts.mergeParams;
+      router23.params = {};
+      router23.strict = opts.strict;
+      router23.stack = [];
+      return router23;
     }
-    Router21.prototype = function() {
+    Router23.prototype = function() {
     };
-    Router21.prototype.param = function param(name, fn) {
+    Router23.prototype.param = function param(name, fn) {
       if (!name) {
         throw new TypeError("argument name is required");
       }
@@ -21105,7 +21105,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router21.prototype.handle = function handle(req, res, callback) {
+    Router23.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -21232,7 +21232,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router21.prototype.use = function use(handler) {
+    Router23.prototype.use = function use(handler) {
       let offset = 0;
       let path2 = "/";
       if (typeof handler !== "function") {
@@ -21265,7 +21265,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router21.prototype.route = function route(path2) {
+    Router23.prototype.route = function route(path2) {
       const route2 = new Route(path2);
       const layer = new Layer(path2, {
         sensitive: this.caseSensitive,
@@ -21280,7 +21280,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router21.prototype[method] = function(path2) {
+      Router23.prototype[method] = function(path2) {
         const route = this.route(path2);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -21463,13 +21463,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve = __require("node:path").resolve;
     var once = require_once();
-    var Router21 = require_router();
+    var Router23 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports = module.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init() {
-      var router21 = null;
+      var router23 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -21478,13 +21478,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router21 === null) {
-            router21 = new Router21({
+          if (router23 === null) {
+            router23 = new Router23({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router21;
+          return router23;
         }
       });
     };
@@ -21555,15 +21555,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router21 = this.router;
+      var router23 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router21.use(path2, fn2);
+          return router23.use(path2, fn2);
         }
         debug(".use app under %s", path2);
         fn2.mountpath = path2;
         fn2.parent = this;
-        router21.use(path2, function mounted_app(req, res, next) {
+        router23.use(path2, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -24148,7 +24148,7 @@ var require_express = __commonJS({
     var EventEmitter = __require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router21 = require_router();
+    var Router23 = require_router();
     var req = require_request();
     var res = require_response();
     exports = module.exports = createApplication;
@@ -24170,8 +24170,8 @@ var require_express = __commonJS({
     exports.application = proto;
     exports.request = req;
     exports.response = res;
-    exports.Route = Router21.Route;
-    exports.Router = Router21;
+    exports.Route = Router23.Route;
+    exports.Router = Router23;
     exports.json = bodyParser.json;
     exports.raw = bodyParser.raw;
     exports.static = require_serve_static();
@@ -42537,12 +42537,12 @@ var require_lib6 = __commonJS({
 })();
 
 // src/app.ts
-var import_express21 = __toESM(require_express2(), 1);
+var import_express23 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_pino_http = __toESM(require_logger(), 1);
 
 // src/routes/index.ts
-var import_express20 = __toESM(require_express2(), 1);
+var import_express22 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
@@ -58281,6 +58281,7 @@ __export(schema_exports, {
   emailVerificationTokensTable: () => emailVerificationTokensTable,
   fileAssetsTable: () => fileAssetsTable,
   flashcardsTable: () => flashcardsTable,
+  getDescendantTopicIds: () => getDescendantTopicIds,
   gradingMethodValues: () => gradingMethodValues,
   insertAIChatMessageSchema: () => insertAIChatMessageSchema,
   insertAIChatSessionSchema: () => insertAIChatSessionSchema,
@@ -58298,6 +58299,7 @@ __export(schema_exports, {
   insertStudySessionSchema: () => insertStudySessionSchema,
   insertSubjectSchema: () => insertSubjectSchema,
   insertTestSchema: () => insertTestSchema,
+  insertTopicSchema: () => insertTopicSchema,
   insertUserQuestionStateSchema: () => insertUserQuestionStateSchema,
   insertUserSchema: () => insertUserSchema,
   passwordHistoryTable: () => passwordHistoryTable,
@@ -58321,6 +58323,7 @@ __export(schema_exports, {
   testModeValues: () => testModeValues,
   testQuestionsTable: () => testQuestionsTable,
   testsTable: () => testsTable,
+  topicsTable: () => topicsTable,
   totpBackupCodesTable: () => totpBackupCodesTable,
   totpCredentialsTable: () => totpCredentialsTable,
   userQuestionStateTable: () => userQuestionStateTable,
@@ -69800,6 +69803,27 @@ var sectionsTable = pgTable("sections", {
 });
 var insertSectionSchema = createInsertSchema(sectionsTable).omit({ id: true, createdAt: true, updatedAt: true });
 
+// ../../lib/db/src/schema/topics.ts
+var topicsTable = pgTable("topics", {
+  id: serial("id").primaryKey(),
+  subjectId: integer2("subject_id").notNull().references(() => subjectsTable.id),
+  parentId: integer2("parent_id"),
+  // Self-referencing topics(id) - nullable for top-level topics
+  name: text("name").notNull(),
+  orderIndex: integer2("order_index").notNull().default(0),
+  isArchived: boolean4("is_archived").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => /* @__PURE__ */ new Date())
+});
+var insertTopicSchema = createInsertSchema(topicsTable).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+function getDescendantTopicIds(topicId) {
+  return [topicId];
+}
+
 // ../../lib/db/src/schema/questions.ts
 var questionTypeValues = ["mcq", "short", "long"];
 var referenceTypeValues = ["board_paper", "coaching_paper", "other"];
@@ -80240,11 +80264,12 @@ async function checkIndexingStatus(operationName) {
     error: operation.error?.message
   };
 }
-async function explainFromBook(storeName, questionText) {
+async function explainFromBook(storeName, questionText, opts = {}) {
   const client2 = getGeminiClient();
+  const lang = languageInstruction(opts.language);
   const response = await client2.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `Explain this in the style of a textbook answer, citing the page it comes from: ${questionText}`,
+    contents: `${lang}Explain this in the style of a textbook answer, citing the page it comes from: ${questionText}`,
     config: {
       tools: [{ fileSearch: { fileSearchStoreNames: [storeName] } }]
     }
@@ -80265,9 +80290,11 @@ Reply with the book's actual answer and the page it's on.`,
   });
   return parseVerificationResponse(response);
 }
-async function generateQuestions(storeName, pageRange, questionType, count, topicFocus) {
+async function generateQuestions(storeName, pageRange, questionType, count, topicFocus, difficulty = "auto", language) {
   const client2 = getGeminiClient();
-  let prompt = `Generate ${count} ${questionType} questions from pages ${pageRange} of this textbook, with answers and page citations. `;
+  const lang = languageInstruction(language);
+  const difficultyText = difficulty === "harder" ? "Make these questions HARDER than a typical board exam question: combine concepts, require application and reasoning, avoid recall-only items. " : difficulty === "easier" ? "Make these questions EASIER than typical board exam difficulty to rebuild confidence: focus on direct recall, definitions, and one-concept basics. " : "Match the difficulty of a typical board exam. ";
+  let prompt = `${lang}${difficultyText}Generate ${count} ${questionType} questions from pages ${pageRange} of this textbook, with answers and page citations. `;
   if (topicFocus) {
     prompt += `Focus on: ${topicFocus}. `;
   }
@@ -80296,9 +80323,9 @@ Grade out of ${maxMarks} marks based on the textbook, citing what was missed.`,
   });
   return parseGradingResponse(response, maxMarks);
 }
-async function chatWithBook(storeName, messages) {
+async function chatWithBook(storeName, messages, opts = {}) {
   const client2 = getGeminiClient();
-  const contents = messages.map((m3) => `${m3.role}: ${m3.content}`).join("\n");
+  const contents = buildChat(messages, opts);
   const response = await client2.models.generateContent({
     model: "gemini-3-flash-preview",
     contents,
@@ -80307,6 +80334,152 @@ async function chatWithBook(storeName, messages) {
     }
   });
   return parseChatResponse(response);
+}
+async function* streamChatWithBook(storeName, messages, opts = {}) {
+  const client2 = getGeminiClient();
+  const contents = buildChat(messages, opts);
+  const stream = await client2.models.generateContentStream({
+    model: "gemini-3-flash-preview",
+    contents,
+    config: {
+      tools: [{ fileSearch: { fileSearchStoreNames: [storeName] } }]
+    }
+  });
+  let final = null;
+  for await (const chunk of stream) {
+    const text2 = chunk.text ?? "";
+    final = { text: text2, groundingMetadata: chunk.groundingMetadata };
+    if (text2) yield { type: "text", text: text2 };
+  }
+  const citations = parseGroundingCitations(final);
+  yield { type: "done", citations };
+}
+async function* streamExplainFromBook(storeName, questionText, opts = {}) {
+  const client2 = getGeminiClient();
+  const lang = languageInstruction(opts.language);
+  const stream = await client2.models.generateContentStream({
+    model: "gemini-3-flash-preview",
+    contents: `${lang}Explain this in the style of a textbook answer, citing the page it comes from: ${questionText}`,
+    config: {
+      tools: [{ fileSearch: { fileSearchStoreNames: [storeName] } }]
+    }
+  });
+  let accumulated = "";
+  let final = null;
+  for await (const chunk of stream) {
+    const text2 = chunk.text ?? "";
+    accumulated += text2;
+    final = { text: text2, groundingMetadata: chunk.groundingMetadata };
+    if (text2) yield { type: "text", text: text2 };
+  }
+  const citations = parseGroundingCitations(final);
+  yield { type: "done", explanation: accumulated, citations };
+}
+async function evaluateAnswerWithRubric(storeName, questionText, studentAnswer, rubric, totalMarks, opts = {}) {
+  const client2 = getGeminiClient();
+  const lang = languageInstruction(opts.language);
+  const rubricText = rubric && rubric.length > 0 ? rubric.map((r2) => `- ${r2.criterion} (${r2.marks} marks)`).join("\n") : `(no explicit rubric \u2014 judge holistically against ${totalMarks} total marks)`;
+  const response = await client2.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: `${lang}Grade this answer strictly against the marking rubric. For each criterion, decide how many of its marks the answer earns (0 to full), whether it was met, and a 1-line comment. Sum to a final total out of the rubric total.
+
+Question: ${questionText}
+Student answer: ${studentAnswer}
+Rubric (criterion = marks):
+${rubricText}
+
+Return EXACTLY a JSON object:
+{
+  "criteria": [{"criterion": "...", "marks": 2, "awarded": 1, "met": false, "comment": "..."}],
+  "marksTotal": <sum of rubric marks>,
+  "marksAwarded": <sum of awarded>,
+  "feedback": "2-3 sentence summary",
+  "missedPoints": ["..."]
+}`,
+    config: {
+      tools: [{ fileSearch: { fileSearchStoreNames: [storeName] } }],
+      responseMimeType: "application/json"
+    }
+  });
+  return parseRubricEvaluation(response, rubric, totalMarks);
+}
+function buildChat(messages, opts = {}) {
+  const mode = opts.mode ?? "answer";
+  const lang = languageInstruction(opts.language);
+  const tutorRule = mode === "tutor" ? `You are a Socratic tutor. Do NOT give the answer directly. Ask a short guiding question that helps the student arrive at the idea themselves. Only reveal the full answer if the student explicitly asks for it, admits they are stuck, or says "reveal". Keep it brief.` : "";
+  const parts = messages.map((m3) => `${m3.role}: ${m3.content}`).join("\n");
+  return `${lang}${tutorRule}
+You are a friendly study assistant answering from the textbook only. Be concise, cite pages, and do not use outside knowledge.
+
+${parts}`;
+}
+function languageInstruction(lang) {
+  switch (lang) {
+    case "urdu":
+      return "Reply in Urdu. ";
+    case "sindhi":
+      return "Reply in Sindhi. ";
+    case "english":
+      return "Reply in English. ";
+    case "auto":
+    default:
+      return "";
+  }
+}
+function finalAsResponse(r2) {
+  if (!r2) return {};
+  return { text: r2.text, groundingMetadata: r2.groundingMetadata };
+}
+function parseGroundingCitations(final) {
+  return parseCitations(finalAsResponse(final));
+}
+function parseCitations(r2) {
+  const raw = r2;
+  const citations = [];
+  if (raw.groundingMetadata?.groundingChunks && raw.groundingMetadata?.groundingSupports) {
+    for (const support of raw.groundingMetadata.groundingSupports) {
+      if (support.groundingChunkIndexes && support.segment?.text) {
+        for (const idx of support.groundingChunkIndexes) {
+          const chunk = raw.groundingMetadata.groundingChunks[idx];
+          if (chunk?.web?.title) {
+            const pageMatch = chunk.web.title.match(/p\.?\s*(\d+)/i);
+            const page = pageMatch ? parseInt(pageMatch[1], 10) : 0;
+            citations.push({
+              page,
+              filename: chunk.web.title,
+              snippet: support.segment.text
+            });
+          }
+        }
+      }
+    }
+  }
+  return citations;
+}
+function parseRubricEvaluation(response, rubric, totalMarks) {
+  const r2 = response;
+  let parsed = null;
+  try {
+    parsed = JSON.parse(r2.text ?? "{}");
+  } catch {
+  }
+  const criteria = Array.isArray(parsed?.criteria) && parsed.criteria.length > 0 ? parsed.criteria.map((c3) => ({
+    criterion: c3.criterion ?? "Unknown",
+    marks: c3.marks ?? 0,
+    awarded: Math.max(0, Math.min(c3.awarded ?? 0, c3.marks ?? 0)),
+    met: c3.met === true,
+    comment: c3.comment ?? ""
+  })) : (rubric ?? []).map((c3) => ({ criterion: c3.criterion, marks: c3.marks, awarded: 0, met: false, comment: "" }));
+  const realTotal = criteria.reduce((a2, c3) => a2 + c3.marks, 0) || totalMarks;
+  const awarded = parsed?.marksAwarded != null ? parsed.marksAwarded : criteria.reduce((a2, c3) => a2 + c3.awarded, 0);
+  return {
+    criteria,
+    marksAwarded: Math.max(0, Math.min(awarded, realTotal)),
+    marksTotal: realTotal,
+    feedback: parsed?.feedback ?? "Evaluation complete.",
+    missedPoints: parsed?.missedPoints ?? [],
+    citations: parseCitations(response)
+  };
 }
 function parseExplanationResponse(response) {
   const r2 = response;
@@ -80447,6 +80620,27 @@ function parseChatResponse(response) {
     }
   }
   return { content: text2, citations };
+}
+async function generateDailySummary(data, opts = {}) {
+  const client2 = getGeminiClient();
+  const lang = languageInstruction(opts.language);
+  const track = [
+    data.minutes > 0 ? `Studied ${data.minutes} minutes` : "No study time logged",
+    `${data.questionsSolved} questions solved`,
+    `${data.questionsAdded} questions added`,
+    `${data.testsTaken} test(s) taken`,
+    `${data.flashcardsReviewed} flashcards reviewed`,
+    `${data.revisionsCompleted} revision(s) completed`,
+    data.accuracy != null ? `${Math.round(data.accuracy * 100)}% overall accuracy (graded)` : "no graded attempts"
+  ].join(", ");
+  const weakLine = data.weakTopic ? ` Weak spot: ${data.weakTopic}.` : "";
+  const response = await client2.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: `${lang}Write ONE short paragraph (3-4 sentences) summarizing today's study session for a student. Include what they studied, how it went, one encouraging note, and one concrete recommendation for tomorrow. Be warm but concise. Do not invent numbers.
+
+Today's raw data \u2014 ${track}.${weakLine}`
+  });
+  return response.text?.trim() || "No summary available today.";
 }
 
 // src/routes/ai-bookstore.ts
@@ -80610,7 +80804,8 @@ router13.post("/ai/explain", requireAuth, async (req, res) => {
     return;
   }
   try {
-    const result = await explainFromBook(store.geminiStoreName, body.data.questionText);
+    const language = ["english", "urdu", "sindhi", "auto"].includes(req.body?.language) ? req.body.language : "auto";
+    const result = await explainFromBook(store.geminiStoreName, body.data.questionText, { language });
     await writeAudit(req, {
       action: "AI_EXPLAIN",
       entityType: "ai_explanation",
@@ -80625,6 +80820,59 @@ router13.post("/ai/explain", requireAuth, async (req, res) => {
   } catch (error41) {
     console.error("Error generating explanation:", error41);
     res.status(500).json({ error: "Failed to generate explanation" });
+  }
+});
+router13.post("/ai/explain/stream", requireAuth, async (req, res) => {
+  const body = ExplainFromBookBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+  const language = ["english", "urdu", "sindhi", "auto"].includes(req.body?.language) ? req.body.language : "auto";
+  let subjectId = body.data.subjectId;
+  if (!subjectId && body.data.questionId) {
+    const [question] = await db.select({ subjectId: chaptersTable.subjectId }).from(questionsTable).innerJoin(sectionsTable, eq(questionsTable.sectionId, sectionsTable.id)).innerJoin(chaptersTable, eq(sectionsTable.chapterId, chaptersTable.id)).where(eq(questionsTable.id, body.data.questionId));
+    if (question) subjectId = question.subjectId;
+  }
+  if (!subjectId) {
+    res.status(400).json({ error: "subjectId or questionId required" });
+    return;
+  }
+  const [store] = await db.select().from(bookStoresTable).where(eq(bookStoresTable.subjectId, subjectId));
+  if (!store) {
+    res.status(404).json({ error: "Book store not found for this subject" });
+    return;
+  }
+  if (store.status !== "ready") {
+    res.status(400).json({ error: "Book store not ready for queries" });
+    return;
+  }
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+  const writeEvent = (data) => res.write(`data: ${JSON.stringify(data)}
+
+`);
+  try {
+    let accumulated = "";
+    for await (const chunk of streamExplainFromBook(store.geminiStoreName, body.data.questionText, { language })) {
+      if (chunk.type === "text") {
+        accumulated += chunk.text;
+        writeEvent({ type: "text", text: chunk.text });
+      } else if (chunk.type === "done") {
+        writeEvent({ type: "done", explanation: chunk.explanation, citations: chunk.citations, subjectId });
+      }
+    }
+    res.end();
+  } catch (error41) {
+    console.error("Error streaming explanation:", error41);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to generate explanation" });
+      return;
+    }
+    writeEvent({ type: "error", message: "Stream interrupted. Please try again." });
+    res.end();
   }
 });
 var ai_explain_default = router13;
@@ -80831,6 +81079,12 @@ function parseId9(raw) {
   const s = Array.isArray(raw) ? raw[0] : raw;
   return parseFloat(s);
 }
+async function subjectAccuracy(userId, subjectId) {
+  const rows = await db.select({ isCorrect: attemptAnswersTable.isCorrect }).from(attemptAnswersTable).innerJoin(testAttemptsTable, eq(attemptAnswersTable.attemptId, testAttemptsTable.id)).innerJoin(questionsTable, eq(attemptAnswersTable.questionId, questionsTable.id)).innerJoin(sectionsTable, eq(questionsTable.sectionId, sectionsTable.id)).innerJoin(chaptersTable, eq(sectionsTable.chapterId, chaptersTable.id)).where(and(eq(testAttemptsTable.userId, userId), eq(chaptersTable.subjectId, subjectId), isNotNull(attemptAnswersTable.isCorrect)));
+  if (rows.length === 0) return null;
+  const correct = rows.filter((r2) => r2.isCorrect).length;
+  return correct / rows.length;
+}
 router15.post("/chapters/:chapterId/ai-generate-questions", requireEditor, async (req, res) => {
   const params = GenerateAIQuestionsParams.safeParse({ chapterId: parseId9(req.params.chapterId) });
   if (!params.success) {
@@ -80853,12 +81107,27 @@ router15.post("/chapters/:chapterId/ai-generate-questions", requireEditor, async
     return;
   }
   try {
+    let difficulty = "auto";
+    const rawDifficulty = req.body?.difficulty;
+    if (rawDifficulty === "easier" || rawDifficulty === "harder") {
+      difficulty = rawDifficulty;
+    } else {
+      const genUser = req.user;
+      const accuracy = await subjectAccuracy(genUser.id, chapter.subjectId);
+      if (accuracy != null) {
+        if (accuracy < 0.5) difficulty = "easier";
+        else if (accuracy >= 0.85) difficulty = "harder";
+      }
+    }
+    const language = ["english", "urdu", "sindhi", "auto"].includes(req.body?.language) ? req.body.language : "auto";
     const drafts = await generateQuestions(
       store.geminiStoreName,
       body.data.pageRange,
       body.data.questionType,
       body.data.count,
-      body.data.topicFocus ?? void 0
+      body.data.topicFocus ?? void 0,
+      difficulty,
+      language
     );
     const savedDrafts = [];
     for (const draft of drafts) {
@@ -81190,6 +81459,9 @@ router17.post("/ai/chat/sessions/:sessionId/messages", requireAuth, async (req, 
     res.status(400).json({ error: body.error.message });
     return;
   }
+  const extra = req.body ?? {};
+  const mode = extra.mode === "tutor" ? "tutor" : "answer";
+  const language = ["english", "urdu", "sindhi", "auto"].includes(extra.language ?? "") ? extra.language : "auto";
   const [session] = await db.select().from(aiChatSessionsTable).where(and(eq(aiChatSessionsTable.id, params.data.sessionId), eq(aiChatSessionsTable.userId, user.id)));
   if (!session) {
     res.status(404).json({ error: "Chat session not found" });
@@ -81209,7 +81481,7 @@ router17.post("/ai/chat/sessions/:sessionId/messages", requireAuth, async (req, 
   try {
     const messages = history.map((m3) => ({ role: m3.role, content: m3.content }));
     messages.push({ role: "user", content: body.data.content });
-    const result = await chatWithBook(store.geminiStoreName, messages);
+    const result = await chatWithBook(store.geminiStoreName, messages, { mode, language });
     const [assistantMessage] = await db.insert(aiChatMessagesTable).values({
       sessionId: session.id,
       role: "assistant",
@@ -81234,10 +81506,234 @@ router17.post("/ai/chat/sessions/:sessionId/messages", requireAuth, async (req, 
     res.status(500).json({ error: "Failed to get AI response" });
   }
 });
+router17.post("/ai/chat/sessions/:sessionId/messages/stream", requireAuth, async (req, res) => {
+  const user = req.user;
+  const params = SendAIChatMessageParams.safeParse({ sessionId: parseId11(req.params.sessionId) });
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+  const body = SendAIChatMessageBody.safeParse(req.body);
+  if (!body.success) {
+    res.status(400).json({ error: body.error.message });
+    return;
+  }
+  const extra = req.body ?? {};
+  const mode = extra.mode === "tutor" ? "tutor" : "answer";
+  const language = ["english", "urdu", "sindhi", "auto"].includes(extra.language ?? "") ? extra.language : "auto";
+  const [session] = await db.select().from(aiChatSessionsTable).where(and(eq(aiChatSessionsTable.id, params.data.sessionId), eq(aiChatSessionsTable.userId, user.id)));
+  if (!session) {
+    res.status(404).json({ error: "Chat session not found" });
+    return;
+  }
+  const [store] = await db.select().from(bookStoresTable).where(and(eq(bookStoresTable.subjectId, session.subjectId), eq(bookStoresTable.status, "ready")));
+  if (!store) {
+    res.status(404).json({ error: "No ready book store for this subject" });
+    return;
+  }
+  const [userMessage] = await db.insert(aiChatMessagesTable).values({
+    sessionId: session.id,
+    role: "user",
+    content: body.data.content
+  }).returning();
+  const history = await db.select().from(aiChatMessagesTable).where(eq(aiChatMessagesTable.sessionId, session.id)).orderBy(asc(aiChatMessagesTable.createdAt)).limit(20);
+  const messages = history.map((m3) => ({ role: m3.role, content: m3.content }));
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+  const writeEvent = (data) => res.write(`data: ${JSON.stringify(data)}
+
+`);
+  try {
+    writeEvent({ type: "meta", userMessageId: userMessage.id });
+    let accumulated = "";
+    for await (const chunk of streamChatWithBook(store.geminiStoreName, messages, { mode, language })) {
+      if (chunk.type === "text") {
+        accumulated += chunk.text;
+        writeEvent({ type: "text", text: chunk.text });
+      } else if (chunk.type === "done") {
+        const [assistantMessage] = await db.insert(aiChatMessagesTable).values({
+          sessionId: session.id,
+          role: "assistant",
+          content: accumulated,
+          citationsJson: chunk.citations
+        }).returning();
+        await writeAudit(req, {
+          action: "AI_CHAT_MESSAGE",
+          entityType: "ai_chat_message",
+          entityId: assistantMessage.id,
+          detail: `Streamed AI response in session ${session.id}`
+        });
+        writeEvent({ type: "done", assistantMessageId: assistantMessage.id, citations: chunk.citations });
+      }
+    }
+    res.end();
+  } catch (error41) {
+    console.error("Error streaming chat:", error41);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to get AI response" });
+      return;
+    }
+    writeEvent({ type: "error", message: "Stream interrupted. Please try again." });
+    res.end();
+  }
+});
 var ai_chat_default = router17;
 
-// src/routes/textbooks.ts
+// src/routes/ai-evaluator.ts
 var import_express18 = __toESM(require_express2(), 1);
+var router18 = (0, import_express18.Router)();
+router18.post("/ai/evaluate", requireAuth, async (req, res) => {
+  const body = req.body;
+  if (!body || !body.subjectId || !body.question || !body.studentAnswer) {
+    res.status(400).json({ error: "subjectId, question, and studentAnswer are required" });
+    return;
+  }
+  const invalidRubric = Array.isArray(body.rubric) && body.rubric.some((c3) => !c3.criterion || typeof c3.marks !== "number" || c3.marks < 0);
+  if (Array.isArray(body.rubric) && (body.rubric.length < 1 || invalidRubric)) {
+    res.status(400).json({ error: "Rubric must be a non-empty array of {criterion, marks}" });
+    return;
+  }
+  const [store] = await db.select().from(bookStoresTable).where(eq(bookStoresTable.subjectId, body.subjectId));
+  if (!store) {
+    res.status(404).json({ error: "Book store not found for this subject" });
+    return;
+  }
+  if (store.status !== "ready") {
+    res.status(400).json({ error: "Book store not ready for queries" });
+    return;
+  }
+  try {
+    const result = await evaluateAnswerWithRubric(
+      store.geminiStoreName,
+      body.question,
+      body.studentAnswer,
+      Array.isArray(body.rubric) && body.rubric.length > 0 ? body.rubric : null,
+      body.totalMarks ?? 0,
+      { language: ["english", "urdu", "sindhi", "auto"].includes(body.language ?? "") ? body.language : "auto" }
+    );
+    await writeAudit(req, {
+      action: "AI_EVALUATE_ANSWER",
+      entityType: "ai_evaluation",
+      entityId: null,
+      detail: `Rubric evaluation for subject ${body.subjectId}`
+    });
+    res.json(result);
+  } catch (error41) {
+    console.error("Error evaluating answer:", error41);
+    res.status(500).json({ error: "Failed to evaluate answer" });
+  }
+});
+var ai_evaluator_default = router18;
+
+// src/routes/ai-summary.ts
+var import_express19 = __toESM(require_express2(), 1);
+var router19 = (0, import_express19.Router)();
+var dailyCache = /* @__PURE__ */ new Map();
+router19.get("/ai/summary/daily", requireAuth, async (req, res) => {
+  const user = req.user;
+  const language = ["english", "urdu", "sindhi"].includes(req.query?.language) ? req.query.language : "english";
+  const today = todayISO();
+  const cached3 = dailyCache.get(user.id);
+  if (cached3 && cached3.day === today && cached3.language === language) {
+    res.json({ summary: cached3.summary, cached: true, day: today });
+    return;
+  }
+  try {
+    const [aggregate] = await db.select({
+      minutes: sql`coalesce(sum(${studySessionsTable.minutes}), 0)::int`,
+      events: sql`count(*)::int`
+    }).from(studySessionsTable).where(and(eq(studySessionsTable.userId, user.id), sql`${studySessionsTable.activityDate} = ${today}`));
+    const dayRows = await db.select({ type: studySessionsTable.type, count: studySessionsTable.count, minutes: studySessionsTable.minutes }).from(studySessionsTable).where(and(eq(studySessionsTable.userId, user.id), sql`${studySessionsTable.activityDate} = ${today}`));
+    let minutes = 0;
+    let questionsSolved = 0;
+    let questionsAdded = 0;
+    let testsTaken = 0;
+    let flashcardsReviewed = 0;
+    let revisionsCompleted = 0;
+    for (const row of dayRows) {
+      minutes += row.minutes ?? 0;
+      switch (row.type) {
+        case "questions_solved":
+          questionsSolved += row.count ?? 1;
+          break;
+        case "questions_added":
+          questionsAdded += row.count ?? 1;
+          break;
+        case "test_taken":
+          testsTaken += row.count ?? 1;
+          break;
+        case "flashcards_reviewed":
+          flashcardsReviewed += row.count ?? 1;
+          break;
+        case "revision_completed":
+          revisionsCompleted += row.count ?? 1;
+          break;
+      }
+    }
+    const attempts = await db.select({ isCorrect: attemptAnswersTable.isCorrect }).from(attemptAnswersTable).innerJoin(testAttemptsTable, eq(attemptAnswersTable.attemptId, testAttemptsTable.id)).where(and(
+      eq(testAttemptsTable.userId, user.id),
+      isNotNull(attemptAnswersTable.isCorrect),
+      sql`${testAttemptsTable.submittedAt}::date = ${today}`
+    ));
+    const accuracy = attempts.length > 0 ? attempts.filter((a2) => a2.isCorrect).length / attempts.length : null;
+    const stats = await getTopicStats(user.id);
+    const weak = stats.filter((s) => s.attempts >= 3 && s.accuracy < 0.6).sort((a2, b3) => b3.mastery - a2.mastery).pop();
+    const weakTopic = weak ? `${weak.chapterName} (${Math.round(weak.accuracy * 100)}% accuracy)` : null;
+    const hasData = (aggregate?.events ?? 0) > 0 || attempts.length > 0;
+    if (!hasData) {
+      res.json({ summary: null, day: today, message: "No study activity recorded today yet." });
+      return;
+    }
+    const summary = await generateDailySummary(
+      {
+        minutes,
+        questionsSolved,
+        questionsAdded,
+        testsTaken,
+        flashcardsReviewed,
+        revisionsCompleted,
+        accuracy,
+        weakTopic
+      },
+      { language }
+    );
+    dailyCache.set(user.id, { summary, day: today, language });
+    await writeAudit(req, {
+      action: "AI_DAILY_SUMMARY",
+      entityType: "ai_summary",
+      entityId: null,
+      detail: `Generated daily study summary`
+    });
+    res.json({ summary, cached: false, day: today });
+  } catch (error41) {
+    console.error("Error generating daily summary:", error41);
+    res.status(500).json({ error: "Failed to generate daily summary" });
+  }
+});
+router19.get("/ai/weak-topics", requireAuth, async (req, res) => {
+  const user = req.user;
+  const subjectName = String(req.query.subjectName ?? "").trim();
+  try {
+    const stats = await getTopicStats(user.id);
+    const filtered = subjectName ? stats.filter((s) => s.subjectName === subjectName) : stats;
+    const weakies = filtered.filter((s) => s.attempts >= 3 && s.accuracy < 0.6).sort((a2, b3) => b3.mastery - a2.mastery);
+    const strongest = filtered.filter((s) => s.attempts >= 3).sort((a2, b3) => b3.accuracy - a2.accuracy)[0] ?? null;
+    res.json({
+      weakest: weakies.length > 0 ? weakies : null,
+      strongest,
+      hasData: filtered.some((s) => s.attempts >= 3)
+    });
+  } catch (error41) {
+    console.error("Error computing weak topics:", error41);
+    res.status(500).json({ error: "Failed to compute weak topics" });
+  }
+});
+var ai_summary_default = router19;
+
+// src/routes/textbooks.ts
+var import_express20 = __toESM(require_express2(), 1);
 
 // ../../lib/textbooks/src/storage.ts
 import { promises as fs } from "node:fs";
@@ -81459,12 +81955,12 @@ ${c3.text}`;
 var INSTREAM_CHUNK_SIZE = 32 * 1024;
 
 // src/routes/textbooks.ts
-var router18 = (0, import_express18.Router)();
+var router20 = (0, import_express20.Router)();
 function parseId12(raw) {
   const s = Array.isArray(raw) ? raw[0] : raw;
   return Number(s);
 }
-router18.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
+router20.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const subjectId = parseId12(req.params.subjectId);
   if (!Number.isInteger(subjectId) || subjectId <= 0) {
     res.status(400).json({ error: "Invalid subjectId" });
@@ -81473,7 +81969,7 @@ router18.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const assets = await db.select().from(fileAssetsTable).where(eq(fileAssetsTable.subjectId, subjectId)).orderBy(desc(fileAssetsTable.id));
   res.json({ assets });
 });
-router18.post("/books/:subjectId/answer", requireAuth, async (req, res) => {
+router20.post("/books/:subjectId/answer", requireAuth, async (req, res) => {
   const subjectId = parseId12(req.params.subjectId);
   if (!Number.isInteger(subjectId) || subjectId <= 0) {
     res.status(400).json({ error: "Invalid subjectId" });
@@ -81537,10 +82033,10 @@ router18.post("/books/:subjectId/answer", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Failed to generate answer" });
   }
 });
-var textbooks_default = router18;
+var textbooks_default = router20;
 
 // src/routes/files.ts
-var import_express19 = __toESM(require_express2(), 1);
+var import_express21 = __toESM(require_express2(), 1);
 import { randomUUID } from "node:crypto";
 var GetUploadUrlBody = external_exports2.object({
   subjectId: external_exports2.number(),
@@ -81562,9 +82058,9 @@ function parseId13(raw) {
   const s = Array.isArray(raw) ? raw[0] : raw;
   return parseFloat(s);
 }
-var router19 = (0, import_express19.Router)();
+var router21 = (0, import_express21.Router)();
 var UPLOAD_EXPIRY_SECONDS = 3600;
-router19.post("/files/upload-url", requireEditor, async (req, res) => {
+router21.post("/files/upload-url", requireEditor, async (req, res) => {
   const user = req.user;
   const body = GetUploadUrlBody.safeParse(req.body);
   if (!body.success) {
@@ -81602,7 +82098,7 @@ router19.post("/files/upload-url", requireEditor, async (req, res) => {
   }
   res.json({ assetId: asset.id, uploadUrl, storageKey, expiresIn: UPLOAD_EXPIRY_SECONDS });
 });
-router19.post("/files/direct-upload", requireEditor, async (req, res) => {
+router21.post("/files/direct-upload", requireEditor, async (req, res) => {
   const storageKey = req.query.storageKey;
   if (!storageKey) {
     res.status(400).json({ error: "storageKey query parameter required" });
@@ -81623,7 +82119,7 @@ router19.post("/files/direct-upload", requireEditor, async (req, res) => {
     res.status(500).json({ error: "Failed to save file" });
   }
 });
-router19.post("/files/:assetId/complete", requireEditor, async (req, res) => {
+router21.post("/files/:assetId/complete", requireEditor, async (req, res) => {
   const user = req.user;
   const params = CompleteUploadParams.safeParse({ assetId: parseId13(req.params.assetId) });
   if (!params.success) {
@@ -81651,7 +82147,7 @@ router19.post("/files/:assetId/complete", requireEditor, async (req, res) => {
   });
   res.json({ assetId: asset.id, status: "queued_for_processing" });
 });
-router19.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
+router21.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const params = ListFileAssetsParams.safeParse({ subjectId: parseId13(req.params.subjectId) });
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -81660,7 +82156,7 @@ router19.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const assets = await db.select().from(fileAssetsTable).where(eq(fileAssetsTable.subjectId, params.data.subjectId)).orderBy(desc(fileAssetsTable.id));
   res.json({ assets });
 });
-router19.get("/files/serve", requireAuth, async (req, res) => {
+router21.get("/files/serve", requireAuth, async (req, res) => {
   const storageKey = req.query.storageKey;
   if (!storageKey) {
     res.status(400).json({ error: "storageKey query parameter required" });
@@ -81679,33 +82175,35 @@ router19.get("/files/serve", requireAuth, async (req, res) => {
     res.status(404).json({ error: "File not found" });
   }
 });
-var files_default = router19;
+var files_default = router21;
 
 // src/routes/index.ts
-var router20 = (0, import_express20.Router)();
-router20.use(health_default);
-router20.use(auth_default);
-router20.use(auth_2fa_default);
-router20.use(dashboard_default);
-router20.use(curriculum_default);
-router20.use(questions_default);
-router20.use(tests_default);
-router20.use(flashcards_default);
-router20.use(userQuestionState_default);
-router20.use(learning_hub_default);
-router20.use(analytics_default);
-router20.use(ai_bookstore_default);
-router20.use(ai_explain_default);
-router20.use(ai_verification_default);
-router20.use(ai_generation_default);
-router20.use(ai_grading_default);
-router20.use(ai_chat_default);
-router20.use(textbooks_default);
-router20.use(files_default);
-var routes_default = router20;
+var router22 = (0, import_express22.Router)();
+router22.use(health_default);
+router22.use(auth_default);
+router22.use(auth_2fa_default);
+router22.use(dashboard_default);
+router22.use(curriculum_default);
+router22.use(questions_default);
+router22.use(tests_default);
+router22.use(flashcards_default);
+router22.use(userQuestionState_default);
+router22.use(learning_hub_default);
+router22.use(analytics_default);
+router22.use(ai_bookstore_default);
+router22.use(ai_explain_default);
+router22.use(ai_verification_default);
+router22.use(ai_generation_default);
+router22.use(ai_grading_default);
+router22.use(ai_chat_default);
+router22.use(ai_evaluator_default);
+router22.use(ai_summary_default);
+router22.use(textbooks_default);
+router22.use(files_default);
+var routes_default = router22;
 
 // src/app.ts
-var app = (0, import_express21.default)();
+var app = (0, import_express23.default)();
 app.use(
   (0, import_pino_http.default)({
     logger,
@@ -81726,8 +82224,8 @@ app.use(
   })
 );
 app.use((0, import_cors.default)());
-app.use(import_express21.default.json());
-app.use(import_express21.default.urlencoded({ extended: true }));
+app.use(import_express23.default.json());
+app.use(import_express23.default.urlencoded({ extended: true }));
 app.use("/api", routes_default);
 var app_default = app;
 

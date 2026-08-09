@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { Shell } from "@/components/layout/shell";
 import {
@@ -9,7 +9,6 @@ import {
   useCreateBookStore,
   useIndexBook,
   useGetIndexingStatus,
-  useExplainFromBook,
   useListAIVerifications,
   useAcceptAIVerification,
   useDismissAIVerification,
@@ -72,6 +71,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { streamExplain, type ReplyLanguage, REPLY_LANGUAGES } from "@/lib/ai-stream";
 
 type TabKey = "chat" | "explain" | "verification" | "drafts" | "index" | "evaluator";
 
@@ -294,6 +294,17 @@ export default function AIKnowledgeEnginePage() {
   const readyAsset = assets.find((a) => a.processingStatus === "done");
   const totalPages = store?.indexedPages ?? readyAsset?.pageCount ?? 0;
 
+  const { data: weakTopics } = useQuery({
+    queryKey: ["aiWeakTopics", subject?.name],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (subject?.name) params.set("subjectName", subject.name);
+      const qs = params.toString();
+      return customFetch(qs ? `/api/ai/weak-topics?${qs}` : "/api/ai/weak-topics");
+    },
+    enabled: !!subject && subject.id > 0 && isIndexed,
+  });
+
   const [aiUsage, setAiUsage] = useState({ queries: 23, cost: 0.4 });
 
   const handleTabChange = useCallback((v: string) => {
@@ -401,6 +412,35 @@ export default function AIKnowledgeEnginePage() {
           </div>
         </div>
       </div>
+
+      {(weakTopics as any)?.hasData && (
+        <div className="mt-4 border border-border bg-card p-3 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-amber-400">
+            <AlertTriangle className="h-3.5 w-3.5" />
+            AI Profile
+          </div>
+          {(weakTopics as any)?.weakest && (weakTopics as any)?.weakest.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-[9px] text-muted-foreground uppercase">Weak topics:</span>
+              {(weakTopics as any).weakest.slice(0, 3).map((t: any, i: number) => (
+                <Badge key={i} variant="outline" className="text-[9px] font-mono border-amber-400/40 text-amber-400">
+                  {t.sectionName} · {Math.round(t.accuracy * 100)}%
+                </Badge>
+              ))}
+            </div>
+          ) : (
+            <span className="font-mono text-[9px] text-muted-foreground uppercase">No chronic weak topics · good standing</span>
+          )}
+          {(weakTopics as any)?.strongest && (
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[9px] text-muted-foreground uppercase">Strongest:</span>
+              <Badge variant="outline" className="text-[9px] font-mono border-teal-400/40 text-teal-400">
+                {(weakTopics as any).strongest.sectionName} · {Math.round((weakTopics as any).strongest.accuracy * 100)}%
+              </Badge>
+            </div>
+          )}
+        </div>
+      )}
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid grid-cols-3 md:grid-cols-6 h-auto p-0.5 mb-4 bg-sidebar">
@@ -1002,7 +1042,6 @@ function ExplainFromBookTab({ subjectId, store, totalPages, onUsage }: {
   subjectId: number; store: any; totalPages: number; onUsage: () => void;
 }) {
   const { toast } = useToast();
-  const { mutate: explain, isPending: explaining } = useExplainFromBook();
   const createFlashcardMutation = useMutation({
     mutationFn: async (data: { subjectId: number; question: string; answer: string; sourcePage: number; sourceCitation: string }) => {
       return customFetch("/api/ai/explain/flashcard", { method: "POST", body: JSON.stringify(data) });
@@ -1012,10 +1051,13 @@ function ExplainFromBookTab({ subjectId, store, totalPages, onUsage }: {
   });
 
   const [question, setQuestion] = useState("");
+  const [language, setLanguage] = useState<ReplyLanguage>("auto");
   const [history, setHistory] = useState<Array<{ q: string; answer: string; citations: Citation[]; confidence?: number }>>([]);
   const [currentAnswer, setCurrentAnswer] = useState<string | null>(null);
   const [currentCitations, setCurrentCitations] = useState<Citation[]>([]);
   const [currentConfidence, setCurrentConfidence] = useState<number | undefined>(undefined);
+  const [streaming, setStreaming] = useState(false);
+  const abortRef = useRef<(() => void) | null>(null);
 
   const suggestions = [
     "Explain the core concept of the first chapter",
@@ -1024,24 +1066,42 @@ function ExplainFromBookTab({ subjectId, store, totalPages, onUsage }: {
     "Walk through the proof of the Pythagorean theorem",
   ];
 
+  const handleAbort = () => {
+    abortRef.current?.();
+    abortRef.current = null;
+    setStreaming(false);
+  };
+
   const handleExplain = () => {
     if (!question.trim() || !store?.geminiStoreName) return;
     const q = question.trim();
-    explain(
-      { data: { questionText: q, subjectId } },
+
+    abortRef.current?.();
+    setCurrentAnswer("");
+    setCurrentCitations([]);
+    setCurrentConfidence(undefined);
+    setStreaming(true);
+    setQuestion("");
+
+    onUsage();
+    abortRef.current = streamExplain(
+      { questionText: q, subjectId, language },
       {
-        onSuccess: (res: any) => {
+        onText: (text) => setCurrentAnswer((prev) => (prev ?? "") + text),
+        onDone: (res) => {
           const answer = res.explanation ?? "No explanation returned.";
           const cits: Citation[] = res.citations ?? [];
           const conf = cits.length > 0 ? 0.5 + Math.min(cits.length * 0.15, 0.45) : 0.2;
           setCurrentAnswer(answer);
           setCurrentCitations(cits);
-          setCurrentConfidence(res.confidence ?? conf);
-          setHistory((h) => [{ q, answer, citations: cits, confidence: res.confidence ?? conf }, ...h].slice(0, 10));
-          setQuestion("");
-          onUsage();
+          setCurrentConfidence(conf);
+          setHistory((h) => [{ q, answer, citations: cits, confidence: conf }, ...h].slice(0, 10));
+          setStreaming(false);
         },
-        onError: () => toast({ title: "Explanation failed", variant: "destructive" }),
+        onError: (message) => {
+          setStreaming(false);
+          toast({ title: "Explanation failed", description: message, variant: "destructive" });
+        },
       }
     );
   };
@@ -1087,7 +1147,19 @@ function ExplainFromBookTab({ subjectId, store, totalPages, onUsage }: {
               }
             }}
           />
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            <Select value={language} onValueChange={(v) => setLanguage(v as ReplyLanguage)}>
+              <SelectTrigger className="h-6 w-[140px] font-mono text-[9px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {REPLY_LANGUAGES.map((l) => (
+                  <SelectItem key={l.value} value={l.value} className="font-mono text-[10px]">
+                    {l.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {suggestions.map((s) => (
               <Button
                 key={s}
@@ -1104,15 +1176,21 @@ function ExplainFromBookTab({ subjectId, store, totalPages, onUsage }: {
             <span className="font-mono text-[9px] text-muted-foreground uppercase">
               Press ENTER to send · SHIFT+ENTER for newline
             </span>
-            <Button onClick={handleExplain} disabled={explaining || !question.trim()} size="sm">
-              {explaining ? <><Loader2 className="mr-2 h-3 w-3 animate-spin" /> MINING...</> : <><Sparkles className="mr-2 h-3 w-3" /> EXPLAIN</>}
-            </Button>
+            {streaming ? (
+              <Button onClick={handleAbort} variant="outline" size="sm">
+                <X className="mr-2 h-3 w-3" /> STOP
+              </Button>
+            ) : (
+              <Button onClick={handleExplain} disabled={!question.trim()} size="sm">
+                <><Sparkles className="mr-2 h-3 w-3" /> EXPLAIN</>
+              </Button>
+            )}
           </div>
         </div>
 
         {/* Result / History */}
         <div className="space-y-3">
-          {currentAnswer && (
+          {(currentAnswer != null || streaming) && (
             <div className={cn("border p-4 animate-in slide-in-from-bottom-2 duration-200", TAB_COLORS.explain.accentBorder, TAB_COLORS.explain.accentBg)}>
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2">
@@ -1157,6 +1235,11 @@ function ExplainFromBookTab({ subjectId, store, totalPages, onUsage }: {
               )}
 
               <div className="mt-4 pt-3 border-t border-border/60 flex flex-wrap items-center gap-2">
+                {streaming && (
+                  <span className="font-mono text-[9px] text-muted-foreground uppercase flex items-center gap-1.5">
+                    <Loader2 className="h-3 w-3 animate-spin text-purple-400" /> streaming...
+                  </span>
+                )}
                 <Button
                   size="sm"
                   variant="outline"

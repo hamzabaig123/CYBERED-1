@@ -2431,6 +2431,8 @@ export declare const GenerateAIQuestionsParams: zod.ZodObject<{
     chapterId: zod.z.ZodCoercedNumber<unknown>;
 }, zod.z.core.$strip>;
 export declare const generateAIQuestionsBodyCountMax = 20;
+export declare const generateAIQuestionsBodyDifficultyDefault = "auto";
+export declare const generateAIQuestionsBodyLanguageDefault = "auto";
 export declare const GenerateAIQuestionsBody: zod.ZodObject<{
     pageRange: zod.ZodString;
     questionType: zod.ZodEnum<{
@@ -2440,6 +2442,17 @@ export declare const GenerateAIQuestionsBody: zod.ZodObject<{
     }>;
     count: zod.ZodNumber;
     topicFocus: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
+    difficulty: zod.ZodDefault<zod.ZodEnum<{
+        auto: "auto";
+        easier: "easier";
+        harder: "harder";
+    }>>;
+    language: zod.ZodDefault<zod.ZodEnum<{
+        auto: "auto";
+        english: "english";
+        urdu: "urdu";
+        sindhi: "sindhi";
+    }>>;
 }, zod.z.core.$strip>;
 export declare const GenerateAIQuestionsResponse: zod.ZodObject<{
     drafts: zod.ZodArray<zod.ZodObject<{

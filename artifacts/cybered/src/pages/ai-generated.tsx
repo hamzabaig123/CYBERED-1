@@ -18,6 +18,8 @@ import { AIGeneratedBadge } from "@/components/ai/ai-generated-badge";
 import { CitationChip } from "@/components/ai/citation-chip";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, Check, X, FileQuestion, ArrowLeft, Layers } from "lucide-react";
+import type { ReplyLanguage, } from "@/lib/ai-stream";
+import { REPLY_LANGUAGES } from "@/lib/ai-stream";
 
 const STATUS_FILTERS = [
   { value: "pending", label: "Unreviewed" },
@@ -56,11 +58,23 @@ export default function GeneratedQuestionsReviewPage() {
   const [questionType, setQuestionType] = useState<"mcq" | "short" | "long">("mcq");
   const [count, setCount] = useState(5);
   const [topicFocus, setTopicFocus] = useState("");
+  const [difficulty, setDifficulty] = useState<"auto" | "easier" | "harder">("auto");
+  const [language, setLanguage] = useState<ReplyLanguage>("auto");
 
   const handleGenerate = () => {
     if (!pageRange.trim() || count < 1 || count > 20) return;
     generate(
-      { chapterId, data: { pageRange: pageRange.trim(), questionType, count, topicFocus: topicFocus.trim() || null } },
+      {
+        chapterId,
+        data: {
+          pageRange: pageRange.trim(),
+          questionType,
+          count,
+          topicFocus: topicFocus.trim() || null,
+          difficulty,
+          language,
+        },
+      },
       {
         onSuccess: () => {
           toast({ title: "Drafts generated", description: "Ready for review." });
@@ -144,6 +158,30 @@ export default function GeneratedQuestionsReviewPage() {
               value={topicFocus}
               onChange={(e) => setTopicFocus(e.target.value)}
             />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="font-mono text-[10px] uppercase text-muted-foreground">Difficulty</label>
+            <Select value={difficulty} onValueChange={(v) => setDifficulty(v as any)}>
+              <SelectTrigger className="h-9 font-mono text-[10px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="auto">Auto (adaptive)</SelectItem>
+                <SelectItem value="easier">Easier</SelectItem>
+                <SelectItem value="harder">Harder</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="font-mono text-[10px] uppercase text-muted-foreground">Language</label>
+            <Select value={language} onValueChange={(v) => setLanguage(v as ReplyLanguage)}>
+              <SelectTrigger className="h-9 font-mono text-[10px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {REPLY_LANGUAGES.map((l) => (
+                  <SelectItem key={l.value} value={l.value} className="font-mono text-[10px]">
+                    {l.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <Button onClick={handleGenerate} disabled={!pageRange.trim() || count < 1 || count > 20}>

@@ -5,6 +5,8 @@
  * CyberEd API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { GenerateQuestionsInputDifficulty } from './generateQuestionsInputDifficulty';
+import type { GenerateQuestionsInputLanguage } from './generateQuestionsInputLanguage';
 import type { GenerateQuestionsInputQuestionType } from './generateQuestionsInputQuestionType';
 export interface GenerateQuestionsInput {
     pageRange: string;
@@ -16,5 +18,7 @@ export interface GenerateQuestionsInput {
     count: number;
     /** @nullable */
     topicFocus?: string | null;
+    difficulty?: GenerateQuestionsInputDifficulty;
+    language?: GenerateQuestionsInputLanguage;
 }
 //# sourceMappingURL=generateQuestionsInput.d.ts.map

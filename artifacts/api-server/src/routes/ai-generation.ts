@@ -13,13 +13,30 @@ import {
 import { requireAuth, requireEditor } from "../middlewares/auth";
 import { generateQuestions } from "../ai/geminiClient";
 import { writeAudit } from "../lib/audit";
-import { questionsTable, sectionsTable } from "@workspace/db";
+import { questionsTable, sectionsTable, attemptAnswersTable, testAttemptsTable } from "@workspace/db";
+import { isNotNull } from "drizzle-orm";
 
 const router: IRouter = Router();
 
 function parseId(raw: string | string[]): number {
   const s = Array.isArray(raw) ? raw[0] : raw;
   return parseFloat(s);
+}
+
+// Recent accuracy for a user on a subject (0..1), or null when no graded attempts.
+async function subjectAccuracy(userId: number, subjectId: number): Promise<number | null> {
+  const rows = await db
+    .select({ isCorrect: attemptAnswersTable.isCorrect })
+    .from(attemptAnswersTable)
+    .innerJoin(testAttemptsTable, eq(attemptAnswersTable.attemptId, testAttemptsTable.id))
+    .innerJoin(questionsTable, eq(attemptAnswersTable.questionId, questionsTable.id))
+    .innerJoin(sectionsTable, eq(questionsTable.sectionId, sectionsTable.id))
+    .innerJoin(chaptersTable, eq(sectionsTable.chapterId, chaptersTable.id))
+    .where(and(eq(testAttemptsTable.userId, userId), eq(chaptersTable.subjectId, subjectId), isNotNull(attemptAnswersTable.isCorrect)));
+
+  if (rows.length === 0) return null;
+  const correct = rows.filter((r) => r.isCorrect).length;
+  return correct / rows.length;
 }
 
 // POST /chapters/:chapterId/ai-generate-questions - Generate AI questions from textbook
@@ -58,12 +75,33 @@ router.post("/chapters/:chapterId/ai-generate-questions", requireEditor, async (
   }
 
   try {
+    // Adaptive difficulty: if "auto", compare against the editor's recent
+    // accuracy on this subject to pick a target.
+    let difficulty: "auto" | "easier" | "harder" = "auto";
+    const rawDifficulty = (req.body as any)?.difficulty;
+    if (rawDifficulty === "easier" || rawDifficulty === "harder") {
+      difficulty = rawDifficulty;
+    } else {
+      const genUser = (req as typeof req & { user: { id: number } }).user;
+      const accuracy = await subjectAccuracy(genUser.id, chapter.subjectId);
+      if (accuracy != null) {
+        if (accuracy < 0.5) difficulty = "easier";
+        else if (accuracy >= 0.85) difficulty = "harder";
+      }
+    }
+
+    const language = ["english", "urdu", "sindhi", "auto"].includes((req.body as any)?.language)
+      ? (req.body as any).language
+      : "auto";
+
     const drafts = await generateQuestions(
       store.geminiStoreName,
       body.data.pageRange,
       body.data.questionType,
       body.data.count,
-      body.data.topicFocus ?? undefined
+      body.data.topicFocus ?? undefined,
+      difficulty,
+      language
     );
 
     // Save as drafts
