@@ -1,7 +1,4 @@
--- Enable pgvector extension for vector similarity search
-CREATE EXTENSION IF NOT EXISTS vector;
-
--- Create textbook_chunks table for RAG
+-- Create textbook_chunks table for RAG (without pgvector initially)
 CREATE TABLE IF NOT EXISTS textbook_chunks (
   id SERIAL PRIMARY KEY,
   file_asset_id INTEGER NOT NULL REFERENCES file_assets(id) ON DELETE CASCADE,
@@ -16,8 +13,8 @@ CREATE TABLE IF NOT EXISTS textbook_chunks (
   content TEXT NOT NULL,
   content_length INTEGER NOT NULL,
   
-  -- Embedding (768 dimensions for Gemini text-embedding-004)
-  embedding vector(768),
+  -- Embedding stored as JSON array (can migrate to pgvector later)
+  embedding_json JSONB,
   
   -- Full-text search
   content_tsv tsvector GENERATED ALWAYS AS (to_tsvector('english', content)) STORED,
@@ -34,8 +31,8 @@ CREATE TABLE IF NOT EXISTS textbook_chunks (
 CREATE INDEX IF NOT EXISTS idx_textbook_chunks_file_asset ON textbook_chunks(file_asset_id);
 CREATE INDEX IF NOT EXISTS idx_textbook_chunks_subject ON textbook_chunks(subject_id);
 CREATE INDEX IF NOT EXISTS idx_textbook_chunks_page ON textbook_chunks(page_number);
-CREATE INDEX IF NOT EXISTS idx_textbook_chunks_embedding ON textbook_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
 CREATE INDEX IF NOT EXISTS idx_textbook_chunks_content_tsv ON textbook_chunks USING gin(content_tsv);
+CREATE INDEX IF NOT EXISTS idx_textbook_chunks_embedding_json ON textbook_chunks USING gin(embedding_json);
 
 -- Create a function to update the updated_at timestamp
 CREATE OR REPLACE FUNCTION update_textbook_chunks_updated_at()

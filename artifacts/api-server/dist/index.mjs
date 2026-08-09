@@ -21065,27 +21065,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module.exports = Router23;
+    module.exports = Router24;
     module.exports.Route = Route;
-    function Router23(options) {
-      if (!(this instanceof Router23)) {
-        return new Router23(options);
+    function Router24(options) {
+      if (!(this instanceof Router24)) {
+        return new Router24(options);
       }
       const opts = options || {};
-      function router23(req, res, next) {
-        router23.handle(req, res, next);
+      function router24(req, res, next) {
+        router24.handle(req, res, next);
       }
-      Object.setPrototypeOf(router23, this);
-      router23.caseSensitive = opts.caseSensitive;
-      router23.mergeParams = opts.mergeParams;
-      router23.params = {};
-      router23.strict = opts.strict;
-      router23.stack = [];
-      return router23;
+      Object.setPrototypeOf(router24, this);
+      router24.caseSensitive = opts.caseSensitive;
+      router24.mergeParams = opts.mergeParams;
+      router24.params = {};
+      router24.strict = opts.strict;
+      router24.stack = [];
+      return router24;
     }
-    Router23.prototype = function() {
+    Router24.prototype = function() {
     };
-    Router23.prototype.param = function param(name, fn) {
+    Router24.prototype.param = function param(name, fn) {
       if (!name) {
         throw new TypeError("argument name is required");
       }
@@ -21105,7 +21105,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router23.prototype.handle = function handle(req, res, callback) {
+    Router24.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -21232,7 +21232,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router23.prototype.use = function use(handler) {
+    Router24.prototype.use = function use(handler) {
       let offset = 0;
       let path2 = "/";
       if (typeof handler !== "function") {
@@ -21265,7 +21265,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router23.prototype.route = function route(path2) {
+    Router24.prototype.route = function route(path2) {
       const route2 = new Route(path2);
       const layer = new Layer(path2, {
         sensitive: this.caseSensitive,
@@ -21280,7 +21280,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router23.prototype[method] = function(path2) {
+      Router24.prototype[method] = function(path2) {
         const route = this.route(path2);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -21463,13 +21463,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve = __require("node:path").resolve;
     var once = require_once();
-    var Router23 = require_router();
+    var Router24 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports = module.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init() {
-      var router23 = null;
+      var router24 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -21478,13 +21478,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router23 === null) {
-            router23 = new Router23({
+          if (router24 === null) {
+            router24 = new Router24({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router23;
+          return router24;
         }
       });
     };
@@ -21555,15 +21555,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router23 = this.router;
+      var router24 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router23.use(path2, fn2);
+          return router24.use(path2, fn2);
         }
         debug(".use app under %s", path2);
         fn2.mountpath = path2;
         fn2.parent = this;
-        router23.use(path2, function mounted_app(req, res, next) {
+        router24.use(path2, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -24148,7 +24148,7 @@ var require_express = __commonJS({
     var EventEmitter = __require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router23 = require_router();
+    var Router24 = require_router();
     var req = require_request();
     var res = require_response();
     exports = module.exports = createApplication;
@@ -24170,8 +24170,8 @@ var require_express = __commonJS({
     exports.application = proto;
     exports.request = req;
     exports.response = res;
-    exports.Route = Router23.Route;
-    exports.Router = Router23;
+    exports.Route = Router24.Route;
+    exports.Router = Router24;
     exports.json = bodyParser.json;
     exports.raw = bodyParser.raw;
     exports.static = require_serve_static();
@@ -42537,12 +42537,12 @@ var require_lib6 = __commonJS({
 })();
 
 // src/app.ts
-var import_express23 = __toESM(require_express2(), 1);
+var import_express24 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_pino_http = __toESM(require_logger(), 1);
 
 // src/routes/index.ts
-var import_express22 = __toESM(require_express2(), 1);
+var import_express23 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
@@ -58285,7 +58285,6 @@ __export(schema_exports, {
   emailVerificationTokensTable: () => emailVerificationTokensTable,
   fileAssetsTable: () => fileAssetsTable,
   flashcardsTable: () => flashcardsTable,
-  getDescendantTopicIds: () => getDescendantTopicIds,
   gradingMethodValues: () => gradingMethodValues,
   insertAIChatMessageSchema: () => insertAIChatMessageSchema,
   insertAIChatSessionSchema: () => insertAIChatSessionSchema,
@@ -69812,7 +69811,7 @@ var topicsTable = pgTable("topics", {
   id: serial("id").primaryKey(),
   subjectId: integer2("subject_id").notNull().references(() => subjectsTable.id),
   parentId: integer2("parent_id"),
-  // Self-referencing topics(id) - nullable for top-level topics
+  // Self-referencing FK to topics(id) - set via SQL migration
   name: text("name").notNull(),
   orderIndex: integer2("order_index").notNull().default(0),
   isArchived: boolean4("is_archived").notNull().default(false),
@@ -69824,9 +69823,6 @@ var insertTopicSchema = createInsertSchema(topicsTable).omit({
   createdAt: true,
   updatedAt: true
 });
-function getDescendantTopicIds(topicId) {
-  return [topicId];
-}
 
 // ../../lib/db/src/schema/questions.ts
 var questionTypeValues = ["mcq", "short", "long"];
@@ -80216,6 +80212,366 @@ var import_express12 = __toESM(require_express2(), 1);
 
 // src/ai/geminiClient.ts
 import { GoogleGenAI } from "@google/genai";
+
+// ../../lib/textbooks/src/storage.ts
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+function normalizeKey(key) {
+  const clean2 = key.replace(/^[/\\]+/, "").replace(/[/\\]+$/, "");
+  const parts = clean2.split(/[/\\]+/).filter((p) => p.length > 0);
+  if (parts.some((p) => p === "..")) {
+    throw new Error(`Invalid storage key (path traversal): "${key}"`);
+  }
+  return parts.join("/");
+}
+var LocalStorage = class {
+  constructor(baseDir) {
+    this.baseDir = baseDir;
+  }
+  resolve(key) {
+    const clean2 = normalizeKey(key);
+    const root = path.resolve(this.baseDir);
+    const full = path.resolve(root, clean2);
+    if (full !== root && !full.startsWith(root + path.sep)) {
+      throw new Error(`Invalid storage key (outside base dir): "${key}"`);
+    }
+    return full;
+  }
+  async putObject(key, body, _contentType) {
+    const full = this.resolve(key);
+    await fs.mkdir(path.dirname(full), { recursive: true });
+    await fs.writeFile(full, body);
+  }
+  async getObject(key) {
+    return fs.readFile(this.resolve(key));
+  }
+  async deleteObject(key) {
+    await fs.unlink(this.resolve(key));
+  }
+  async exists(key) {
+    try {
+      await fs.access(this.resolve(key));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  async getPresignedUploadUrl(key, _expirySeconds) {
+    const baseUrl = process.env["API_BASE_URL"] ?? "http://localhost:3000";
+    return `${baseUrl}/api/files/direct-upload?storageKey=${encodeURIComponent(key)}`;
+  }
+};
+var DEFAULT_STORAGE_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+  "..",
+  "data"
+);
+function getStorage() {
+  const backend = process.env["STORAGE_BACKEND"] ?? "local";
+  if (backend !== "local") {
+    throw new Error(`STORAGE_BACKEND "${backend}" is not implemented yet \u2014 use "local"`);
+  }
+  const baseDir = process.env["FILE_STORAGE_DIR"] ?? DEFAULT_STORAGE_DIR;
+  return new LocalStorage(baseDir);
+}
+
+// ../../lib/textbooks/src/search.ts
+function parsePages(fullText) {
+  const re = /\[page (\d+)\]\s*/g;
+  const chunks = [];
+  let last = null;
+  let m3;
+  while ((m3 = re.exec(fullText)) !== null) {
+    if (last) {
+      chunks.push({
+        page: Number(last[1]),
+        text: fullText.slice(last.index + last[0].length, m3.index).trim()
+      });
+    }
+    last = m3;
+  }
+  if (last) {
+    chunks.push({
+      page: Number(last[1]),
+      text: fullText.slice(last.index + last[0].length).trim()
+    });
+  }
+  return chunks;
+}
+var STOPWORDS = /* @__PURE__ */ new Set([
+  "a",
+  "an",
+  "the",
+  "is",
+  "are",
+  "was",
+  "were",
+  "be",
+  "been",
+  "being",
+  "of",
+  "to",
+  "in",
+  "on",
+  "at",
+  "for",
+  "and",
+  "or",
+  "not",
+  "with",
+  "what",
+  "which",
+  "who",
+  "whom",
+  "whose",
+  "how",
+  "when",
+  "where",
+  "why",
+  "does",
+  "do",
+  "did",
+  "done",
+  "it",
+  "its",
+  "this",
+  "that",
+  "these",
+  "those",
+  "from",
+  "by",
+  "about",
+  "into",
+  "than",
+  "then",
+  "as",
+  "if",
+  "but",
+  "so",
+  "can",
+  "could",
+  "would",
+  "should",
+  "will",
+  "shall",
+  "may",
+  "might",
+  "must",
+  "has",
+  "have",
+  "had",
+  "is",
+  "you",
+  "your",
+  "we",
+  "our",
+  "i",
+  "he",
+  "she",
+  "they"
+]);
+function tokenize(text2) {
+  return text2.toLowerCase().split(/[^a-z0-9]+/i).filter((t2) => t2.length > 0);
+}
+function keywordTerms(question) {
+  return tokenize(question).filter((t2) => !STOPWORDS.has(t2) && !/^\d+$/.test(t2));
+}
+function countOccurrences(text2, term) {
+  let count = 0;
+  let idx = text2.indexOf(term);
+  while (idx !== -1) {
+    count += 1;
+    idx = text2.indexOf(term, idx + term.length);
+  }
+  return count;
+}
+function findRelevantPages(fullText, question, opts = {}) {
+  const window2 = opts.window ?? 1;
+  const maxChars = opts.maxChars ?? 12e3;
+  const terms = keywordTerms(question);
+  const chunks = parsePages(fullText);
+  const scores = chunks.map((c3) => {
+    const text3 = c3.text.toLowerCase();
+    let score = 0;
+    for (const term of terms) {
+      score += countOccurrences(text3, term);
+    }
+    return { chunk: c3, score };
+  });
+  let bestIndex = -1;
+  let bestScore = 0;
+  for (let i2 = 0; i2 < scores.length; i2++) {
+    if (scores[i2].score > bestScore) {
+      bestScore = scores[i2].score;
+      bestIndex = i2;
+    }
+  }
+  if (bestIndex === -1 || bestScore === 0) {
+    return { pages: [], text: "", scores: [] };
+  }
+  const from = Math.max(0, bestIndex - window2);
+  const to = Math.min(chunks.length - 1, bestIndex + window2);
+  const selected = chunks.slice(from, to + 1);
+  let text2 = "";
+  for (const c3 of selected) {
+    const block = `[page ${c3.page}]
+${c3.text}`;
+    if (text2.length + block.length + 2 > maxChars) break;
+    text2 += (text2 ? "\n\n" : "") + block;
+  }
+  return {
+    pages: selected.map((c3) => c3.page),
+    text: text2,
+    scores: scores.map((s) => ({ page: s.chunk.page, score: s.score })).filter((s) => s.score > 0).sort((a2, b3) => b3.score - a2.score)
+  };
+}
+
+// ../../lib/textbooks/src/virusScan.ts
+var INSTREAM_CHUNK_SIZE = 32 * 1024;
+
+// ../../lib/textbooks/src/embeddings.ts
+async function generateEmbedding(text2, geminiClient) {
+  try {
+    const result = await geminiClient.models.embedContent({
+      model: "models/text-embedding-004",
+      contents: text2
+    });
+    const embeddings = result.embeddings;
+    if (!embeddings || embeddings.length === 0 || !embeddings[0].values) {
+      throw new Error("No embedding returned from Gemini API");
+    }
+    return embeddings[0].values;
+  } catch (error41) {
+    console.error("Failed to generate embedding:", error41);
+    throw new Error(`Embedding generation failed: ${error41 instanceof Error ? error41.message : "Unknown error"}`);
+  }
+}
+function calculateSimilarity(queryEmbedding, docEmbedding) {
+  if (queryEmbedding.length !== docEmbedding.length) {
+    throw new Error(`Embedding dimension mismatch: ${queryEmbedding.length} vs ${docEmbedding.length}`);
+  }
+  let dotProduct = 0;
+  let queryNorm = 0;
+  let docNorm = 0;
+  for (let i2 = 0; i2 < queryEmbedding.length; i2++) {
+    dotProduct += queryEmbedding[i2] * docEmbedding[i2];
+    queryNorm += queryEmbedding[i2] * queryEmbedding[i2];
+    docNorm += docEmbedding[i2] * docEmbedding[i2];
+  }
+  if (queryNorm === 0 || docNorm === 0) {
+    return 0;
+  }
+  const similarity = dotProduct / (Math.sqrt(queryNorm) * Math.sqrt(docNorm));
+  return (similarity + 1) / 2;
+}
+
+// ../../lib/textbooks/src/rag-search.ts
+var DEFAULT_SEARCH_OPTIONS = {
+  topK: 5,
+  minScore: 0.3,
+  hybridWeight: 0.7
+  // 70% embedding, 30% full-text
+};
+async function searchTextbookChunks(query, geminiClient, options = {}) {
+  const opts = { ...DEFAULT_SEARCH_OPTIONS, ...options };
+  try {
+    const queryEmbedding = await generateEmbedding(query, geminiClient);
+    let sqlQuery = sql`
+      SELECT 
+        tc.id as chunk_id,
+        tc.content,
+        tc.page_number,
+        tc.section_title,
+        tc.embedding_json,
+        tc.file_asset_id,
+        fa.original_filename as filename,
+        ts_rank(tc.content_tsv, plainto_tsquery('english', ${query})) as fts_score
+      FROM textbook_chunks tc
+      JOIN file_assets fa ON tc.file_asset_id = fa.id
+      WHERE 1=1
+    `;
+    if (opts.subjectId) {
+      sqlQuery = sql`${sqlQuery} AND tc.subject_id = ${opts.subjectId}`;
+    }
+    if (opts.fileAssetId) {
+      sqlQuery = sql`${sqlQuery} AND tc.file_asset_id = ${opts.fileAssetId}`;
+    }
+    sqlQuery = sql`${sqlQuery} AND tc.content_tsv @@ plainto_tsquery('english', ${query})`;
+    sqlQuery = sql`${sqlQuery} LIMIT 100`;
+    const result = await db.execute(sqlQuery);
+    const rows = result.rows;
+    const scoredResults = [];
+    for (const row of rows) {
+      let embedding;
+      try {
+        embedding = JSON.parse(row.embedding_json);
+      } catch {
+        console.error(`Failed to parse embedding for chunk ${row.chunk_id}`);
+        continue;
+      }
+      const embeddingScore = calculateSimilarity(queryEmbedding, embedding);
+      const ftsScore = Math.min(row.fts_score / 0.1, 1);
+      const hybridScore = opts.hybridWeight * embeddingScore + (1 - opts.hybridWeight) * ftsScore;
+      if (hybridScore >= opts.minScore) {
+        scoredResults.push({
+          chunkId: row.chunk_id,
+          content: row.content,
+          pageNumber: row.page_number,
+          sectionTitle: row.section_title || void 0,
+          score: hybridScore,
+          fileAssetId: row.file_asset_id,
+          filename: row.filename
+        });
+      }
+    }
+    scoredResults.sort((a2, b3) => b3.score - a2.score);
+    return scoredResults.slice(0, opts.topK);
+  } catch (error41) {
+    console.error("[RAG Search] Search failed:", error41);
+    console.log("[RAG Search] Falling back to full-text search only...");
+    return await fallbackFullTextSearch(query, options);
+  }
+}
+async function fallbackFullTextSearch(query, options = {}) {
+  const opts = { ...DEFAULT_SEARCH_OPTIONS, ...options };
+  let sqlQuery = sql`
+    SELECT 
+      tc.id as chunk_id,
+      tc.content,
+      tc.page_number,
+      tc.section_title,
+      tc.file_asset_id,
+      fa.original_filename as filename,
+      ts_rank(tc.content_tsv, plainto_tsquery('english', ${query})) as score
+    FROM textbook_chunks tc
+    JOIN file_assets fa ON tc.file_asset_id = fa.id
+    WHERE tc.content_tsv @@ plainto_tsquery('english', ${query})
+  `;
+  if (opts.subjectId) {
+    sqlQuery = sql`${sqlQuery} AND tc.subject_id = ${opts.subjectId}`;
+  }
+  if (opts.fileAssetId) {
+    sqlQuery = sql`${sqlQuery} AND tc.file_asset_id = ${opts.fileAssetId}`;
+  }
+  sqlQuery = sql`${sqlQuery} ORDER BY score DESC LIMIT ${opts.topK}`;
+  const result = await db.execute(sqlQuery);
+  const rows = result.rows;
+  return rows.map((row) => ({
+    chunkId: row.chunk_id,
+    content: row.content,
+    pageNumber: row.page_number,
+    sectionTitle: row.section_title || void 0,
+    score: Math.min(row.score / 0.1, 1),
+    // Normalize score
+    fileAssetId: row.file_asset_id,
+    filename: row.filename
+  }));
+}
+
+// src/ai/geminiClient.ts
 var client = null;
 function getGeminiClient() {
   if (!client) {
@@ -80694,6 +81050,184 @@ async function generateDailySummary(data, opts = {}) {
 Today's raw data \u2014 ${track}.${weakLine}`
   });
   return response.text?.trim() || "No summary available today.";
+}
+async function explainFromBookRAG(subjectId, questionText, opts = {}) {
+  const client2 = getGeminiClient();
+  const lang = languageInstruction(opts.language);
+  const chunks = await searchTextbookChunks(questionText, client2, {
+    subjectId,
+    topK: 5,
+    minScore: 0.3
+  });
+  if (chunks.length === 0) {
+    return {
+      explanation: "I couldn't find relevant information in the textbook for this question.",
+      citations: []
+    };
+  }
+  const context = chunks.map((chunk, i2) => `[Source ${i2 + 1}, Page ${chunk.pageNumber}]
+${chunk.content}`).join("\n\n---\n\n");
+  const prompt = `${lang}You are explaining a concept from a textbook. Use ONLY the information provided in the sources below. Do not use outside knowledge.
+
+Question: ${questionText}
+
+Textbook Sources:
+${context}
+
+Instructions:
+- Explain this concept clearly and thoroughly based on the sources
+- Cite sources using [Page N] format
+- If the sources don't contain enough information, say so
+- Keep it concise but complete (3-5 sentences)
+
+Explanation:`;
+  const response = await client2.models.generateContent({
+    model: "gemini-2.0-flash-exp",
+    contents: prompt
+  });
+  const explanation = response.text || "";
+  const citations = chunks.map((chunk) => ({
+    page: chunk.pageNumber,
+    filename: chunk.filename,
+    snippet: chunk.content.substring(0, 200) + "..."
+  }));
+  return { explanation, citations };
+}
+async function chatWithBookRAG(subjectId, messages, opts = {}) {
+  const client2 = getGeminiClient();
+  const mode = opts.mode ?? "answer";
+  const lang = languageInstruction(opts.language);
+  const lastUserMessage = messages.filter((m3) => m3.role === "user").pop();
+  if (!lastUserMessage) {
+    return { content: "No question provided.", citations: [] };
+  }
+  const chunks = await searchTextbookChunks(lastUserMessage.content, client2, {
+    subjectId,
+    topK: 5,
+    minScore: 0.3
+  });
+  const context = chunks.map((chunk, i2) => `[Source ${i2 + 1}, Page ${chunk.pageNumber}]
+${chunk.content}`).join("\n\n---\n\n");
+  const chatHistory = messages.slice(0, -1).map((m3) => `${m3.role}: ${m3.content}`).join("\n");
+  const tutorInstruction = mode === "tutor" ? "You are a Socratic tutor. Ask guiding questions instead of giving direct answers. Only reveal the full answer if the student explicitly asks or is stuck." : "";
+  const prompt = `${lang}${tutorInstruction}
+You are a helpful study assistant. Answer the question using ONLY the textbook sources provided below.
+
+${chatHistory ? `Previous conversation:
+${chatHistory}
+
+` : ""}Current question: ${lastUserMessage.content}
+
+Textbook Sources:
+${context}
+
+Instructions:
+- Base your answer strictly on the sources
+- Cite pages using [Page N] format
+- Be friendly and concise
+- If sources lack information, say so honestly
+
+Answer:`;
+  const response = await client2.models.generateContent({
+    model: "gemini-2.0-flash-exp",
+    contents: prompt
+  });
+  const content = response.text || "";
+  const citations = chunks.map((chunk) => ({
+    page: chunk.pageNumber,
+    filename: chunk.filename,
+    snippet: chunk.content.substring(0, 200) + "..."
+  }));
+  return { content, citations };
+}
+async function* streamChatWithBookRAG(subjectId, messages, opts = {}) {
+  const client2 = getGeminiClient();
+  const mode = opts.mode ?? "answer";
+  const lang = languageInstruction(opts.language);
+  const lastUserMessage = messages.filter((m3) => m3.role === "user").pop();
+  if (!lastUserMessage) {
+    yield { type: "text", text: "No question provided." };
+    yield { type: "done", citations: [] };
+    return;
+  }
+  const chunks = await searchTextbookChunks(lastUserMessage.content, client2, {
+    subjectId,
+    topK: 5,
+    minScore: 0.3
+  });
+  const context = chunks.map((chunk, i2) => `[Source ${i2 + 1}, Page ${chunk.pageNumber}]
+${chunk.content}`).join("\n\n---\n\n");
+  const chatHistory = messages.slice(0, -1).map((m3) => `${m3.role}: ${m3.content}`).join("\n");
+  const tutorInstruction = mode === "tutor" ? "You are a Socratic tutor. Ask guiding questions instead of giving direct answers." : "";
+  const prompt = `${lang}${tutorInstruction}
+You are a helpful study assistant. Answer using ONLY the textbook sources below.
+
+${chatHistory ? `Previous conversation:
+${chatHistory}
+
+` : ""}Current question: ${lastUserMessage.content}
+
+Textbook Sources:
+${context}
+
+Answer (cite pages with [Page N]):`;
+  const stream = await client2.models.generateContentStream({
+    model: "gemini-2.0-flash-exp",
+    contents: prompt
+  });
+  let accumulated = "";
+  for await (const chunk of stream) {
+    const text2 = chunk.text ?? "";
+    accumulated += text2;
+    if (text2) yield { type: "text", text: text2 };
+  }
+  const citations = chunks.map((chunk) => ({
+    page: chunk.pageNumber,
+    filename: chunk.filename,
+    snippet: chunk.content.substring(0, 200) + "..."
+  }));
+  yield { type: "done", citations };
+}
+async function* streamExplainFromBookRAG(subjectId, questionText, opts = {}) {
+  const client2 = getGeminiClient();
+  const lang = languageInstruction(opts.language);
+  const chunks = await searchTextbookChunks(questionText, client2, {
+    subjectId,
+    topK: 5,
+    minScore: 0.3
+  });
+  if (chunks.length === 0) {
+    const msg = "I couldn't find relevant information in the textbook for this question.";
+    yield { type: "text", text: msg };
+    yield { type: "done", explanation: msg, citations: [] };
+    return;
+  }
+  const context = chunks.map((chunk, i2) => `[Source ${i2 + 1}, Page ${chunk.pageNumber}]
+${chunk.content}`).join("\n\n---\n\n");
+  const prompt = `${lang}Explain this concept using ONLY the textbook sources below. Cite pages with [Page N].
+
+Question: ${questionText}
+
+Sources:
+${context}
+
+Explanation:`;
+  const stream = await client2.models.generateContentStream({
+    model: "gemini-2.0-flash-exp",
+    contents: prompt
+  });
+  let accumulated = "";
+  for await (const chunk of stream) {
+    const text2 = chunk.text ?? "";
+    accumulated += text2;
+    if (text2) yield { type: "text", text: text2 };
+  }
+  const citations = chunks.map((chunk) => ({
+    page: chunk.pageNumber,
+    filename: chunk.filename,
+    snippet: chunk.content.substring(0, 200) + "..."
+  }));
+  yield { type: "done", explanation: accumulated, citations };
 }
 
 // src/routes/ai-bookstore.ts
@@ -81853,235 +82387,232 @@ router19.get("/ai/weak-topics", requireAuth, async (req, res) => {
 });
 var ai_summary_default = router19;
 
-// src/routes/textbooks.ts
+// src/routes/ai-rag.ts
 var import_express20 = __toESM(require_express2(), 1);
-
-// ../../lib/textbooks/src/storage.ts
-import { promises as fs } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-function normalizeKey(key) {
-  const clean2 = key.replace(/^[/\\]+/, "").replace(/[/\\]+$/, "");
-  const parts = clean2.split(/[/\\]+/).filter((p) => p.length > 0);
-  if (parts.some((p) => p === "..")) {
-    throw new Error(`Invalid storage key (path traversal): "${key}"`);
-  }
-  return parts.join("/");
+var router20 = (0, import_express20.Router)();
+async function hasRAGContent(subjectId) {
+  const [asset] = await db.select().from(fileAssetsTable).where(and(
+    eq(fileAssetsTable.subjectId, subjectId),
+    eq(fileAssetsTable.embeddingsGenerated, true)
+  )).limit(1);
+  return !!asset;
 }
-var LocalStorage = class {
-  constructor(baseDir) {
-    this.baseDir = baseDir;
+router20.post("/ai/rag/explain", requireAuth, async (req, res) => {
+  const { questionText, subjectId, questionId, language } = req.body;
+  if (!questionText) {
+    res.status(400).json({ error: "questionText is required" });
+    return;
   }
-  resolve(key) {
-    const clean2 = normalizeKey(key);
-    const root = path.resolve(this.baseDir);
-    const full = path.resolve(root, clean2);
-    if (full !== root && !full.startsWith(root + path.sep)) {
-      throw new Error(`Invalid storage key (outside base dir): "${key}"`);
-    }
-    return full;
-  }
-  async putObject(key, body, _contentType) {
-    const full = this.resolve(key);
-    await fs.mkdir(path.dirname(full), { recursive: true });
-    await fs.writeFile(full, body);
-  }
-  async getObject(key) {
-    return fs.readFile(this.resolve(key));
-  }
-  async deleteObject(key) {
-    await fs.unlink(this.resolve(key));
-  }
-  async exists(key) {
-    try {
-      await fs.access(this.resolve(key));
-      return true;
-    } catch {
-      return false;
+  let finalSubjectId = subjectId;
+  if (!finalSubjectId && questionId) {
+    const [question] = await db.select({ subjectId: chaptersTable.subjectId }).from(questionsTable).innerJoin(sectionsTable, eq(questionsTable.sectionId, sectionsTable.id)).innerJoin(chaptersTable, eq(sectionsTable.chapterId, chaptersTable.id)).where(eq(questionsTable.id, questionId));
+    if (question) {
+      finalSubjectId = question.subjectId;
     }
   }
-  async getPresignedUploadUrl(key, _expirySeconds) {
-    const baseUrl = process.env["API_BASE_URL"] ?? "http://localhost:3000";
-    return `${baseUrl}/api/files/direct-upload?storageKey=${encodeURIComponent(key)}`;
+  if (!finalSubjectId) {
+    res.status(400).json({ error: "subjectId or questionId required" });
+    return;
   }
-};
-var DEFAULT_STORAGE_DIR = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "..",
-  "..",
-  "data"
-);
-function getStorage() {
-  const backend = process.env["STORAGE_BACKEND"] ?? "local";
-  if (backend !== "local") {
-    throw new Error(`STORAGE_BACKEND "${backend}" is not implemented yet \u2014 use "local"`);
+  const hasContent = await hasRAGContent(finalSubjectId);
+  if (!hasContent) {
+    res.status(400).json({ error: "No RAG-indexed content available for this subject. Please wait for indexing to complete." });
+    return;
   }
-  const baseDir = process.env["FILE_STORAGE_DIR"] ?? DEFAULT_STORAGE_DIR;
-  return new LocalStorage(baseDir);
-}
-
-// ../../lib/textbooks/src/search.ts
-function parsePages(fullText) {
-  const re = /\[page (\d+)\]\s*/g;
-  const chunks = [];
-  let last = null;
-  let m3;
-  while ((m3 = re.exec(fullText)) !== null) {
-    if (last) {
-      chunks.push({
-        page: Number(last[1]),
-        text: fullText.slice(last.index + last[0].length, m3.index).trim()
-      });
-    }
-    last = m3;
-  }
-  if (last) {
-    chunks.push({
-      page: Number(last[1]),
-      text: fullText.slice(last.index + last[0].length).trim()
+  try {
+    const result = await explainFromBookRAG(finalSubjectId, questionText, { language });
+    await writeAudit(req, {
+      action: "AI_RAG_EXPLAIN",
+      entityType: "ai_explanation",
+      entityId: questionId,
+      detail: `RAG explanation for subject ${finalSubjectId}`
     });
+    res.json({
+      explanation: result.explanation,
+      citations: result.citations,
+      subjectId: finalSubjectId,
+      method: "rag"
+    });
+  } catch (error41) {
+    console.error("Error generating RAG explanation:", error41);
+    res.status(500).json({ error: "Failed to generate explanation" });
   }
-  return chunks;
-}
-var STOPWORDS = /* @__PURE__ */ new Set([
-  "a",
-  "an",
-  "the",
-  "is",
-  "are",
-  "was",
-  "were",
-  "be",
-  "been",
-  "being",
-  "of",
-  "to",
-  "in",
-  "on",
-  "at",
-  "for",
-  "and",
-  "or",
-  "not",
-  "with",
-  "what",
-  "which",
-  "who",
-  "whom",
-  "whose",
-  "how",
-  "when",
-  "where",
-  "why",
-  "does",
-  "do",
-  "did",
-  "done",
-  "it",
-  "its",
-  "this",
-  "that",
-  "these",
-  "those",
-  "from",
-  "by",
-  "about",
-  "into",
-  "than",
-  "then",
-  "as",
-  "if",
-  "but",
-  "so",
-  "can",
-  "could",
-  "would",
-  "should",
-  "will",
-  "shall",
-  "may",
-  "might",
-  "must",
-  "has",
-  "have",
-  "had",
-  "is",
-  "you",
-  "your",
-  "we",
-  "our",
-  "i",
-  "he",
-  "she",
-  "they"
-]);
-function tokenize(text2) {
-  return text2.toLowerCase().split(/[^a-z0-9]+/i).filter((t2) => t2.length > 0);
-}
-function keywordTerms(question) {
-  return tokenize(question).filter((t2) => !STOPWORDS.has(t2) && !/^\d+$/.test(t2));
-}
-function countOccurrences(text2, term) {
-  let count = 0;
-  let idx = text2.indexOf(term);
-  while (idx !== -1) {
-    count += 1;
-    idx = text2.indexOf(term, idx + term.length);
+});
+router20.post("/ai/rag/explain/stream", requireAuth, async (req, res) => {
+  const { questionText, subjectId, questionId, language } = req.body;
+  if (!questionText) {
+    res.status(400).json({ error: "questionText is required" });
+    return;
   }
-  return count;
-}
-function findRelevantPages(fullText, question, opts = {}) {
-  const window2 = opts.window ?? 1;
-  const maxChars = opts.maxChars ?? 12e3;
-  const terms = keywordTerms(question);
-  const chunks = parsePages(fullText);
-  const scores = chunks.map((c3) => {
-    const text3 = c3.text.toLowerCase();
-    let score = 0;
-    for (const term of terms) {
-      score += countOccurrences(text3, term);
-    }
-    return { chunk: c3, score };
-  });
-  let bestIndex = -1;
-  let bestScore = 0;
-  for (let i2 = 0; i2 < scores.length; i2++) {
-    if (scores[i2].score > bestScore) {
-      bestScore = scores[i2].score;
-      bestIndex = i2;
+  let finalSubjectId = subjectId;
+  if (!finalSubjectId && questionId) {
+    const [question] = await db.select({ subjectId: chaptersTable.subjectId }).from(questionsTable).innerJoin(sectionsTable, eq(questionsTable.sectionId, sectionsTable.id)).innerJoin(chaptersTable, eq(sectionsTable.chapterId, chaptersTable.id)).where(eq(questionsTable.id, questionId));
+    if (question) {
+      finalSubjectId = question.subjectId;
     }
   }
-  if (bestIndex === -1 || bestScore === 0) {
-    return { pages: [], text: "", scores: [] };
+  if (!finalSubjectId) {
+    res.status(400).json({ error: "subjectId or questionId required" });
+    return;
   }
-  const from = Math.max(0, bestIndex - window2);
-  const to = Math.min(chunks.length - 1, bestIndex + window2);
-  const selected = chunks.slice(from, to + 1);
-  let text2 = "";
-  for (const c3 of selected) {
-    const block = `[page ${c3.page}]
-${c3.text}`;
-    if (text2.length + block.length + 2 > maxChars) break;
-    text2 += (text2 ? "\n\n" : "") + block;
+  const hasContent = await hasRAGContent(finalSubjectId);
+  if (!hasContent) {
+    res.status(400).json({ error: "No RAG-indexed content available" });
+    return;
   }
-  return {
-    pages: selected.map((c3) => c3.page),
-    text: text2,
-    scores: scores.map((s) => ({ page: s.chunk.page, score: s.score })).filter((s) => s.score > 0).sort((a2, b3) => b3.score - a2.score)
-  };
-}
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+  const writeEvent = (data) => res.write(`data: ${JSON.stringify(data)}
 
-// ../../lib/textbooks/src/virusScan.ts
-var INSTREAM_CHUNK_SIZE = 32 * 1024;
+`);
+  try {
+    for await (const chunk of streamExplainFromBookRAG(finalSubjectId, questionText, { language })) {
+      if (chunk.type === "text") {
+        writeEvent({ type: "text", text: chunk.text });
+      } else if (chunk.type === "done") {
+        writeEvent({
+          type: "done",
+          explanation: chunk.explanation,
+          citations: chunk.citations,
+          subjectId: finalSubjectId,
+          method: "rag"
+        });
+      }
+    }
+    res.end();
+  } catch (error41) {
+    console.error("Error streaming RAG explanation:", error41);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to stream explanation" });
+      return;
+    }
+    writeEvent({ type: "error", message: "Stream interrupted" });
+    res.end();
+  }
+});
+router20.post("/ai/rag/chat", requireAuth, async (req, res) => {
+  const { subjectId, messages, mode, language } = req.body;
+  if (!subjectId || !messages || !Array.isArray(messages)) {
+    res.status(400).json({ error: "subjectId and messages array required" });
+    return;
+  }
+  const hasContent = await hasRAGContent(subjectId);
+  if (!hasContent) {
+    res.status(400).json({ error: "No RAG-indexed content available" });
+    return;
+  }
+  try {
+    const result = await chatWithBookRAG(subjectId, messages, { mode, language });
+    await writeAudit(req, {
+      action: "AI_RAG_CHAT",
+      entityType: "ai_chat",
+      entityId: subjectId,
+      detail: `RAG chat for subject ${subjectId}`
+    });
+    res.json({
+      content: result.content,
+      citations: result.citations,
+      method: "rag"
+    });
+  } catch (error41) {
+    console.error("Error in RAG chat:", error41);
+    res.status(500).json({ error: "Failed to process chat" });
+  }
+});
+router20.post("/ai/rag/chat/stream", requireAuth, async (req, res) => {
+  const { subjectId, messages, mode, language } = req.body;
+  if (!subjectId || !messages || !Array.isArray(messages)) {
+    res.status(400).json({ error: "subjectId and messages array required" });
+    return;
+  }
+  const hasContent = await hasRAGContent(subjectId);
+  if (!hasContent) {
+    res.status(400).json({ error: "No RAG-indexed content available" });
+    return;
+  }
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+  const writeEvent = (data) => res.write(`data: ${JSON.stringify(data)}
+
+`);
+  try {
+    for await (const chunk of streamChatWithBookRAG(subjectId, messages, { mode, language })) {
+      if (chunk.type === "text") {
+        writeEvent({ type: "text", text: chunk.text });
+      } else if (chunk.type === "done") {
+        writeEvent({ type: "done", citations: chunk.citations, method: "rag" });
+      }
+    }
+    res.end();
+  } catch (error41) {
+    console.error("Error streaming RAG chat:", error41);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to stream chat" });
+      return;
+    }
+    writeEvent({ type: "error", message: "Stream interrupted" });
+    res.end();
+  }
+});
+router20.post("/ai/rag/search", requireAuth, async (req, res) => {
+  const { query, subjectId, topK = 5, minScore = 0.3 } = req.body;
+  if (!query || !subjectId) {
+    res.status(400).json({ error: "query and subjectId required" });
+    return;
+  }
+  try {
+    const geminiClient = getGeminiClient();
+    const results = await searchTextbookChunks(query, geminiClient, {
+      subjectId,
+      topK,
+      minScore
+    });
+    res.json({ results, count: results.length });
+  } catch (error41) {
+    console.error("Error searching chunks:", error41);
+    res.status(500).json({ error: "Search failed" });
+  }
+});
+router20.get("/ai/rag/status/:subjectId", requireAuth, async (req, res) => {
+  const subjectId = parseInt(req.params.subjectId, 10);
+  if (isNaN(subjectId)) {
+    res.status(400).json({ error: "Invalid subjectId" });
+    return;
+  }
+  const assets = await db.select({
+    id: fileAssetsTable.id,
+    filename: fileAssetsTable.originalFilename,
+    chunksCount: fileAssetsTable.chunksCount,
+    embeddingsGenerated: fileAssetsTable.embeddingsGenerated,
+    ragIndexedAt: fileAssetsTable.ragIndexedAt,
+    processingStatus: fileAssetsTable.processingStatus
+  }).from(fileAssetsTable).where(and(
+    eq(fileAssetsTable.subjectId, subjectId),
+    eq(fileAssetsTable.isTextbook, true)
+  ));
+  const ragReady = assets.some((a2) => a2.embeddingsGenerated);
+  const totalChunks = assets.reduce((sum, a2) => sum + (a2.chunksCount || 0), 0);
+  res.json({
+    subjectId,
+    ragReady,
+    totalChunks,
+    textbooks: assets
+  });
+});
+var ai_rag_default = router20;
 
 // src/routes/textbooks.ts
-var router20 = (0, import_express20.Router)();
+var import_express21 = __toESM(require_express2(), 1);
+var router21 = (0, import_express21.Router)();
 function parseId12(raw) {
   const s = Array.isArray(raw) ? raw[0] : raw;
   return Number(s);
 }
-router20.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
+router21.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const subjectId = parseId12(req.params.subjectId);
   if (!Number.isInteger(subjectId) || subjectId <= 0) {
     res.status(400).json({ error: "Invalid subjectId" });
@@ -82090,7 +82621,7 @@ router20.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const assets = await db.select().from(fileAssetsTable).where(eq(fileAssetsTable.subjectId, subjectId)).orderBy(desc(fileAssetsTable.id));
   res.json({ assets });
 });
-router20.post("/books/:subjectId/answer", requireAuth, async (req, res) => {
+router21.post("/books/:subjectId/answer", requireAuth, async (req, res) => {
   const subjectId = parseId12(req.params.subjectId);
   if (!Number.isInteger(subjectId) || subjectId <= 0) {
     res.status(400).json({ error: "Invalid subjectId" });
@@ -82154,10 +82685,10 @@ router20.post("/books/:subjectId/answer", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Failed to generate answer" });
   }
 });
-var textbooks_default = router20;
+var textbooks_default = router21;
 
 // src/routes/files.ts
-var import_express21 = __toESM(require_express2(), 1);
+var import_express22 = __toESM(require_express2(), 1);
 import { randomUUID } from "node:crypto";
 var GetUploadUrlBody = external_exports2.object({
   subjectId: external_exports2.number(),
@@ -82179,9 +82710,9 @@ function parseId13(raw) {
   const s = Array.isArray(raw) ? raw[0] : raw;
   return parseFloat(s);
 }
-var router21 = (0, import_express21.Router)();
+var router22 = (0, import_express22.Router)();
 var UPLOAD_EXPIRY_SECONDS = 3600;
-router21.post("/files/upload-url", requireEditor, async (req, res) => {
+router22.post("/files/upload-url", requireEditor, async (req, res) => {
   const user = req.user;
   const body = GetUploadUrlBody.safeParse(req.body);
   if (!body.success) {
@@ -82219,7 +82750,7 @@ router21.post("/files/upload-url", requireEditor, async (req, res) => {
   }
   res.json({ assetId: asset.id, uploadUrl, storageKey, expiresIn: UPLOAD_EXPIRY_SECONDS });
 });
-router21.post("/files/direct-upload", requireEditor, async (req, res) => {
+router22.post("/files/direct-upload", requireEditor, async (req, res) => {
   const storageKey = req.query.storageKey;
   if (!storageKey) {
     res.status(400).json({ error: "storageKey query parameter required" });
@@ -82240,7 +82771,7 @@ router21.post("/files/direct-upload", requireEditor, async (req, res) => {
     res.status(500).json({ error: "Failed to save file" });
   }
 });
-router21.post("/files/:assetId/complete", requireEditor, async (req, res) => {
+router22.post("/files/:assetId/complete", requireEditor, async (req, res) => {
   const user = req.user;
   const params = CompleteUploadParams.safeParse({ assetId: parseId13(req.params.assetId) });
   if (!params.success) {
@@ -82268,7 +82799,7 @@ router21.post("/files/:assetId/complete", requireEditor, async (req, res) => {
   });
   res.json({ assetId: asset.id, status: "queued_for_processing" });
 });
-router21.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
+router22.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const params = ListFileAssetsParams.safeParse({ subjectId: parseId13(req.params.subjectId) });
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -82277,7 +82808,7 @@ router21.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const assets = await db.select().from(fileAssetsTable).where(eq(fileAssetsTable.subjectId, params.data.subjectId)).orderBy(desc(fileAssetsTable.id));
   res.json({ assets });
 });
-router21.get("/files/serve", requireAuth, async (req, res) => {
+router22.get("/files/serve", requireAuth, async (req, res) => {
   const storageKey = req.query.storageKey;
   if (!storageKey) {
     res.status(400).json({ error: "storageKey query parameter required" });
@@ -82296,35 +82827,36 @@ router21.get("/files/serve", requireAuth, async (req, res) => {
     res.status(404).json({ error: "File not found" });
   }
 });
-var files_default = router21;
+var files_default = router22;
 
 // src/routes/index.ts
-var router22 = (0, import_express22.Router)();
-router22.use(health_default);
-router22.use(auth_default);
-router22.use(auth_2fa_default);
-router22.use(dashboard_default);
-router22.use(curriculum_default);
-router22.use(questions_default);
-router22.use(tests_default);
-router22.use(flashcards_default);
-router22.use(userQuestionState_default);
-router22.use(learning_hub_default);
-router22.use(analytics_default);
-router22.use(ai_bookstore_default);
-router22.use(ai_explain_default);
-router22.use(ai_verification_default);
-router22.use(ai_generation_default);
-router22.use(ai_grading_default);
-router22.use(ai_chat_default);
-router22.use(ai_evaluator_default);
-router22.use(ai_summary_default);
-router22.use(textbooks_default);
-router22.use(files_default);
-var routes_default = router22;
+var router23 = (0, import_express23.Router)();
+router23.use(health_default);
+router23.use(auth_default);
+router23.use(auth_2fa_default);
+router23.use(dashboard_default);
+router23.use(curriculum_default);
+router23.use(questions_default);
+router23.use(tests_default);
+router23.use(flashcards_default);
+router23.use(userQuestionState_default);
+router23.use(learning_hub_default);
+router23.use(analytics_default);
+router23.use(ai_bookstore_default);
+router23.use(ai_explain_default);
+router23.use(ai_verification_default);
+router23.use(ai_generation_default);
+router23.use(ai_grading_default);
+router23.use(ai_chat_default);
+router23.use(ai_evaluator_default);
+router23.use(ai_summary_default);
+router23.use(ai_rag_default);
+router23.use(textbooks_default);
+router23.use(files_default);
+var routes_default = router23;
 
 // src/app.ts
-var app = (0, import_express23.default)();
+var app = (0, import_express24.default)();
 app.use(
   (0, import_pino_http.default)({
     logger,
@@ -82345,8 +82877,8 @@ app.use(
   })
 );
 app.use((0, import_cors.default)());
-app.use(import_express23.default.json({ limit: "200mb" }));
-app.use(import_express23.default.urlencoded({ extended: true, limit: "200mb" }));
+app.use(import_express24.default.json({ limit: "200mb" }));
+app.use(import_express24.default.urlencoded({ extended: true, limit: "200mb" }));
 app.use("/api", routes_default);
 var app_default = app;
 
