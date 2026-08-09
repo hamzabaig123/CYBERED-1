@@ -82345,8 +82345,8 @@ app.use(
   })
 );
 app.use((0, import_cors.default)());
-app.use(import_express23.default.json());
-app.use(import_express23.default.urlencoded({ extended: true }));
+app.use(import_express23.default.json({ limit: "200mb" }));
+app.use(import_express23.default.urlencoded({ extended: true, limit: "200mb" }));
 app.use("/api", routes_default);
 var app_default = app;
 
