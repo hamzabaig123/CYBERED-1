@@ -1,5 +1,6 @@
 export * from "./users";
 export * from "./curriculum";
+export { topicsTable, insertTopicSchema, type InsertTopic, type TopicRow, getDescendantTopicIds } from "./topics";
 export * from "./questions";
 export * from "./tests";
 export * from "./audit";
