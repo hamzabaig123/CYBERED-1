@@ -49297,11 +49297,15 @@ var GenerateAIQuestionsParams = object({
   "chapterId": coerce_exports.number()
 });
 var generateAIQuestionsBodyCountMax = 20;
+var generateAIQuestionsBodyDifficultyDefault = `auto`;
+var generateAIQuestionsBodyLanguageDefault = `auto`;
 var GenerateAIQuestionsBody = object({
   "pageRange": string2(),
   "questionType": _enum(["mcq", "short", "long"]),
   "count": number2().min(1).max(generateAIQuestionsBodyCountMax),
-  "topicFocus": string2().nullish()
+  "topicFocus": string2().nullish(),
+  "difficulty": _enum(["auto", "easier", "harder"]).default(generateAIQuestionsBodyDifficultyDefault),
+  "language": _enum(["auto", "english", "urdu", "sindhi"]).default(generateAIQuestionsBodyLanguageDefault)
 });
 var GenerateAIQuestionsResponse = object({
   "drafts": array(object({
@@ -80403,6 +80407,55 @@ Return EXACTLY a JSON object:
   });
   return parseRubricEvaluation(response, rubric, totalMarks);
 }
+async function* streamEvaluateAnswer(storeName, questionText, studentAnswer, rubric, totalMarks, opts = {}) {
+  const client2 = getGeminiClient();
+  const lang = languageInstruction(opts.language);
+  const rubricText = rubric && rubric.length > 0 ? rubric.map((r2) => `- ${r2.criterion} (${r2.marks} marks)`).join("\n") : `(no explicit rubric \u2014 judge holistically against ${totalMarks} total marks)`;
+  const stream = await client2.models.generateContentStream({
+    model: "gemini-3-flash-preview",
+    contents: `${lang}Grade this answer strictly against the marking rubric. For each criterion, decide how many of its marks the answer earns (0 to full), whether it was met, and a 1-line comment. Sum to a final total out of the rubric total.
+
+Question: ${questionText}
+Student answer: ${studentAnswer}
+Rubric (criterion = marks):
+${rubricText}
+
+Return EXACTLY a JSON object:
+{
+  "criteria": [{"criterion": "...", "marks": 2, "awarded": 1, "met": false, "comment": "..."}],
+  "marksTotal": <sum of rubric marks>,
+  "marksAwarded": <sum of awarded>,
+  "feedback": "2-3 sentence summary",
+  "missedPoints": ["..."]
+}`,
+    config: {
+      tools: [{ fileSearch: { fileSearchStoreNames: [storeName] } }],
+      responseMimeType: "application/json"
+    }
+  });
+  let accumulated = "";
+  let final = null;
+  for await (const chunk of stream) {
+    const text2 = chunk.text ?? "";
+    accumulated += text2;
+    final = { text: text2, groundingMetadata: chunk.groundingMetadata };
+    if (text2) yield { type: "text", text: text2 };
+  }
+  const evaluation = parseRubricEvaluation(final, rubric, totalMarks);
+  yield {
+    type: "done",
+    marksAwarded: evaluation.marksAwarded,
+    marksTotal: evaluation.marksTotal,
+    feedback: evaluation.feedback,
+    missedPoints: evaluation.missedPoints,
+    rubricBreakdown: evaluation.criteria.map((c3) => ({
+      criterion: c3.criterion,
+      marksAwarded: c3.awarded,
+      marksTotal: c3.marks,
+      feedback: c3.comment
+    }))
+  };
+}
 function buildChat(messages, opts = {}) {
   const mode = opts.mode ?? "answer";
   const lang = languageInstruction(opts.language);
@@ -81623,6 +81676,74 @@ router18.post("/ai/evaluate", requireAuth, async (req, res) => {
   } catch (error41) {
     console.error("Error evaluating answer:", error41);
     res.status(500).json({ error: "Failed to evaluate answer" });
+  }
+});
+router18.post("/ai/evaluate/stream", requireAuth, async (req, res) => {
+  const body = req.body;
+  if (!body || !body.subjectId || !body.question || !body.studentAnswer) {
+    res.status(400).json({ error: "subjectId, question, and studentAnswer are required" });
+    return;
+  }
+  const invalidRubric = Array.isArray(body.rubric) && body.rubric.some((c3) => !c3.criterion || typeof c3.marks !== "number" || c3.marks < 0);
+  if (Array.isArray(body.rubric) && (body.rubric.length < 1 || invalidRubric)) {
+    res.status(400).json({ error: "Rubric must be a non-empty array of {criterion, marks}" });
+    return;
+  }
+  const [store] = await db.select().from(bookStoresTable).where(eq(bookStoresTable.subjectId, body.subjectId));
+  if (!store) {
+    res.status(404).json({ error: "Book store not found for this subject" });
+    return;
+  }
+  if (store.status !== "ready") {
+    res.status(400).json({ error: "Book store not ready for queries" });
+    return;
+  }
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+  const writeEvent = (data) => res.write(`data: ${JSON.stringify(data)}
+
+`);
+  try {
+    let feedbackText = "";
+    for await (const chunk of streamEvaluateAnswer(
+      store.geminiStoreName,
+      body.question,
+      body.studentAnswer,
+      Array.isArray(body.rubric) && body.rubric.length > 0 ? body.rubric : null,
+      body.totalMarks ?? 0,
+      { language: ["english", "urdu", "sindhi", "auto"].includes(body.language ?? "") ? body.language : "auto" }
+    )) {
+      if (chunk.type === "text") {
+        feedbackText += chunk.text;
+        writeEvent({ type: "text", text: chunk.text });
+      } else if (chunk.type === "done") {
+        await writeAudit(req, {
+          action: "AI_EVALUATE_ANSWER",
+          entityType: "ai_evaluation",
+          entityId: null,
+          detail: `Streamed rubric evaluation for subject ${body.subjectId}`
+        });
+        writeEvent({
+          type: "done",
+          marksAwarded: chunk.marksAwarded,
+          marksTotal: chunk.marksTotal,
+          feedback: chunk.feedback ?? feedbackText,
+          missedPoints: chunk.missedPoints,
+          rubricBreakdown: chunk.rubricBreakdown
+        });
+      }
+    }
+    res.end();
+  } catch (error41) {
+    console.error("Error streaming evaluation:", error41);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to evaluate answer" });
+      return;
+    }
+    writeEvent({ type: "error", message: "Stream interrupted. Please try again." });
+    res.end();
   }
 });
 var ai_evaluator_default = router18;

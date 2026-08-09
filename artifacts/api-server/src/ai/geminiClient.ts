@@ -382,6 +382,76 @@ Return EXACTLY a JSON object:
   return parseRubricEvaluation(response, rubric, totalMarks);
 }
 
+/**
+ * Stream the rubric evaluation feedback token-by-token, finalizing with
+ * marks, rubricBreakdown, and missedPoints.
+ */
+export async function* streamEvaluateAnswer(
+  storeName: string,
+  questionText: string,
+  studentAnswer: string,
+  rubric: Array<{ criterion: string; marks: number }> | null,
+  totalMarks: number,
+  opts: { language?: ReplyLanguage } = {}
+): AsyncGenerator<
+  | { type: "text"; text: string }
+  | { type: "done"; marksAwarded: number; marksTotal: number; feedback: string; missedPoints: string[]; rubricBreakdown?: Array<{ criterion: string; marksAwarded: number; marksTotal: number; feedback: string }> }
+> {
+  const client = getGeminiClient();
+  const lang = languageInstruction(opts.language);
+
+  const rubricText = rubric && rubric.length > 0
+    ? rubric.map((r) => `- ${r.criterion} (${r.marks} marks)`).join("\n")
+    : `(no explicit rubric — judge holistically against ${totalMarks} total marks)`;
+
+  const stream = await client.models.generateContentStream({
+    model: "gemini-3-flash-preview",
+    contents: `${lang}Grade this answer strictly against the marking rubric. For each criterion, decide how many of its marks the answer earns (0 to full), whether it was met, and a 1-line comment. Sum to a final total out of the rubric total.
+
+Question: ${questionText}
+Student answer: ${studentAnswer}
+Rubric (criterion = marks):
+${rubricText}
+
+Return EXACTLY a JSON object:
+{
+  "criteria": [{"criterion": "...", "marks": 2, "awarded": 1, "met": false, "comment": "..."}],
+  "marksTotal": <sum of rubric marks>,
+  "marksAwarded": <sum of awarded>,
+  "feedback": "2-3 sentence summary",
+  "missedPoints": ["..."]
+}`,
+    config: {
+      tools: [{ fileSearch: { fileSearchStoreNames: [storeName] } }],
+      responseMimeType: "application/json",
+    },
+  });
+
+  let accumulated = "";
+  let final: { text?: string; groundingMetadata?: unknown } | null = null;
+  for await (const chunk of stream) {
+    const text = (chunk as { text?: string }).text ?? "";
+    accumulated += text;
+    final = { text, groundingMetadata: (chunk as { groundingMetadata?: unknown }).groundingMetadata };
+    if (text) yield { type: "text", text };
+  }
+
+  const evaluation = parseRubricEvaluation(final, rubric, totalMarks);
+  yield {
+    type: "done",
+    marksAwarded: evaluation.marksAwarded,
+    marksTotal: evaluation.marksTotal,
+    feedback: evaluation.feedback,
+    missedPoints: evaluation.missedPoints,
+    rubricBreakdown: evaluation.criteria.map((c) => ({
+      criterion: c.criterion,
+      marksAwarded: c.awarded,
+      marksTotal: c.marks,
+      feedback: c.comment,
+    })),
+  };
+}
+
 function buildChat(
   messages: Array<{ role: "user" | "assistant"; content: string }>,
   opts: ChatStreamOptions = {}

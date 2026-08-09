@@ -71,7 +71,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { streamExplain, type ReplyLanguage, REPLY_LANGUAGES } from "@/lib/ai-stream";
+import { streamExplain, type ReplyLanguage, REPLY_LANGUAGES, streamChat, streamEvaluate } from "@/lib/ai-stream";
 
 type TabKey = "chat" | "explain" | "verification" | "drafts" | "index" | "evaluator";
 
@@ -1851,6 +1851,8 @@ function AIAnswerEvaluatorTab({ subjectId, chapters, onUsage }: {
   const [grading, setGrading] = useState(false);
   const [lastResult, setLastResult] = useState<GradingResult | null>(null);
   const [history, setHistory] = useState<GradingResult[]>([]);
+  const [streamingFeedback, setStreamingFeedback] = useState("");
+  const abortRef = useRef<(() => void) | null>(null);
 
   const questionSuggestions = [
     {
@@ -1872,45 +1874,79 @@ function AIAnswerEvaluatorTab({ subjectId, chapters, onUsage }: {
 
   const handleGrade = () => {
     if (!question.trim() || !studentAnswer.trim() || !markingGuide.trim()) return;
+    
+    abortRef.current?.();
     setGrading(true);
-    setTimeout(() => {
-      const answerLen = studentAnswer.length;
-      const guideLen = markingGuide.length;
-      const baseOverlap = Math.min(1, answerLen / Math.max(guideLen, 100));
-      const keyTerms = markingGuide.toLowerCase().split(/[\s,().]+/).filter((w) => w.length > 4);
-      const matched = keyTerms.filter((t) => studentAnswer.toLowerCase().includes(t)).length;
-      const termRatio = keyTerms.length > 0 ? matched / keyTerms.length : 0.5;
-      const rawScore = (baseOverlap * 0.3 + termRatio * 0.7) * totalMarks;
-      const awarded = Math.max(0, Math.min(totalMarks, Math.round(rawScore * 2) / 2));
+    setStreamingFeedback("");
+    setLastResult(null);
 
-      const missed: string[] = [];
-      if (awarded < totalMarks * 0.5) missed.push("Answer length is significantly shorter than expected for full marks");
-      if (termRatio < 0.6) missed.push("Several key terms from the marking guide are missing");
-      if (awarded / totalMarks < 0.8) missed.push("Structure/organization could be more explicit (use step-by-step)");
-      if (missed.length === 0 && awarded < totalMarks) missed.push("Minor gap: add one concrete example or edge case");
+    // Parse rubric from marking guide if it contains structured criteria
+    const rubric = parseRubricFromGuide(markingGuide, totalMarks);
 
-      const feedback =
-        awarded / totalMarks >= 0.9 ? "Excellent answer. Covers almost all points from the guide." :
-        awarded / totalMarks >= 0.7 ? "Strong answer. A few omissions prevent full marks." :
-        awarded / totalMarks >= 0.5 ? "Competent but incomplete. Address the missed points below." :
-        "Significant gaps. Review the marking guide and expand substantially.";
-
-      const result: GradingResult = {
-        id: Math.random().toString(36).slice(2, 9),
+    onUsage();
+    abortRef.current = streamEvaluate(
+      {
+        subjectId,
         question,
         studentAnswer,
-        marksAwarded: awarded,
-        marksTotal: totalMarks,
-        feedback,
-        missedPoints: missed,
-        timestamp: new Date().toISOString(),
-        confirmed: false,
-      };
-      setLastResult(result);
-      setHistory((h) => [result, ...h].slice(0, 20));
-      setGrading(false);
-      onUsage();
-    }, 1400);
+        rubric,
+        totalMarks,
+      },
+      {
+        onText: (text) => {
+          setStreamingFeedback((prev) => prev + text);
+        },
+        onDone: (res) => {
+          const result: GradingResult = {
+            id: Math.random().toString(36).slice(2, 9),
+            question,
+            studentAnswer,
+            marksAwarded: res.marksAwarded,
+            marksTotal: res.marksTotal,
+            feedback: res.feedback,
+            missedPoints: res.missedPoints,
+            timestamp: new Date().toISOString(),
+            confirmed: false,
+          };
+          setLastResult(result);
+          setHistory((h) => [result, ...h].slice(0, 20));
+          setGrading(false);
+          setStreamingFeedback("");
+        },
+        onError: (message) => {
+          setGrading(false);
+          setStreamingFeedback("");
+          toast({ title: "Evaluation failed", description: message, variant: "destructive" });
+        },
+      }
+    );
+  };
+
+  const handleStop = () => {
+    abortRef.current?.();
+    abortRef.current = null;
+    setGrading(false);
+    setStreamingFeedback("");
+  };
+
+  // Helper to parse a marking guide into a structured rubric
+  const parseRubricFromGuide = (guide: string, total: number): Array<{ criterion: string; marks: number }> | null => {
+    // Try to parse patterns like "criterion (N marks)" or "criterion - N marks"
+    const criterionRegex = /([^()\n]+?)\s*[\(\-]\s*(\d+)\s*marks?\s*[\)\,\;]?/gi;
+    const matches = [...guide.matchAll(criterionRegex)];
+    
+    if (matches.length === 0) return null;
+    
+    const criteria = matches.map(m => ({
+      criterion: m[1].trim(),
+      marks: parseInt(m[2], 10),
+    }));
+    
+    // Only return if the sum roughly matches the total
+    const sum = criteria.reduce((a, c) => a + c.marks, 0);
+    if (Math.abs(sum - total) <= 2) return criteria;
+    
+    return null;
   };
 
   const handleConfirm = (id: string) => {
@@ -2011,12 +2047,32 @@ function AIAnswerEvaluatorTab({ subjectId, chapters, onUsage }: {
             </div>
           </div>
 
-          <div className="flex justify-end pt-1">
+          <div className="flex justify-end gap-2 pt-1">
+            {grading && (
+              <Button onClick={handleStop} variant="outline" size="sm">
+                <X className="mr-2 h-3 w-3" /> STOP
+              </Button>
+            )}
             <Button onClick={handleGrade} disabled={grading || !question.trim() || !studentAnswer.trim() || !markingGuide.trim()} size="sm">
               {grading ? <><Loader2 className="mr-2 h-3 w-3 animate-spin" /> EVALUATING...</> : <><Star className="mr-2 h-3 w-3" /> EVALUATE ANSWER</>}
             </Button>
           </div>
         </div>
+
+        {streamingFeedback && grading && (
+          <div className={cn("border p-4 animate-in slide-in-from-bottom-2 duration-200", TAB_COLORS.evaluator.accentBorder, TAB_COLORS.evaluator.accentBg)}>
+            <div className="flex items-center gap-2 mb-3">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <div className="font-mono text-[10px] uppercase tracking-widest text-foreground font-bold">
+                Evaluating answer...
+              </div>
+            </div>
+            <div className="border-l-2 border-primary/40 bg-background/40 p-2.5">
+              <div className="font-mono text-[9px] uppercase text-muted-foreground mb-0.5">AI Feedback (streaming)</div>
+              <p className="font-sans text-[12px] whitespace-pre-wrap">{streamingFeedback}</p>
+            </div>
+          </div>
+        )}
 
         {lastResult && (
           <div className={cn("border p-4 animate-in slide-in-from-bottom-2 duration-200", TAB_COLORS.evaluator.accentBorder, TAB_COLORS.evaluator.accentBg)}>
@@ -2226,10 +2282,11 @@ function AskBookChatTab({ subjectId, subject, store, readyAsset, totalPages, onU
     undefined,
     { query: { enabled: sessionId != null && sessionId > 0 } as any }
   );
-  const { mutate: sendMessage, isPending: sending } = useSendAIChatMessage();
 
   const [input, setInput] = useState("");
   const [localMessages, setLocalMessages] = useState<Array<{ role: "user" | "assistant"; content: string; citations?: Citation[]; confidence?: number }>>([]);
+  const [streaming, setStreaming] = useState(false);
+  const abortRef = useRef<(() => void) | null>(null);
 
   const createFlashcardMutation = useMutation({
     mutationFn: async (data: { subjectId: number; question: string; answer: string; sourcePage: number; sourceCitation: string }) => {
@@ -2298,25 +2355,61 @@ function AskBookChatTab({ subjectId, subject, store, readyAsset, totalPages, onU
   };
 
   const sendChatMessage = (sid: number, userMsg: string) => {
+    abortRef.current?.();
     setLocalMessages((prev) => [...prev, { role: "user", content: userMsg }]);
     setInput("");
-    sendMessage(
-      { sessionId: sid, data: { content: userMsg } },
+    setStreaming(true);
+
+    // Add a placeholder assistant message for streaming
+    setLocalMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+
+    onUsage();
+    abortRef.current = streamChat(
+      { sessionId: sid, content: userMsg },
       {
-        onSuccess: (res: any) => {
-          const reply = res.reply ?? res.message ?? res.content ?? "No response generated.";
+        onText: (text) => {
+          setLocalMessages((prev) => {
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (lastIdx >= 0 && updated[lastIdx].role === "assistant") {
+              updated[lastIdx] = { ...updated[lastIdx], content: (updated[lastIdx].content ?? "") + text };
+            }
+            return updated;
+          });
+        },
+        onDone: (res) => {
           const cits: Citation[] = res.citations ?? [];
           const conf = cits.length > 0 ? 0.5 + Math.min(cits.length * 0.15, 0.45) : 0.2;
-          setLocalMessages((prev) => [...prev, { role: "assistant", content: reply, citations: cits, confidence: res.confidence ?? conf }]);
+          setLocalMessages((prev) => {
+            const updated = [...prev];
+            const lastIdx = updated.length - 1;
+            if (lastIdx >= 0 && updated[lastIdx].role === "assistant") {
+              updated[lastIdx] = { 
+                ...updated[lastIdx], 
+                content: res.content,
+                citations: cits,
+                confidence: conf
+              };
+            }
+            return updated;
+          });
+          setStreaming(false);
           refetchSession();
-          onUsage();
         },
-        onError: (err) => {
-          toast({ title: "Chat failed", description: (err as Error).message, variant: "destructive" });
+        onError: (message) => {
+          setStreaming(false);
+          toast({ title: "Chat failed", description: message, variant: "destructive" });
+          // Remove the placeholder assistant message on error
           setLocalMessages((prev) => prev.slice(0, -1));
         },
       }
     );
+  };
+
+  const handleStop = () => {
+    abortRef.current?.();
+    abortRef.current = null;
+    setStreaming(false);
   };
 
   const starters = [
@@ -2489,8 +2582,8 @@ function AskBookChatTab({ subjectId, subject, store, readyAsset, totalPages, onU
             <span className="font-mono text-[9px] text-muted-foreground uppercase">
               ENTER to send · SHIFT+ENTER for newline
             </span>
-            <Button onClick={handleSend} disabled={sending || creatingSession || !input.trim()} size="sm">
-              <Send className="mr-2 h-3 w-3" /> SEND
+            <Button onClick={handleSend} disabled={streaming || creatingSession || !input.trim()} size="sm">
+              <Send className="mr-2 h-3 w-3" /> {streaming ? "SENDING..." : "SEND"}
             </Button>
           </div>
         </div>
