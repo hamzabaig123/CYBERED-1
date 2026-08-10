@@ -1067,7 +1067,7 @@ function BookStoreIndexTab(props: {
                       onClick={async () => {
                         if (!confirm(`Delete ${asset.originalFilename}? This can't be undone.`)) return;
                         try {
-                          const res = await fetch(`/api/files/${asset.id}`, { method: "DELETE" });
+                          const res = await customFetch(`/api/files/${asset.id}`, { method: "DELETE" });
                           if (!res.ok) throw new Error("Failed to delete");
                           toast({ title: "Deleted", description: `${asset.originalFilename} removed.` });
                           refetchAssets();

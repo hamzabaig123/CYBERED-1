@@ -1,4 +1,5 @@
 import { promises as fs } from "node:fs";
+import { createWriteStream } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -27,8 +28,19 @@ export interface TextbookStorage {
   getPresignedUploadUrl?(key: string, expirySeconds: number): Promise<string | null>;
 }
 
-/** Normalize a storage key into a safe, forward-slash path. Rejects traversal. */
+/**
+ * Normalize a storage key into a safe, forward-slash path. Rejects traversal.
+ * Handles both relative keys (preferred) and absolute Windows paths from legacy
+ * DB records by extracting just the filename portion.
+ */
 export function normalizeKey(key: string): string {
+  // Handle absolute Windows paths (e.g. D:\...\file.pdf or \\server\share\file.pdf)
+  // by extracting just the filename — this preserves backward compat with
+  // legacy DB records that stored absolute paths.
+  if (/^[A-Za-z]:\\|^\\\\/ .test(key)) {
+    const filename = key.split(/[/\\]+/).pop() ?? key;
+    return filename.replace(/^[/\\]+/, "").replace(/[/\\]+$/, "");
+  }
   const clean = key.replace(/^[/\\]+/, "").replace(/[/\\]+$/, "");
   const parts = clean.split(/[/\\]+/).filter((p) => p.length > 0);
   if (parts.some((p) => p === "..")) {
@@ -59,7 +71,7 @@ export class LocalStorage implements TextbookStorage {
   async putStream(key: string, body: NodeJS.ReadableStream, _contentType: string): Promise<void> {
     const full = this.resolve(key);
     await fs.mkdir(path.dirname(full), { recursive: true });
-    const fileStream = await fs.createWriteStream(full);
+    const fileStream = createWriteStream(full);
     for await (const chunk of body) {
       fileStream.write(chunk);
     }

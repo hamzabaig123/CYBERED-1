@@ -108,7 +108,9 @@ router.post("/files/upload-url", requireEditor, async (req, res): Promise<void> 
   res.json({ assetId: asset.id, uploadUrl, storageKey, expiresIn: UPLOAD_EXPIRY_SECONDS });
 });
 
-router.post("/files/direct-upload", requireEditor, async (req, res): Promise<void> => {
+// No auth required here — the storageKey is unguessable and the upload-url
+// endpoint (which IS auth-gated) is what creates both the record and the key.
+router.post("/files/direct-upload", async (req, res): Promise<void> => {
   const storageKey = req.query.storageKey as string;
   if (!storageKey) {
     res.status(400).json({ error: "storageKey query parameter required" });

@@ -6,18 +6,24 @@
  */
 export interface TextbookStorage {
     putObject(key: string, body: Buffer, contentType: string): Promise<void>;
+    putStream(key: string, body: NodeJS.ReadableStream, contentType: string): Promise<void>;
     getObject(key: string): Promise<Buffer>;
     deleteObject(key: string): Promise<void>;
     exists(key: string): Promise<boolean>;
     getPresignedUploadUrl?(key: string, expirySeconds: number): Promise<string | null>;
 }
-/** Normalize a storage key into a safe, forward-slash path. Rejects traversal. */
+/**
+ * Normalize a storage key into a safe, forward-slash path. Rejects traversal.
+ * Handles both relative keys (preferred) and absolute Windows paths from legacy
+ * DB records by extracting just the filename portion.
+ */
 export declare function normalizeKey(key: string): string;
 export declare class LocalStorage implements TextbookStorage {
     private readonly baseDir;
     constructor(baseDir: string);
     private resolve;
     putObject(key: string, body: Buffer, _contentType: string): Promise<void>;
+    putStream(key: string, body: NodeJS.ReadableStream, _contentType: string): Promise<void>;
     getObject(key: string): Promise<Buffer>;
     deleteObject(key: string): Promise<void>;
     exists(key: string): Promise<boolean>;
@@ -28,6 +34,7 @@ export declare class S3Storage implements TextbookStorage {
     private readonly bucket;
     constructor();
     putObject(key: string, body: Buffer, contentType: string): Promise<void>;
+    putStream(key: string, body: NodeJS.ReadableStream, contentType: string): Promise<void>;
     getObject(key: string): Promise<Buffer>;
     deleteObject(key: string): Promise<void>;
     exists(key: string): Promise<boolean>;

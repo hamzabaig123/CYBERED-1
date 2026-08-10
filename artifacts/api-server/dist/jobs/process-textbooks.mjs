@@ -87113,9 +87113,14 @@ var db = drizzle(pool, { schema: schema_exports });
 var import_client_s3 = __toESM(require_dist_cjs16(), 1);
 var import_s3_request_presigner = __toESM(require_dist_cjs17(), 1);
 import { promises as fs } from "node:fs";
+import { createWriteStream } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 function normalizeKey(key) {
+  if (/^[A-Za-z]:\\|^\\\\/.test(key)) {
+    const filename = key.split(/[/\\]+/).pop() ?? key;
+    return filename.replace(/^[/\\]+/, "").replace(/[/\\]+$/, "");
+  }
   const clean = key.replace(/^[/\\]+/, "").replace(/[/\\]+$/, "");
   const parts = clean.split(/[/\\]+/).filter((p3) => p3.length > 0);
   if (parts.some((p3) => p3 === "..")) {
@@ -87140,6 +87145,15 @@ var LocalStorage = class {
     const full = this.resolve(key);
     await fs.mkdir(path.dirname(full), { recursive: true });
     await fs.writeFile(full, body);
+  }
+  async putStream(key, body, _contentType) {
+    const full = this.resolve(key);
+    await fs.mkdir(path.dirname(full), { recursive: true });
+    const fileStream = createWriteStream(full);
+    for await (const chunk of body) {
+      fileStream.write(chunk);
+    }
+    fileStream.end();
   }
   async getObject(key) {
     return fs.readFile(this.resolve(key));
@@ -87184,6 +87198,17 @@ var S3Storage = class {
     this.client = new import_client_s3.S3Client(config2);
   }
   async putObject(key, body, contentType) {
+    const clean = normalizeKey(key);
+    await this.client.send(
+      new import_client_s3.PutObjectCommand({
+        Bucket: this.bucket,
+        Key: clean,
+        Body: body,
+        ContentType: contentType
+      })
+    );
+  }
+  async putStream(key, body, contentType) {
     const clean = normalizeKey(key);
     await this.client.send(
       new import_client_s3.PutObjectCommand({
