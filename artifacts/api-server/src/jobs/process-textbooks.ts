@@ -55,6 +55,8 @@ async function processPendingAssets() {
       const processed = await processFileAsset(asset.id, { skipScan: !process.env.CLAMAV_HOST });
       console.log(`Asset ${asset.id} processed: ${processed.processingStatus}`);
 
+      // Index any textbook that reached "done" — Gemini reads the PDF directly,
+      // no fullTextKey required (scanned PDFs won't have one)
       if (processed.isTextbook && processed.processingStatus === "done") {
         await indexTextbookToGemini(processed.id);
       }
@@ -82,11 +84,13 @@ async function indexTextbookToGemini(assetId: number) {
     .from(fileAssetsTable)
     .where(eq(fileAssetsTable.id, assetId));
 
-  if (!asset || !asset.fullTextKey) {
-    console.log(`Asset ${assetId} has no full text, skipping indexing`);
+  if (!asset) {
+    console.log(`Asset ${assetId} not found, skipping indexing`);
     return;
   }
 
+  // No fullTextKey check — Gemini File Search reads the PDF directly,
+  // doesn't need local text extraction to have succeeded
   const [store] = await db
     .select()
     .from(bookStoresTable)
@@ -146,7 +150,10 @@ async function indexTextbookToGemini(assetId: number) {
 
     console.log(`Started indexing for store ${currentStore.id}, operation: ${operationName}`);
 
-    pollIndexingStatus(currentStore.id, operationName, asset.id);
+    // Fire-and-forget indexing status polling (non-blocking)
+    pollIndexingStatus(currentStore.id, operationName, asset.id).catch(err => {
+      console.error(`Background indexing poll failed for store ${currentStore.id}:`, err);
+    });
   } catch (error) {
     console.error(`Failed to start indexing:`, error);
     await db

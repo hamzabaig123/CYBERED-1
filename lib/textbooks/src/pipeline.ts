@@ -22,8 +22,8 @@ export interface ProcessFileAssetOptions {
  *   3. extract page-tagged full text and store it next to the PDF
  *   4. update the asset row (page_count, full_text_key, text_preview, statuses)
  *
- * Never silently ends with processingStatus "done": any scan failure or
- * extraction failure flips the row to "error" with an error_message.
+ * Text extraction failure is non-fatal: scanned/image-only PDFs will not have
+ * a local text layer, but Gemini File Search reads PDFs directly.
  */
 export async function processFileAsset(
   assetId: number,
@@ -81,7 +81,7 @@ export async function processFileAsset(
     return fail("error", `Virus scan failed: ${scan.message ?? "unknown error"}`);
   }
 
-  // Phase 4 — full text extraction
+  // Phase 4 — full text extraction (best-effort, not a gate for Gemini indexing)
   try {
     const extracted = await extractPdfText(pdfBytes);
     const textKey = storageKeyForText(asset.storageKey);
@@ -102,7 +102,23 @@ export async function processFileAsset(
 
     return updated;
   } catch (err) {
-    return fail(scan.status, `Text extraction failed (corrupted PDF?): ${messageOf(err)}`);
+    // Local text layer missing/corrupt (typical for scanned PDFs) — still let it
+    // through to Gemini File Search, which reads the PDF directly.
+    console.warn(`[pipeline] Local text extraction failed for asset ${assetId}, continuing without preview:`, err);
+
+    const [updated] = await db
+      .update(fileAssetsTable)
+      .set({
+        virusScanStatus: scan.status,
+        processingStatus: "done",
+        fullTextKey: null,
+        textPreview: null,
+        errorMessage: null,
+      })
+      .where(eq(fileAssetsTable.id, assetId))
+      .returning();
+
+    return updated;
   }
 }
 

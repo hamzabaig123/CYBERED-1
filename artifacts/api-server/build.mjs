@@ -49,7 +49,6 @@ const esbuildSharedOptions = {
     "@mikro-orm/*",
     "@grpc/*",
     "@swc/*",
-    "@aws-sdk/*",
     "@azure/*",
     "@opentelemetry/*",
     "@google-cloud/*",

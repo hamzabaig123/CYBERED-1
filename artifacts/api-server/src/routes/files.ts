@@ -27,6 +27,10 @@ const ListFileAssetsParams = z.object({
   subjectId: z.coerce.number(),
 });
 
+const DeleteFileAssetParams = z.object({
+  assetId: z.coerce.number(),
+});
+
 function parseId(raw: string | string[]): number {
   const s = Array.isArray(raw) ? raw[0] : raw;
   return parseFloat(s);
@@ -35,6 +39,24 @@ function parseId(raw: string | string[]): number {
 const router: IRouter = Router();
 
 const UPLOAD_EXPIRY_SECONDS = 3600;
+
+// Stage-based progress estimation
+const STAGE_PERCENT: Record<string, number> = {
+  queued: 5,
+  scanning: 15,
+  extracting: 30,
+  uploading_to_ai: 50,
+  indexing: 70,
+  ready: 100,
+  error: 0,
+};
+
+function estimateSecondsRemaining(stage: string, sizeBytes: number, stageStartedAt: Date): number | null {
+  if (stage === "ready" || stage === "error") return 0;
+  const estimatedTotalSec = Math.max(60, (sizeBytes / (1024 * 1024)) * 25);
+  const elapsedSec = (Date.now() - stageStartedAt.getTime()) / 1000;
+  return Math.max(5, Math.round(estimatedTotalSec - elapsedSec));
+}
 
 router.post("/files/upload-url", requireEditor, async (req, res): Promise<void> => {
   const user = (req as typeof req & { user: { id: number } }).user;
@@ -77,7 +99,7 @@ router.post("/files/upload-url", requireEditor, async (req, res): Promise<void> 
 
   const storage = getStorage();
   const uploadUrl = await storage.getPresignedUploadUrl?.(storageKey, UPLOAD_EXPIRY_SECONDS);
-  
+
   if (!uploadUrl) {
     res.status(501).json({ error: "Presigned uploads not supported by current storage backend" });
     return;
@@ -93,16 +115,16 @@ router.post("/files/direct-upload", requireEditor, async (req, res): Promise<voi
     return;
   }
   const decodedKey = decodeURIComponent(storageKey);
-  
+
   const storage = getStorage();
   const chunks: Buffer[] = [];
-  
+
   for await (const chunk of req) {
     chunks.push(chunk);
   }
-  
+
   const buffer = Buffer.concat(chunks);
-  
+
   try {
     await storage.putObject(decodedKey, buffer, "application/pdf");
     res.json({ success: true, size: buffer.length });
@@ -153,6 +175,50 @@ router.post("/files/:assetId/complete", requireEditor, async (req, res): Promise
   res.json({ assetId: asset.id, status: "queued_for_processing" });
 });
 
+router.delete("/files/:assetId", requireEditor, async (req, res): Promise<void> => {
+  const params = DeleteFileAssetParams.safeParse({ assetId: parseId(req.params.assetId) });
+  if (!params.success) {
+    res.status(400).json({ error: params.error.message });
+    return;
+  }
+
+  const [asset] = await db
+    .select()
+    .from(fileAssetsTable)
+    .where(eq(fileAssetsTable.id, params.data.assetId));
+
+  if (!asset) {
+    res.status(404).json({ error: "File asset not found" });
+    return;
+  }
+
+  const storage = getStorage();
+  // Best-effort — don't fail the delete if the file's already gone from storage
+  try {
+    await storage.deleteObject?.(asset.storageKey);
+  } catch (e) {
+    console.warn("Could not delete PDF object:", e);
+  }
+  if (asset.fullTextKey) {
+    try {
+      await storage.deleteObject?.(asset.fullTextKey);
+    } catch (e) {
+      console.warn("Could not delete text object:", e);
+    }
+  }
+
+  await db.delete(fileAssetsTable).where(eq(fileAssetsTable.id, asset.id));
+
+  await writeAudit(req, {
+    action: "FILE_DELETE",
+    entityType: "file_asset",
+    entityId: asset.id,
+    detail: `Deleted ${asset.originalFilename} (was ${asset.processingStatus})`,
+  });
+
+  res.json({ success: true });
+});
+
 router.get("/books/:subjectId/assets", requireAuth, async (req, res): Promise<void> => {
   const params = ListFileAssetsParams.safeParse({ subjectId: parseId(req.params.subjectId) });
   if (!params.success) {
@@ -166,7 +232,18 @@ router.get("/books/:subjectId/assets", requireAuth, async (req, res): Promise<vo
     .where(eq(fileAssetsTable.subjectId, params.data.subjectId))
     .orderBy(desc(fileAssetsTable.id));
 
-  res.json({ assets });
+  // Enhance response with progress info
+  const enhancedAssets = assets.map((asset) => ({
+    ...asset,
+    stagePercent: STAGE_PERCENT[asset.processingStatus as string] ?? 0,
+    estimatedSecondsRemaining: estimateSecondsRemaining(
+      asset.processingStatus,
+      asset.sizeBytes,
+      new Date(asset.updatedAt || asset.createdAt)
+    ),
+  }));
+
+  res.json({ assets: enhancedAssets });
 });
 
 router.get("/files/serve", requireAuth, async (req, res): Promise<void> => {
@@ -176,7 +253,7 @@ router.get("/files/serve", requireAuth, async (req, res): Promise<void> => {
     return;
   }
   const decodedKey = decodeURIComponent(storageKey);
-  
+
   const storage = getStorage();
   try {
     const fileBuffer = await storage.getObject(decodedKey);

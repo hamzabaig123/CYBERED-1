@@ -72,6 +72,24 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { streamExplain, type ReplyLanguage, REPLY_LANGUAGES, streamChat, streamEvaluate } from "@/lib/ai-stream";
+// Stage-based progress estimation
+const STAGE_PERCENT: Record<string, number> = {
+  queued: 5,
+  scanning: 15,
+  extracting: 30,
+  uploading_to_ai: 50,
+  indexing: 70,
+  done: 100,
+  ready: 100,
+  error: 0,
+};
+
+function formatEta(seconds: number): string {
+  if (seconds < 60) return "~" + seconds + "s";
+  return "~" + Math.round(seconds / 60) + "m";
+}
+
+
 
 type TabKey = "chat" | "explain" | "verification" | "drafts" | "index" | "evaluator";
 
@@ -119,6 +137,9 @@ interface FileAsset {
   errorMessage: string | null;
   createdAt: string;
   updatedAt: string;
+  stagePercent?: number;
+  estimatedSecondsRemaining?: number | null;
+  processingStage?: string;
 }
 
 interface FileAssetListResponse {
@@ -988,6 +1009,8 @@ function BookStoreIndexTab(props: {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {assets.map((asset) => {
               const assetStatus = getAssetStatus(asset);
+              const stagePercent = asset.stagePercent ?? STAGE_PERCENT[asset.processingStatus] ?? 0;
+              const isProcessing = asset.processingStatus !== "done" && asset.processingStatus !== "error";
               return (
                 <div key={asset.id} className="border border-border bg-background/40 p-3 flex flex-col gap-2">
                   <div className="flex items-start justify-between gap-2">
@@ -1011,6 +1034,19 @@ function BookStoreIndexTab(props: {
                     {asset.errorMessage && (
                       <p className="font-mono text-[9px] text-rose-400 mt-1">{asset.errorMessage}</p>
                     )}
+                    {isProcessing && (
+                      <div className="mt-1.5 space-y-1">
+                        <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+<div className="h-full bg-cyan-400 transition-all duration-300" style={{ width: `${stagePercent}%` }} />
+                        </div>
+                        <div className="flex justify-between text-[8px] font-mono text-muted-foreground">
+                          <span>{stagePercent}% — {asset.processingStage ?? asset.processingStatus}</span>
+                          {asset.estimatedSecondsRemaining != null && asset.estimatedSecondsRemaining > 0 && (
+                            <span>ETA {formatEta(asset.estimatedSecondsRemaining)}</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-1.5 pt-2 border-t border-border">
                     <Button
@@ -1023,6 +1059,24 @@ function BookStoreIndexTab(props: {
                       <Link href={`/subjects/${subjectId}/books/${asset.id}`}>
                         <Eye className="mr-1 h-2.5 w-2.5" /> View
                       </Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-[9px] h-7 text-rose-400 hover:bg-rose-400/10"
+                      onClick={async () => {
+                        if (!confirm(`Delete ${asset.originalFilename}? This can't be undone.`)) return;
+                        try {
+                          const res = await fetch(`/api/files/${asset.id}`, { method: "DELETE" });
+                          if (!res.ok) throw new Error("Failed to delete");
+                          toast({ title: "Deleted", description: `${asset.originalFilename} removed.` });
+                          refetchAssets();
+                        } catch (e) {
+                          toast({ title: "Delete failed", description: (e as Error).message, variant: "destructive" });
+                        }
+                      }}
+                    >
+                      <Trash2 className="mr-1 h-2.5 w-2.5" /> Delete
                     </Button>
                   </div>
                 </div>
