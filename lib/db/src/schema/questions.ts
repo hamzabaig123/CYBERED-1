@@ -11,6 +11,7 @@ export const questionStatusValues = ["solved", "wrong", "bookmarked"] as const;
 export const questionsTable = pgTable("questions", {
   id: serial("id").primaryKey(),
   sectionId: integer("section_id").notNull().references(() => sectionsTable.id),
+  topicId: integer("topic_id").references(() => import("./curriculum").topicsTable.id),
   questionType: text("question_type").notNull().default("mcq"),
   questionText: text("question_text").notNull(),
   optionA: text("option_a"),

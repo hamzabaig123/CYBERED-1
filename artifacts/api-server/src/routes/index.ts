@@ -4,7 +4,11 @@ import authRouter from "./auth";
 import auth2faRouter from "./auth-2fa";
 import dashboardRouter from "./dashboard";
 import curriculumRouter from "./curriculum";
+import topicsRouter from "./topics";
 import questionsRouter from "./questions";
+import mcqOptionsRouter from "./mcq-options";
+import notesRouter from "./notes";
+import documentsRouter from "./documents";
 import testsRouter from "./tests";
 import flashcardsRouter from "./flashcards";
 import userQuestionStateRouter from "./userQuestionState";
@@ -18,8 +22,7 @@ import aiGradingRouter from "./ai-grading";
 import aiChatRouter from "./ai-chat";
 import aiEvaluateRouter from "./ai-evaluator";
 import aiSummarizerRouter from "./ai-summary";
-// [Phase 0 — Frozen: DIY pgvector pipeline disabled, using Gemini File Search instead]
-// import aiRAGRouter from "./ai-rag";
+import aiRAGRouter from "./ai-rag";
 import textbooksRouter from "./textbooks";
 import filesRouter from "./files";
 
@@ -30,7 +33,11 @@ router.use(authRouter);
 router.use(auth2faRouter);
 router.use(dashboardRouter);
 router.use(curriculumRouter);
+router.use(topicsRouter);
 router.use(questionsRouter);
+router.use(mcqOptionsRouter);
+router.use(notesRouter);
+router.use(documentsRouter);
 router.use(testsRouter);
 router.use(flashcardsRouter);
 router.use(userQuestionStateRouter);
@@ -44,8 +51,7 @@ router.use(aiGradingRouter);
 router.use(aiChatRouter);
 router.use(aiEvaluateRouter);
 router.use(aiSummarizerRouter);
-// [Phase 0 — Frozen: DIY pgvector pipeline disabled, using Gemini File Search instead]
-// router.use(aiRAGRouter);
+router.use(aiRAGRouter);
 router.use(textbooksRouter);
 router.use(filesRouter);
 

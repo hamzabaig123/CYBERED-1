@@ -117,17 +117,13 @@ router.post("/files/direct-upload", requireEditor, async (req, res): Promise<voi
   const decodedKey = decodeURIComponent(storageKey);
 
   const storage = getStorage();
-  const chunks: Buffer[] = [];
+  let uploadedBytes = 0;
 
-  for await (const chunk of req) {
-    chunks.push(chunk);
-  }
-
-  const buffer = Buffer.concat(chunks);
-
+  // Stream directly to storage instead of buffering the entire file in memory
   try {
-    await storage.putObject(decodedKey, buffer, "application/pdf");
-    res.json({ success: true, size: buffer.length });
+    await storage.putStream(decodedKey, req, "application/pdf");
+    uploadedBytes = parseInt(req.headers["content-length"] ?? "0", 10);
+    res.json({ success: true, size: uploadedBytes });
   } catch (error) {
     console.error("Direct upload failed:", error);
     res.status(500).json({ error: "Failed to save file" });

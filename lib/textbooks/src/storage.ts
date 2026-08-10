@@ -8,6 +8,7 @@ import {
   DeleteObjectCommand,
   HeadObjectCommand,
   type S3ClientConfig,
+  type PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -19,6 +20,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
  */
 export interface TextbookStorage {
   putObject(key: string, body: Buffer, contentType: string): Promise<void>;
+  putStream(key: string, body: NodeJS.ReadableStream, contentType: string): Promise<void>;
   getObject(key: string): Promise<Buffer>;
   deleteObject(key: string): Promise<void>;
   exists(key: string): Promise<boolean>;
@@ -52,6 +54,16 @@ export class LocalStorage implements TextbookStorage {
     const full = this.resolve(key);
     await fs.mkdir(path.dirname(full), { recursive: true });
     await fs.writeFile(full, body);
+  }
+
+  async putStream(key: string, body: NodeJS.ReadableStream, _contentType: string): Promise<void> {
+    const full = this.resolve(key);
+    await fs.mkdir(path.dirname(full), { recursive: true });
+    const fileStream = await fs.createWriteStream(full);
+    for await (const chunk of body) {
+      fileStream.write(chunk);
+    }
+    fileStream.end();
   }
 
   async getObject(key: string): Promise<Buffer> {
@@ -114,7 +126,19 @@ export class S3Storage implements TextbookStorage {
         Key: clean,
         Body: body,
         ContentType: contentType,
-      })
+      } as PutObjectCommandInput)
+    );
+  }
+
+  async putStream(key: string, body: NodeJS.ReadableStream, contentType: string): Promise<void> {
+    const clean = normalizeKey(key);
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: clean,
+        Body: body,
+        ContentType: contentType,
+      } as PutObjectCommandInput)
     );
   }
 
