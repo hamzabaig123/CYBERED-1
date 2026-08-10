@@ -18,7 +18,8 @@ import aiGradingRouter from "./ai-grading";
 import aiChatRouter from "./ai-chat";
 import aiEvaluateRouter from "./ai-evaluator";
 import aiSummarizerRouter from "./ai-summary";
-import aiRAGRouter from "./ai-rag";
+// [Phase 0 — Frozen: DIY pgvector pipeline disabled, using Gemini File Search instead]
+// import aiRAGRouter from "./ai-rag";
 import textbooksRouter from "./textbooks";
 import filesRouter from "./files";
 
@@ -43,7 +44,8 @@ router.use(aiGradingRouter);
 router.use(aiChatRouter);
 router.use(aiEvaluateRouter);
 router.use(aiSummarizerRouter);
-router.use(aiRAGRouter);
+// [Phase 0 — Frozen: DIY pgvector pipeline disabled, using Gemini File Search instead]
+// router.use(aiRAGRouter);
 router.use(textbooksRouter);
 router.use(filesRouter);
 

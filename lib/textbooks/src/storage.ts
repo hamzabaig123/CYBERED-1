@@ -1,6 +1,15 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+  HeadObjectCommand,
+  type S3ClientConfig,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 /**
  * Storage abstraction for textbook files. `storage_key` is a flat, portable
@@ -27,7 +36,7 @@ export function normalizeKey(key: string): string {
 }
 
 export class LocalStorage implements TextbookStorage {
-  constructor(private readonly baseDir: string) {}
+  constructor(private readonly baseDir: string) { }
 
   private resolve(key: string): string {
     const clean = normalizeKey(key);
@@ -68,6 +77,92 @@ export class LocalStorage implements TextbookStorage {
   }
 }
 
+export class S3Storage implements TextbookStorage {
+  private readonly client: S3Client;
+  private readonly bucket: string;
+
+  constructor() {
+    const bucket = process.env["S3_BUCKET"];
+    if (!bucket) {
+      throw new Error('S3Storage requires S3_BUCKET environment variable');
+    }
+    this.bucket = bucket;
+
+    const region = process.env["S3_REGION"] ?? "auto";
+    const endpoint = process.env["S3_ENDPOINT"];
+    const forcePathStyle = process.env["S3_FORCE_PATH_STYLE"] === "true";
+
+    const config: S3ClientConfig = { region, forcePathStyle };
+    if (endpoint) {
+      config.endpoint = endpoint;
+    }
+
+    const accessKeyId = process.env["S3_ACCESS_KEY_ID"];
+    const secretAccessKey = process.env["S3_SECRET_ACCESS_KEY"];
+    if (accessKeyId && secretAccessKey) {
+      config.credentials = { accessKeyId, secretAccessKey };
+    }
+
+    this.client = new S3Client(config);
+  }
+
+  async putObject(key: string, body: Buffer, contentType: string): Promise<void> {
+    const clean = normalizeKey(key);
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: clean,
+        Body: body,
+        ContentType: contentType,
+      })
+    );
+  }
+
+  async getObject(key: string): Promise<Buffer> {
+    const clean = normalizeKey(key);
+    const resp = await this.client.send(
+      new GetObjectCommand({ Bucket: this.bucket, Key: clean })
+    );
+    const arr = await resp.Body?.transformToByteArray();
+    if (!arr) {
+      throw new Error(`Empty body for S3 object: ${clean}`);
+    }
+    return Buffer.from(arr);
+  }
+
+  async deleteObject(key: string): Promise<void> {
+    const clean = normalizeKey(key);
+    await this.client.send(
+      new DeleteObjectCommand({ Bucket: this.bucket, Key: clean })
+    );
+  }
+
+  async exists(key: string): Promise<boolean> {
+    const clean = normalizeKey(key);
+    try {
+      await this.client.send(
+        new HeadObjectCommand({ Bucket: this.bucket, Key: clean })
+      );
+      return true;
+    } catch (err: any) {
+      if (err && (err.name === "NotFound" || err.$metadata?.httpStatusCode === 404)) {
+        return false;
+      }
+      throw err;
+    }
+  }
+
+  async getPresignedUploadUrl(key: string, expirySeconds: number): Promise<string | null> {
+    const clean = normalizeKey(key);
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: clean,
+    });
+    const expiresIn = expirySeconds > 0 ? expirySeconds : 900;
+    return getSignedUrl(this.client, command, { expiresIn });
+  }
+}
+
 /**
  * Default storage root, anchored to the workspace rather than `process.cwd()`
  * so the ingestion script and the API server (different working directories)
@@ -84,14 +179,17 @@ export const DEFAULT_STORAGE_DIR = path.resolve(
 );
 
 /**
- * Build the storage backend from environment. `STORAGE_BACKEND` is reserved for
- * "s3" (R2/B2) later; today only "local" is implemented.
+ * Build the storage backend from environment.
+ * Supported: "local" (default), "s3" (AWS S3 / Cloudflare R2 / Backblaze B2).
  */
 export function getStorage(): TextbookStorage {
-  const backend = process.env["STORAGE_BACKEND"] ?? "local";
-  if (backend !== "local") {
-    throw new Error(`STORAGE_BACKEND "${backend}" is not implemented yet — use "local"`);
+  const backend = (process.env["STORAGE_BACKEND"] ?? "local").toLowerCase();
+  if (backend === "s3") {
+    return new S3Storage();
   }
-  const baseDir = process.env["FILE_STORAGE_DIR"] ?? DEFAULT_STORAGE_DIR;
-  return new LocalStorage(baseDir);
+  if (backend === "local") {
+    const baseDir = process.env["FILE_STORAGE_DIR"] ?? DEFAULT_STORAGE_DIR;
+    return new LocalStorage(baseDir);
+  }
+  throw new Error(`Unsupported STORAGE_BACKEND "${backend}" — use "local" or "s3"`);
 }

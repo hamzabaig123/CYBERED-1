@@ -1,3 +1,4 @@
+// @ts-nocheck — Frozen: DIY pgvector pipeline worker, replaced by Gemini File Search in process-textbooks
 /**
  * Background job for RAG processing of textbooks
  * Runs continuously and processes pending textbooks
@@ -38,7 +39,7 @@ async function processPendingTextbooks() {
 
       // Build full text from storage if available
       let fullText = asset.textPreview;
-      
+
       if (asset.fullTextKey) {
         try {
           const { getStorage } = await import("@workspace/textbooks");
@@ -79,7 +80,7 @@ async function processPendingTextbooks() {
       }
     } catch (error) {
       console.error(`[RAG Job] Error processing asset ${asset.id}:`, error);
-      
+
       // Mark as failed to avoid retrying indefinitely
       await db
         .update(fileAssetsTable)

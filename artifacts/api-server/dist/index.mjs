@@ -21065,27 +21065,27 @@ var require_router = __commonJS({
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var methods = METHODS.map((method) => method.toLowerCase());
-    module.exports = Router24;
+    module.exports = Router23;
     module.exports.Route = Route;
-    function Router24(options) {
-      if (!(this instanceof Router24)) {
-        return new Router24(options);
+    function Router23(options) {
+      if (!(this instanceof Router23)) {
+        return new Router23(options);
       }
       const opts = options || {};
-      function router24(req, res, next) {
-        router24.handle(req, res, next);
+      function router23(req, res, next) {
+        router23.handle(req, res, next);
       }
-      Object.setPrototypeOf(router24, this);
-      router24.caseSensitive = opts.caseSensitive;
-      router24.mergeParams = opts.mergeParams;
-      router24.params = {};
-      router24.strict = opts.strict;
-      router24.stack = [];
-      return router24;
+      Object.setPrototypeOf(router23, this);
+      router23.caseSensitive = opts.caseSensitive;
+      router23.mergeParams = opts.mergeParams;
+      router23.params = {};
+      router23.strict = opts.strict;
+      router23.stack = [];
+      return router23;
     }
-    Router24.prototype = function() {
+    Router23.prototype = function() {
     };
-    Router24.prototype.param = function param(name, fn) {
+    Router23.prototype.param = function param(name, fn) {
       if (!name) {
         throw new TypeError("argument name is required");
       }
@@ -21105,7 +21105,7 @@ var require_router = __commonJS({
       params.push(fn);
       return this;
     };
-    Router24.prototype.handle = function handle(req, res, callback) {
+    Router23.prototype.handle = function handle(req, res, callback) {
       if (!callback) {
         throw new TypeError("argument callback is required");
       }
@@ -21232,7 +21232,7 @@ var require_router = __commonJS({
         }
       }
     };
-    Router24.prototype.use = function use(handler) {
+    Router23.prototype.use = function use(handler) {
       let offset = 0;
       let path2 = "/";
       if (typeof handler !== "function") {
@@ -21265,7 +21265,7 @@ var require_router = __commonJS({
       }
       return this;
     };
-    Router24.prototype.route = function route(path2) {
+    Router23.prototype.route = function route(path2) {
       const route2 = new Route(path2);
       const layer = new Layer(path2, {
         sensitive: this.caseSensitive,
@@ -21280,7 +21280,7 @@ var require_router = __commonJS({
       return route2;
     };
     methods.concat("all").forEach(function(method) {
-      Router24.prototype[method] = function(path2) {
+      Router23.prototype[method] = function(path2) {
         const route = this.route(path2);
         route[method].apply(route, slice.call(arguments, 1));
         return this;
@@ -21463,13 +21463,13 @@ var require_application = __commonJS({
     var compileTrust = require_utils3().compileTrust;
     var resolve = __require("node:path").resolve;
     var once = require_once();
-    var Router24 = require_router();
+    var Router23 = require_router();
     var slice = Array.prototype.slice;
     var flatten = Array.prototype.flat;
     var app2 = exports = module.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
     app2.init = function init() {
-      var router24 = null;
+      var router23 = null;
       this.cache = /* @__PURE__ */ Object.create(null);
       this.engines = /* @__PURE__ */ Object.create(null);
       this.settings = /* @__PURE__ */ Object.create(null);
@@ -21478,13 +21478,13 @@ var require_application = __commonJS({
         configurable: true,
         enumerable: true,
         get: function getrouter() {
-          if (router24 === null) {
-            router24 = new Router24({
+          if (router23 === null) {
+            router23 = new Router23({
               caseSensitive: this.enabled("case sensitive routing"),
               strict: this.enabled("strict routing")
             });
           }
-          return router24;
+          return router23;
         }
       });
     };
@@ -21555,15 +21555,15 @@ var require_application = __commonJS({
       if (fns.length === 0) {
         throw new TypeError("app.use() requires a middleware function");
       }
-      var router24 = this.router;
+      var router23 = this.router;
       fns.forEach(function(fn2) {
         if (!fn2 || !fn2.handle || !fn2.set) {
-          return router24.use(path2, fn2);
+          return router23.use(path2, fn2);
         }
         debug(".use app under %s", path2);
         fn2.mountpath = path2;
         fn2.parent = this;
-        router24.use(path2, function mounted_app(req, res, next) {
+        router23.use(path2, function mounted_app(req, res, next) {
           var orig = req.app;
           fn2.handle(req, res, function(err) {
             Object.setPrototypeOf(req, orig.request);
@@ -24148,7 +24148,7 @@ var require_express = __commonJS({
     var EventEmitter = __require("node:events").EventEmitter;
     var mixin = require_merge_descriptors();
     var proto = require_application();
-    var Router24 = require_router();
+    var Router23 = require_router();
     var req = require_request();
     var res = require_response();
     exports = module.exports = createApplication;
@@ -24170,8 +24170,8 @@ var require_express = __commonJS({
     exports.application = proto;
     exports.request = req;
     exports.response = res;
-    exports.Route = Router24.Route;
-    exports.Router = Router24;
+    exports.Route = Router23.Route;
+    exports.Router = Router23;
     exports.json = bodyParser.json;
     exports.raw = bodyParser.raw;
     exports.static = require_serve_static();
@@ -42537,12 +42537,12 @@ var require_lib6 = __commonJS({
 })();
 
 // src/app.ts
-var import_express24 = __toESM(require_express2(), 1);
+var import_express23 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
 var import_pino_http = __toESM(require_logger(), 1);
 
 // src/routes/index.ts
-var import_express23 = __toESM(require_express2(), 1);
+var import_express22 = __toESM(require_express2(), 1);
 
 // src/routes/health.ts
 var import_express = __toESM(require_express2(), 1);
@@ -80217,6 +80217,14 @@ import { GoogleGenAI } from "@google/genai";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+  HeadObjectCommand
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 function normalizeKey(key) {
   const clean2 = key.replace(/^[/\\]+/, "").replace(/[/\\]+$/, "");
   const parts = clean2.split(/[/\\]+/).filter((p) => p.length > 0);
@@ -80262,6 +80270,81 @@ var LocalStorage = class {
     return `${baseUrl}/api/files/direct-upload?storageKey=${encodeURIComponent(key)}`;
   }
 };
+var S3Storage = class {
+  client;
+  bucket;
+  constructor() {
+    const bucket = process.env["S3_BUCKET"];
+    if (!bucket) {
+      throw new Error("S3Storage requires S3_BUCKET environment variable");
+    }
+    this.bucket = bucket;
+    const region = process.env["S3_REGION"] ?? "auto";
+    const endpoint = process.env["S3_ENDPOINT"];
+    const forcePathStyle = process.env["S3_FORCE_PATH_STYLE"] === "true";
+    const config3 = { region, forcePathStyle };
+    if (endpoint) {
+      config3.endpoint = endpoint;
+    }
+    const accessKeyId = process.env["S3_ACCESS_KEY_ID"];
+    const secretAccessKey = process.env["S3_SECRET_ACCESS_KEY"];
+    if (accessKeyId && secretAccessKey) {
+      config3.credentials = { accessKeyId, secretAccessKey };
+    }
+    this.client = new S3Client(config3);
+  }
+  async putObject(key, body, contentType) {
+    const clean2 = normalizeKey(key);
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: clean2,
+        Body: body,
+        ContentType: contentType
+      })
+    );
+  }
+  async getObject(key) {
+    const clean2 = normalizeKey(key);
+    const resp = await this.client.send(
+      new GetObjectCommand({ Bucket: this.bucket, Key: clean2 })
+    );
+    const arr = await resp.Body?.transformToByteArray();
+    if (!arr) {
+      throw new Error(`Empty body for S3 object: ${clean2}`);
+    }
+    return Buffer.from(arr);
+  }
+  async deleteObject(key) {
+    const clean2 = normalizeKey(key);
+    await this.client.send(
+      new DeleteObjectCommand({ Bucket: this.bucket, Key: clean2 })
+    );
+  }
+  async exists(key) {
+    const clean2 = normalizeKey(key);
+    try {
+      await this.client.send(
+        new HeadObjectCommand({ Bucket: this.bucket, Key: clean2 })
+      );
+      return true;
+    } catch (err) {
+      if (err && (err.name === "NotFound" || err.$metadata?.httpStatusCode === 404)) {
+        return false;
+      }
+      throw err;
+    }
+  }
+  async getPresignedUploadUrl(key, expirySeconds) {
+    const clean2 = normalizeKey(key);
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: clean2
+    });
+    const expiresIn = expirySeconds > 0 ? expirySeconds : 900;
+    return getSignedUrl(this.client, command, { expiresIn });
+  }
+};
 var DEFAULT_STORAGE_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "..",
@@ -80270,12 +80353,15 @@ var DEFAULT_STORAGE_DIR = path.resolve(
   "data"
 );
 function getStorage() {
-  const backend = process.env["STORAGE_BACKEND"] ?? "local";
-  if (backend !== "local") {
-    throw new Error(`STORAGE_BACKEND "${backend}" is not implemented yet \u2014 use "local"`);
+  const backend = (process.env["STORAGE_BACKEND"] ?? "local").toLowerCase();
+  if (backend === "s3") {
+    return new S3Storage();
   }
-  const baseDir = process.env["FILE_STORAGE_DIR"] ?? DEFAULT_STORAGE_DIR;
-  return new LocalStorage(baseDir);
+  if (backend === "local") {
+    const baseDir = process.env["FILE_STORAGE_DIR"] ?? DEFAULT_STORAGE_DIR;
+    return new LocalStorage(baseDir);
+  }
+  throw new Error(`Unsupported STORAGE_BACKEND "${backend}" \u2014 use "local" or "s3"`);
 }
 
 // ../../lib/textbooks/src/search.ts
@@ -80431,145 +80517,6 @@ ${c3.text}`;
 
 // ../../lib/textbooks/src/virusScan.ts
 var INSTREAM_CHUNK_SIZE = 32 * 1024;
-
-// ../../lib/textbooks/src/embeddings.ts
-async function generateEmbedding(text2, geminiClient) {
-  try {
-    const result = await geminiClient.models.embedContent({
-      model: "models/text-embedding-004",
-      contents: text2
-    });
-    const embeddings = result.embeddings;
-    if (!embeddings || embeddings.length === 0 || !embeddings[0].values) {
-      throw new Error("No embedding returned from Gemini API");
-    }
-    return embeddings[0].values;
-  } catch (error41) {
-    console.error("Failed to generate embedding:", error41);
-    throw new Error(`Embedding generation failed: ${error41 instanceof Error ? error41.message : "Unknown error"}`);
-  }
-}
-function calculateSimilarity(queryEmbedding, docEmbedding) {
-  if (queryEmbedding.length !== docEmbedding.length) {
-    throw new Error(`Embedding dimension mismatch: ${queryEmbedding.length} vs ${docEmbedding.length}`);
-  }
-  let dotProduct = 0;
-  let queryNorm = 0;
-  let docNorm = 0;
-  for (let i2 = 0; i2 < queryEmbedding.length; i2++) {
-    dotProduct += queryEmbedding[i2] * docEmbedding[i2];
-    queryNorm += queryEmbedding[i2] * queryEmbedding[i2];
-    docNorm += docEmbedding[i2] * docEmbedding[i2];
-  }
-  if (queryNorm === 0 || docNorm === 0) {
-    return 0;
-  }
-  const similarity = dotProduct / (Math.sqrt(queryNorm) * Math.sqrt(docNorm));
-  return (similarity + 1) / 2;
-}
-
-// ../../lib/textbooks/src/rag-search.ts
-var DEFAULT_SEARCH_OPTIONS = {
-  topK: 5,
-  minScore: 0.3,
-  hybridWeight: 0.7
-  // 70% embedding, 30% full-text
-};
-async function searchTextbookChunks(query, geminiClient, options = {}) {
-  const opts = { ...DEFAULT_SEARCH_OPTIONS, ...options };
-  try {
-    const queryEmbedding = await generateEmbedding(query, geminiClient);
-    let sqlQuery = sql`
-      SELECT 
-        tc.id as chunk_id,
-        tc.content,
-        tc.page_number,
-        tc.section_title,
-        tc.embedding_json,
-        tc.file_asset_id,
-        fa.original_filename as filename,
-        ts_rank(tc.content_tsv, plainto_tsquery('english', ${query})) as fts_score
-      FROM textbook_chunks tc
-      JOIN file_assets fa ON tc.file_asset_id = fa.id
-      WHERE 1=1
-    `;
-    if (opts.subjectId) {
-      sqlQuery = sql`${sqlQuery} AND tc.subject_id = ${opts.subjectId}`;
-    }
-    if (opts.fileAssetId) {
-      sqlQuery = sql`${sqlQuery} AND tc.file_asset_id = ${opts.fileAssetId}`;
-    }
-    sqlQuery = sql`${sqlQuery} AND tc.content_tsv @@ plainto_tsquery('english', ${query})`;
-    sqlQuery = sql`${sqlQuery} LIMIT 100`;
-    const result = await db.execute(sqlQuery);
-    const rows = result.rows;
-    const scoredResults = [];
-    for (const row of rows) {
-      let embedding;
-      try {
-        embedding = JSON.parse(row.embedding_json);
-      } catch {
-        console.error(`Failed to parse embedding for chunk ${row.chunk_id}`);
-        continue;
-      }
-      const embeddingScore = calculateSimilarity(queryEmbedding, embedding);
-      const ftsScore = Math.min(row.fts_score / 0.1, 1);
-      const hybridScore = opts.hybridWeight * embeddingScore + (1 - opts.hybridWeight) * ftsScore;
-      if (hybridScore >= opts.minScore) {
-        scoredResults.push({
-          chunkId: row.chunk_id,
-          content: row.content,
-          pageNumber: row.page_number,
-          sectionTitle: row.section_title || void 0,
-          score: hybridScore,
-          fileAssetId: row.file_asset_id,
-          filename: row.filename
-        });
-      }
-    }
-    scoredResults.sort((a2, b3) => b3.score - a2.score);
-    return scoredResults.slice(0, opts.topK);
-  } catch (error41) {
-    console.error("[RAG Search] Search failed:", error41);
-    console.log("[RAG Search] Falling back to full-text search only...");
-    return await fallbackFullTextSearch(query, options);
-  }
-}
-async function fallbackFullTextSearch(query, options = {}) {
-  const opts = { ...DEFAULT_SEARCH_OPTIONS, ...options };
-  let sqlQuery = sql`
-    SELECT 
-      tc.id as chunk_id,
-      tc.content,
-      tc.page_number,
-      tc.section_title,
-      tc.file_asset_id,
-      fa.original_filename as filename,
-      ts_rank(tc.content_tsv, plainto_tsquery('english', ${query})) as score
-    FROM textbook_chunks tc
-    JOIN file_assets fa ON tc.file_asset_id = fa.id
-    WHERE tc.content_tsv @@ plainto_tsquery('english', ${query})
-  `;
-  if (opts.subjectId) {
-    sqlQuery = sql`${sqlQuery} AND tc.subject_id = ${opts.subjectId}`;
-  }
-  if (opts.fileAssetId) {
-    sqlQuery = sql`${sqlQuery} AND tc.file_asset_id = ${opts.fileAssetId}`;
-  }
-  sqlQuery = sql`${sqlQuery} ORDER BY score DESC LIMIT ${opts.topK}`;
-  const result = await db.execute(sqlQuery);
-  const rows = result.rows;
-  return rows.map((row) => ({
-    chunkId: row.chunk_id,
-    content: row.content,
-    pageNumber: row.page_number,
-    sectionTitle: row.section_title || void 0,
-    score: Math.min(row.score / 0.1, 1),
-    // Normalize score
-    fileAssetId: row.file_asset_id,
-    filename: row.filename
-  }));
-}
 
 // src/ai/geminiClient.ts
 var client = null;
@@ -81051,184 +80998,6 @@ Today's raw data \u2014 ${track}.${weakLine}`
   });
   return response.text?.trim() || "No summary available today.";
 }
-async function explainFromBookRAG(subjectId, questionText, opts = {}) {
-  const client2 = getGeminiClient();
-  const lang = languageInstruction(opts.language);
-  const chunks = await searchTextbookChunks(questionText, client2, {
-    subjectId,
-    topK: 5,
-    minScore: 0.3
-  });
-  if (chunks.length === 0) {
-    return {
-      explanation: "I couldn't find relevant information in the textbook for this question.",
-      citations: []
-    };
-  }
-  const context = chunks.map((chunk, i2) => `[Source ${i2 + 1}, Page ${chunk.pageNumber}]
-${chunk.content}`).join("\n\n---\n\n");
-  const prompt = `${lang}You are explaining a concept from a textbook. Use ONLY the information provided in the sources below. Do not use outside knowledge.
-
-Question: ${questionText}
-
-Textbook Sources:
-${context}
-
-Instructions:
-- Explain this concept clearly and thoroughly based on the sources
-- Cite sources using [Page N] format
-- If the sources don't contain enough information, say so
-- Keep it concise but complete (3-5 sentences)
-
-Explanation:`;
-  const response = await client2.models.generateContent({
-    model: "gemini-2.0-flash-exp",
-    contents: prompt
-  });
-  const explanation = response.text || "";
-  const citations = chunks.map((chunk) => ({
-    page: chunk.pageNumber,
-    filename: chunk.filename,
-    snippet: chunk.content.substring(0, 200) + "..."
-  }));
-  return { explanation, citations };
-}
-async function chatWithBookRAG(subjectId, messages, opts = {}) {
-  const client2 = getGeminiClient();
-  const mode = opts.mode ?? "answer";
-  const lang = languageInstruction(opts.language);
-  const lastUserMessage = messages.filter((m3) => m3.role === "user").pop();
-  if (!lastUserMessage) {
-    return { content: "No question provided.", citations: [] };
-  }
-  const chunks = await searchTextbookChunks(lastUserMessage.content, client2, {
-    subjectId,
-    topK: 5,
-    minScore: 0.3
-  });
-  const context = chunks.map((chunk, i2) => `[Source ${i2 + 1}, Page ${chunk.pageNumber}]
-${chunk.content}`).join("\n\n---\n\n");
-  const chatHistory = messages.slice(0, -1).map((m3) => `${m3.role}: ${m3.content}`).join("\n");
-  const tutorInstruction = mode === "tutor" ? "You are a Socratic tutor. Ask guiding questions instead of giving direct answers. Only reveal the full answer if the student explicitly asks or is stuck." : "";
-  const prompt = `${lang}${tutorInstruction}
-You are a helpful study assistant. Answer the question using ONLY the textbook sources provided below.
-
-${chatHistory ? `Previous conversation:
-${chatHistory}
-
-` : ""}Current question: ${lastUserMessage.content}
-
-Textbook Sources:
-${context}
-
-Instructions:
-- Base your answer strictly on the sources
-- Cite pages using [Page N] format
-- Be friendly and concise
-- If sources lack information, say so honestly
-
-Answer:`;
-  const response = await client2.models.generateContent({
-    model: "gemini-2.0-flash-exp",
-    contents: prompt
-  });
-  const content = response.text || "";
-  const citations = chunks.map((chunk) => ({
-    page: chunk.pageNumber,
-    filename: chunk.filename,
-    snippet: chunk.content.substring(0, 200) + "..."
-  }));
-  return { content, citations };
-}
-async function* streamChatWithBookRAG(subjectId, messages, opts = {}) {
-  const client2 = getGeminiClient();
-  const mode = opts.mode ?? "answer";
-  const lang = languageInstruction(opts.language);
-  const lastUserMessage = messages.filter((m3) => m3.role === "user").pop();
-  if (!lastUserMessage) {
-    yield { type: "text", text: "No question provided." };
-    yield { type: "done", citations: [] };
-    return;
-  }
-  const chunks = await searchTextbookChunks(lastUserMessage.content, client2, {
-    subjectId,
-    topK: 5,
-    minScore: 0.3
-  });
-  const context = chunks.map((chunk, i2) => `[Source ${i2 + 1}, Page ${chunk.pageNumber}]
-${chunk.content}`).join("\n\n---\n\n");
-  const chatHistory = messages.slice(0, -1).map((m3) => `${m3.role}: ${m3.content}`).join("\n");
-  const tutorInstruction = mode === "tutor" ? "You are a Socratic tutor. Ask guiding questions instead of giving direct answers." : "";
-  const prompt = `${lang}${tutorInstruction}
-You are a helpful study assistant. Answer using ONLY the textbook sources below.
-
-${chatHistory ? `Previous conversation:
-${chatHistory}
-
-` : ""}Current question: ${lastUserMessage.content}
-
-Textbook Sources:
-${context}
-
-Answer (cite pages with [Page N]):`;
-  const stream = await client2.models.generateContentStream({
-    model: "gemini-2.0-flash-exp",
-    contents: prompt
-  });
-  let accumulated = "";
-  for await (const chunk of stream) {
-    const text2 = chunk.text ?? "";
-    accumulated += text2;
-    if (text2) yield { type: "text", text: text2 };
-  }
-  const citations = chunks.map((chunk) => ({
-    page: chunk.pageNumber,
-    filename: chunk.filename,
-    snippet: chunk.content.substring(0, 200) + "..."
-  }));
-  yield { type: "done", citations };
-}
-async function* streamExplainFromBookRAG(subjectId, questionText, opts = {}) {
-  const client2 = getGeminiClient();
-  const lang = languageInstruction(opts.language);
-  const chunks = await searchTextbookChunks(questionText, client2, {
-    subjectId,
-    topK: 5,
-    minScore: 0.3
-  });
-  if (chunks.length === 0) {
-    const msg = "I couldn't find relevant information in the textbook for this question.";
-    yield { type: "text", text: msg };
-    yield { type: "done", explanation: msg, citations: [] };
-    return;
-  }
-  const context = chunks.map((chunk, i2) => `[Source ${i2 + 1}, Page ${chunk.pageNumber}]
-${chunk.content}`).join("\n\n---\n\n");
-  const prompt = `${lang}Explain this concept using ONLY the textbook sources below. Cite pages with [Page N].
-
-Question: ${questionText}
-
-Sources:
-${context}
-
-Explanation:`;
-  const stream = await client2.models.generateContentStream({
-    model: "gemini-2.0-flash-exp",
-    contents: prompt
-  });
-  let accumulated = "";
-  for await (const chunk of stream) {
-    const text2 = chunk.text ?? "";
-    accumulated += text2;
-    if (text2) yield { type: "text", text: text2 };
-  }
-  const citations = chunks.map((chunk) => ({
-    page: chunk.pageNumber,
-    filename: chunk.filename,
-    snippet: chunk.content.substring(0, 200) + "..."
-  }));
-  yield { type: "done", explanation: accumulated, citations };
-}
 
 // src/routes/ai-bookstore.ts
 var router12 = (0, import_express12.Router)();
@@ -81482,14 +81251,18 @@ router14.post("/ai/verify", requireEditor, async (req, res) => {
     res.status(404).json({ error: "Question not found" });
     return;
   }
-  const [store] = await db.select().from(bookStoresTable).innerJoin(chaptersTable, eq(bookStoresTable.subjectId, chaptersTable.subjectId)).innerJoin(sectionsTable, eq(chaptersTable.id, sectionsTable.chapterId)).where(and(eq(sectionsTable.id, question.sectionId), eq(bookStoresTable.status, "ready")));
+  const [store] = await db.select({
+    id: bookStoresTable.id,
+    geminiStoreName: bookStoresTable.geminiStoreName,
+    status: bookStoresTable.status
+  }).from(bookStoresTable).innerJoin(chaptersTable, eq(bookStoresTable.subjectId, chaptersTable.subjectId)).innerJoin(sectionsTable, eq(chaptersTable.id, sectionsTable.chapterId)).where(and(eq(sectionsTable.id, question.sectionId), eq(bookStoresTable.status, "ready")));
   if (!store) {
     res.status(404).json({ error: "No ready book store found for this question's subject" });
     return;
   }
   try {
     const result = await verifyQuestion(
-      store.book_stores.geminiStoreName,
+      store.geminiStoreName,
       question.questionText,
       question.correctOption || question.modelAnswer || "",
       question.questionType
@@ -82387,232 +82160,14 @@ router19.get("/ai/weak-topics", requireAuth, async (req, res) => {
 });
 var ai_summary_default = router19;
 
-// src/routes/ai-rag.ts
+// src/routes/textbooks.ts
 var import_express20 = __toESM(require_express2(), 1);
 var router20 = (0, import_express20.Router)();
-async function hasRAGContent(subjectId) {
-  const [asset] = await db.select().from(fileAssetsTable).where(and(
-    eq(fileAssetsTable.subjectId, subjectId),
-    eq(fileAssetsTable.embeddingsGenerated, true)
-  )).limit(1);
-  return !!asset;
-}
-router20.post("/ai/rag/explain", requireAuth, async (req, res) => {
-  const { questionText, subjectId, questionId, language } = req.body;
-  if (!questionText) {
-    res.status(400).json({ error: "questionText is required" });
-    return;
-  }
-  let finalSubjectId = subjectId;
-  if (!finalSubjectId && questionId) {
-    const [question] = await db.select({ subjectId: chaptersTable.subjectId }).from(questionsTable).innerJoin(sectionsTable, eq(questionsTable.sectionId, sectionsTable.id)).innerJoin(chaptersTable, eq(sectionsTable.chapterId, chaptersTable.id)).where(eq(questionsTable.id, questionId));
-    if (question) {
-      finalSubjectId = question.subjectId;
-    }
-  }
-  if (!finalSubjectId) {
-    res.status(400).json({ error: "subjectId or questionId required" });
-    return;
-  }
-  const hasContent = await hasRAGContent(finalSubjectId);
-  if (!hasContent) {
-    res.status(400).json({ error: "No RAG-indexed content available for this subject. Please wait for indexing to complete." });
-    return;
-  }
-  try {
-    const result = await explainFromBookRAG(finalSubjectId, questionText, { language });
-    await writeAudit(req, {
-      action: "AI_RAG_EXPLAIN",
-      entityType: "ai_explanation",
-      entityId: questionId,
-      detail: `RAG explanation for subject ${finalSubjectId}`
-    });
-    res.json({
-      explanation: result.explanation,
-      citations: result.citations,
-      subjectId: finalSubjectId,
-      method: "rag"
-    });
-  } catch (error41) {
-    console.error("Error generating RAG explanation:", error41);
-    res.status(500).json({ error: "Failed to generate explanation" });
-  }
-});
-router20.post("/ai/rag/explain/stream", requireAuth, async (req, res) => {
-  const { questionText, subjectId, questionId, language } = req.body;
-  if (!questionText) {
-    res.status(400).json({ error: "questionText is required" });
-    return;
-  }
-  let finalSubjectId = subjectId;
-  if (!finalSubjectId && questionId) {
-    const [question] = await db.select({ subjectId: chaptersTable.subjectId }).from(questionsTable).innerJoin(sectionsTable, eq(questionsTable.sectionId, sectionsTable.id)).innerJoin(chaptersTable, eq(sectionsTable.chapterId, chaptersTable.id)).where(eq(questionsTable.id, questionId));
-    if (question) {
-      finalSubjectId = question.subjectId;
-    }
-  }
-  if (!finalSubjectId) {
-    res.status(400).json({ error: "subjectId or questionId required" });
-    return;
-  }
-  const hasContent = await hasRAGContent(finalSubjectId);
-  if (!hasContent) {
-    res.status(400).json({ error: "No RAG-indexed content available" });
-    return;
-  }
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.flushHeaders?.();
-  const writeEvent = (data) => res.write(`data: ${JSON.stringify(data)}
-
-`);
-  try {
-    for await (const chunk of streamExplainFromBookRAG(finalSubjectId, questionText, { language })) {
-      if (chunk.type === "text") {
-        writeEvent({ type: "text", text: chunk.text });
-      } else if (chunk.type === "done") {
-        writeEvent({
-          type: "done",
-          explanation: chunk.explanation,
-          citations: chunk.citations,
-          subjectId: finalSubjectId,
-          method: "rag"
-        });
-      }
-    }
-    res.end();
-  } catch (error41) {
-    console.error("Error streaming RAG explanation:", error41);
-    if (!res.headersSent) {
-      res.status(500).json({ error: "Failed to stream explanation" });
-      return;
-    }
-    writeEvent({ type: "error", message: "Stream interrupted" });
-    res.end();
-  }
-});
-router20.post("/ai/rag/chat", requireAuth, async (req, res) => {
-  const { subjectId, messages, mode, language } = req.body;
-  if (!subjectId || !messages || !Array.isArray(messages)) {
-    res.status(400).json({ error: "subjectId and messages array required" });
-    return;
-  }
-  const hasContent = await hasRAGContent(subjectId);
-  if (!hasContent) {
-    res.status(400).json({ error: "No RAG-indexed content available" });
-    return;
-  }
-  try {
-    const result = await chatWithBookRAG(subjectId, messages, { mode, language });
-    await writeAudit(req, {
-      action: "AI_RAG_CHAT",
-      entityType: "ai_chat",
-      entityId: subjectId,
-      detail: `RAG chat for subject ${subjectId}`
-    });
-    res.json({
-      content: result.content,
-      citations: result.citations,
-      method: "rag"
-    });
-  } catch (error41) {
-    console.error("Error in RAG chat:", error41);
-    res.status(500).json({ error: "Failed to process chat" });
-  }
-});
-router20.post("/ai/rag/chat/stream", requireAuth, async (req, res) => {
-  const { subjectId, messages, mode, language } = req.body;
-  if (!subjectId || !messages || !Array.isArray(messages)) {
-    res.status(400).json({ error: "subjectId and messages array required" });
-    return;
-  }
-  const hasContent = await hasRAGContent(subjectId);
-  if (!hasContent) {
-    res.status(400).json({ error: "No RAG-indexed content available" });
-    return;
-  }
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.flushHeaders?.();
-  const writeEvent = (data) => res.write(`data: ${JSON.stringify(data)}
-
-`);
-  try {
-    for await (const chunk of streamChatWithBookRAG(subjectId, messages, { mode, language })) {
-      if (chunk.type === "text") {
-        writeEvent({ type: "text", text: chunk.text });
-      } else if (chunk.type === "done") {
-        writeEvent({ type: "done", citations: chunk.citations, method: "rag" });
-      }
-    }
-    res.end();
-  } catch (error41) {
-    console.error("Error streaming RAG chat:", error41);
-    if (!res.headersSent) {
-      res.status(500).json({ error: "Failed to stream chat" });
-      return;
-    }
-    writeEvent({ type: "error", message: "Stream interrupted" });
-    res.end();
-  }
-});
-router20.post("/ai/rag/search", requireAuth, async (req, res) => {
-  const { query, subjectId, topK = 5, minScore = 0.3 } = req.body;
-  if (!query || !subjectId) {
-    res.status(400).json({ error: "query and subjectId required" });
-    return;
-  }
-  try {
-    const geminiClient = getGeminiClient();
-    const results = await searchTextbookChunks(query, geminiClient, {
-      subjectId,
-      topK,
-      minScore
-    });
-    res.json({ results, count: results.length });
-  } catch (error41) {
-    console.error("Error searching chunks:", error41);
-    res.status(500).json({ error: "Search failed" });
-  }
-});
-router20.get("/ai/rag/status/:subjectId", requireAuth, async (req, res) => {
-  const subjectId = parseInt(req.params.subjectId, 10);
-  if (isNaN(subjectId)) {
-    res.status(400).json({ error: "Invalid subjectId" });
-    return;
-  }
-  const assets = await db.select({
-    id: fileAssetsTable.id,
-    filename: fileAssetsTable.originalFilename,
-    chunksCount: fileAssetsTable.chunksCount,
-    embeddingsGenerated: fileAssetsTable.embeddingsGenerated,
-    ragIndexedAt: fileAssetsTable.ragIndexedAt,
-    processingStatus: fileAssetsTable.processingStatus
-  }).from(fileAssetsTable).where(and(
-    eq(fileAssetsTable.subjectId, subjectId),
-    eq(fileAssetsTable.isTextbook, true)
-  ));
-  const ragReady = assets.some((a2) => a2.embeddingsGenerated);
-  const totalChunks = assets.reduce((sum, a2) => sum + (a2.chunksCount || 0), 0);
-  res.json({
-    subjectId,
-    ragReady,
-    totalChunks,
-    textbooks: assets
-  });
-});
-var ai_rag_default = router20;
-
-// src/routes/textbooks.ts
-var import_express21 = __toESM(require_express2(), 1);
-var router21 = (0, import_express21.Router)();
 function parseId12(raw) {
   const s = Array.isArray(raw) ? raw[0] : raw;
   return Number(s);
 }
-router21.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
+router20.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const subjectId = parseId12(req.params.subjectId);
   if (!Number.isInteger(subjectId) || subjectId <= 0) {
     res.status(400).json({ error: "Invalid subjectId" });
@@ -82621,7 +82176,7 @@ router21.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const assets = await db.select().from(fileAssetsTable).where(eq(fileAssetsTable.subjectId, subjectId)).orderBy(desc(fileAssetsTable.id));
   res.json({ assets });
 });
-router21.post("/books/:subjectId/answer", requireAuth, async (req, res) => {
+router20.post("/books/:subjectId/answer", requireAuth, async (req, res) => {
   const subjectId = parseId12(req.params.subjectId);
   if (!Number.isInteger(subjectId) || subjectId <= 0) {
     res.status(400).json({ error: "Invalid subjectId" });
@@ -82685,10 +82240,10 @@ router21.post("/books/:subjectId/answer", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Failed to generate answer" });
   }
 });
-var textbooks_default = router21;
+var textbooks_default = router20;
 
 // src/routes/files.ts
-var import_express22 = __toESM(require_express2(), 1);
+var import_express21 = __toESM(require_express2(), 1);
 import { randomUUID } from "node:crypto";
 var GetUploadUrlBody = external_exports2.object({
   subjectId: external_exports2.number(),
@@ -82710,9 +82265,9 @@ function parseId13(raw) {
   const s = Array.isArray(raw) ? raw[0] : raw;
   return parseFloat(s);
 }
-var router22 = (0, import_express22.Router)();
+var router21 = (0, import_express21.Router)();
 var UPLOAD_EXPIRY_SECONDS = 3600;
-router22.post("/files/upload-url", requireEditor, async (req, res) => {
+router21.post("/files/upload-url", requireEditor, async (req, res) => {
   const user = req.user;
   const body = GetUploadUrlBody.safeParse(req.body);
   if (!body.success) {
@@ -82750,7 +82305,7 @@ router22.post("/files/upload-url", requireEditor, async (req, res) => {
   }
   res.json({ assetId: asset.id, uploadUrl, storageKey, expiresIn: UPLOAD_EXPIRY_SECONDS });
 });
-router22.post("/files/direct-upload", requireEditor, async (req, res) => {
+router21.post("/files/direct-upload", requireEditor, async (req, res) => {
   const storageKey = req.query.storageKey;
   if (!storageKey) {
     res.status(400).json({ error: "storageKey query parameter required" });
@@ -82771,7 +82326,7 @@ router22.post("/files/direct-upload", requireEditor, async (req, res) => {
     res.status(500).json({ error: "Failed to save file" });
   }
 });
-router22.post("/files/:assetId/complete", requireEditor, async (req, res) => {
+router21.post("/files/:assetId/complete", requireEditor, async (req, res) => {
   const user = req.user;
   const params = CompleteUploadParams.safeParse({ assetId: parseId13(req.params.assetId) });
   if (!params.success) {
@@ -82799,7 +82354,7 @@ router22.post("/files/:assetId/complete", requireEditor, async (req, res) => {
   });
   res.json({ assetId: asset.id, status: "queued_for_processing" });
 });
-router22.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
+router21.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const params = ListFileAssetsParams.safeParse({ subjectId: parseId13(req.params.subjectId) });
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -82808,7 +82363,7 @@ router22.get("/books/:subjectId/assets", requireAuth, async (req, res) => {
   const assets = await db.select().from(fileAssetsTable).where(eq(fileAssetsTable.subjectId, params.data.subjectId)).orderBy(desc(fileAssetsTable.id));
   res.json({ assets });
 });
-router22.get("/files/serve", requireAuth, async (req, res) => {
+router21.get("/files/serve", requireAuth, async (req, res) => {
   const storageKey = req.query.storageKey;
   if (!storageKey) {
     res.status(400).json({ error: "storageKey query parameter required" });
@@ -82827,36 +82382,35 @@ router22.get("/files/serve", requireAuth, async (req, res) => {
     res.status(404).json({ error: "File not found" });
   }
 });
-var files_default = router22;
+var files_default = router21;
 
 // src/routes/index.ts
-var router23 = (0, import_express23.Router)();
-router23.use(health_default);
-router23.use(auth_default);
-router23.use(auth_2fa_default);
-router23.use(dashboard_default);
-router23.use(curriculum_default);
-router23.use(questions_default);
-router23.use(tests_default);
-router23.use(flashcards_default);
-router23.use(userQuestionState_default);
-router23.use(learning_hub_default);
-router23.use(analytics_default);
-router23.use(ai_bookstore_default);
-router23.use(ai_explain_default);
-router23.use(ai_verification_default);
-router23.use(ai_generation_default);
-router23.use(ai_grading_default);
-router23.use(ai_chat_default);
-router23.use(ai_evaluator_default);
-router23.use(ai_summary_default);
-router23.use(ai_rag_default);
-router23.use(textbooks_default);
-router23.use(files_default);
-var routes_default = router23;
+var router22 = (0, import_express22.Router)();
+router22.use(health_default);
+router22.use(auth_default);
+router22.use(auth_2fa_default);
+router22.use(dashboard_default);
+router22.use(curriculum_default);
+router22.use(questions_default);
+router22.use(tests_default);
+router22.use(flashcards_default);
+router22.use(userQuestionState_default);
+router22.use(learning_hub_default);
+router22.use(analytics_default);
+router22.use(ai_bookstore_default);
+router22.use(ai_explain_default);
+router22.use(ai_verification_default);
+router22.use(ai_generation_default);
+router22.use(ai_grading_default);
+router22.use(ai_chat_default);
+router22.use(ai_evaluator_default);
+router22.use(ai_summary_default);
+router22.use(textbooks_default);
+router22.use(files_default);
+var routes_default = router22;
 
 // src/app.ts
-var app = (0, import_express24.default)();
+var app = (0, import_express23.default)();
 app.use(
   (0, import_pino_http.default)({
     logger,
@@ -82877,8 +82431,8 @@ app.use(
   })
 );
 app.use((0, import_cors.default)());
-app.use(import_express24.default.json({ limit: "200mb" }));
-app.use(import_express24.default.urlencoded({ extended: true, limit: "200mb" }));
+app.use(import_express23.default.json({ limit: "200mb" }));
+app.use(import_express23.default.urlencoded({ extended: true, limit: "200mb" }));
 app.use("/api", routes_default);
 var app_default = app;
 

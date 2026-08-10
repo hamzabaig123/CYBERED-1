@@ -23,6 +23,16 @@ export declare class LocalStorage implements TextbookStorage {
     exists(key: string): Promise<boolean>;
     getPresignedUploadUrl(key: string, _expirySeconds: number): Promise<string | null>;
 }
+export declare class S3Storage implements TextbookStorage {
+    private readonly client;
+    private readonly bucket;
+    constructor();
+    putObject(key: string, body: Buffer, contentType: string): Promise<void>;
+    getObject(key: string): Promise<Buffer>;
+    deleteObject(key: string): Promise<void>;
+    exists(key: string): Promise<boolean>;
+    getPresignedUploadUrl(key: string, expirySeconds: number): Promise<string | null>;
+}
 /**
  * Default storage root, anchored to the workspace rather than `process.cwd()`
  * so the ingestion script and the API server (different working directories)
@@ -32,8 +42,8 @@ export declare class LocalStorage implements TextbookStorage {
  */
 export declare const DEFAULT_STORAGE_DIR: string;
 /**
- * Build the storage backend from environment. `STORAGE_BACKEND` is reserved for
- * "s3" (R2/B2) later; today only "local" is implemented.
+ * Build the storage backend from environment.
+ * Supported: "local" (default), "s3" (AWS S3 / Cloudflare R2 / Backblaze B2).
  */
 export declare function getStorage(): TextbookStorage;
 //# sourceMappingURL=storage.d.ts.map

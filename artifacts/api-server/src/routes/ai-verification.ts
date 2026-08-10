@@ -39,7 +39,11 @@ router.post("/ai/verify", requireEditor, async (req, res): Promise<void> => {
 
   // Get book store for the question's subject
   const [store] = await db
-    .select()
+    .select({
+      id: bookStoresTable.id,
+      geminiStoreName: bookStoresTable.geminiStoreName,
+      status: bookStoresTable.status,
+    })
     .from(bookStoresTable)
     .innerJoin(chaptersTable, eq(bookStoresTable.subjectId, chaptersTable.subjectId))
     .innerJoin(sectionsTable, eq(chaptersTable.id, sectionsTable.chapterId))
@@ -52,7 +56,7 @@ router.post("/ai/verify", requireEditor, async (req, res): Promise<void> => {
 
   try {
     const result = await verifyQuestion(
-      store.book_stores.geminiStoreName,
+      store.geminiStoreName,
       question.questionText,
       question.correctOption || question.modelAnswer || "",
       question.questionType

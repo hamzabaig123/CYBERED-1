@@ -4,6 +4,28 @@ import { processFileAsset } from "@workspace/textbooks";
 import { createBookStore, uploadToFileSearchStore, checkIndexingStatus } from "../ai/geminiClient";
 import { getStorage } from "@workspace/textbooks";
 
+const MAX_RETRIES = 3;
+const BASE_BACKOFF_MS = 5000;
+const retryTracker = new Map<number, { retries: number; lastError: string }>();
+
+function backoffMs(retries: number): number {
+  return BASE_BACKOFF_MS * Math.pow(2, Math.max(0, retries - 1));
+}
+
+async function markAssetError(assetId: number, error: string) {
+  try {
+    await db
+      .update(fileAssetsTable)
+      .set({
+        processingStatus: "error",
+        errorMessage: error.substring(0, 1000),
+      })
+      .where(eq(fileAssetsTable.id, assetId));
+  } catch (e) {
+    console.error(`Failed to mark asset ${assetId} as error:`, e);
+  }
+}
+
 async function processPendingAssets() {
   const assets = await db
     .select()
@@ -12,17 +34,44 @@ async function processPendingAssets() {
     .limit(5);
 
   for (const asset of assets) {
-    console.log(`Processing asset ${asset.id}: ${asset.originalFilename}`);
-    
+    const tracked = retryTracker.get(asset.id) ?? { retries: 0, lastError: "" };
+
+    if (tracked.retries >= MAX_RETRIES) {
+      console.error(`Asset ${asset.id} failed ${MAX_RETRIES} times — marking as error: ${tracked.lastError}`);
+      retryTracker.delete(asset.id);
+      await markAssetError(asset.id, `Permanently failed after ${MAX_RETRIES} attempts: ${tracked.lastError}`);
+      continue;
+    }
+
+    if (tracked.retries > 0) {
+      const waitMs = backoffMs(tracked.retries);
+      console.log(`Asset ${asset.id}: retry ${tracked.retries}/${MAX_RETRIES} — backing off ${waitMs}ms`);
+      await new Promise(r => setTimeout(r, waitMs));
+    }
+
+    console.log(`Processing asset ${asset.id} (attempt ${tracked.retries + 1}/${MAX_RETRIES}): ${asset.originalFilename}`);
+
     try {
       const processed = await processFileAsset(asset.id, { skipScan: !process.env.CLAMAV_HOST });
       console.log(`Asset ${asset.id} processed: ${processed.processingStatus}`);
-      
+
       if (processed.isTextbook && processed.processingStatus === "done") {
         await indexTextbookToGemini(processed.id);
       }
+
+      retryTracker.delete(asset.id);
     } catch (error) {
-      console.error(`Failed to process asset ${asset.id}:`, error);
+      const errMsg = error instanceof Error ? error.message : String(error);
+      tracked.retries += 1;
+      tracked.lastError = errMsg;
+      retryTracker.set(asset.id, tracked);
+      console.error(`Failed to process asset ${asset.id} (attempt ${tracked.retries}/${MAX_RETRIES}):`, errMsg);
+
+      if (tracked.retries >= MAX_RETRIES) {
+        console.error(`Asset ${asset.id} exhausted retries — marking as error`);
+        retryTracker.delete(asset.id);
+        await markAssetError(asset.id, `Failed after ${MAX_RETRIES} attempts: ${errMsg}`);
+      }
     }
   }
 }
@@ -48,7 +97,7 @@ async function indexTextbookToGemini(assetId: number) {
       .select()
       .from(subjectsTable)
       .where(eq(subjectsTable.id, asset.subjectId));
-    
+
     if (!subject) {
       console.log(`Subject ${asset.subjectId} not found, skipping indexing`);
       return;
@@ -88,7 +137,7 @@ async function indexTextbookToGemini(assetId: number) {
   try {
     const storage = getStorage();
     const pdfBytes = await storage.getObject(asset.storageKey);
-    
+
     const operationName = await uploadToFileSearchStore(
       currentStore.geminiStoreName,
       pdfBytes,
@@ -96,8 +145,8 @@ async function indexTextbookToGemini(assetId: number) {
     );
 
     console.log(`Started indexing for store ${currentStore.id}, operation: ${operationName}`);
-    
-    pollIndexingStatus(currentStore.id, operationName);
+
+    pollIndexingStatus(currentStore.id, operationName, asset.id);
   } catch (error) {
     console.error(`Failed to start indexing:`, error);
     await db
@@ -107,16 +156,16 @@ async function indexTextbookToGemini(assetId: number) {
   }
 }
 
-async function pollIndexingStatus(storeId: number, operationName: string) {
+async function pollIndexingStatus(storeId: number, operationName: string, assetId: number) {
   const maxAttempts = 30;
   const intervalMs = 10000;
-  
+
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     await new Promise(resolve => setTimeout(resolve, intervalMs));
-    
+
     try {
       const status = await checkIndexingStatus(operationName);
-      
+
       if (status.done) {
         if (status.error) {
           await db
@@ -128,18 +177,17 @@ async function pollIndexingStatus(storeId: number, operationName: string) {
           const [asset] = await db
             .select()
             .from(fileAssetsTable)
-            .where(eq(fileAssetsTable.subjectId, (await db.select({ subjectId: bookStoresTable.subjectId }).from(bookStoresTable).where(eq(bookStoresTable.id, storeId)))[0]?.subjectId ?? 0))
-            .orderBy(desc(fileAssetsTable.id))
+            .where(eq(fileAssetsTable.id, assetId))
             .limit(1);
-          
+
           await db
             .update(bookStoresTable)
-            .set({ 
-              status: "ready", 
+            .set({
+              status: "ready",
               indexedPages: asset?.pageCount ?? 0,
             })
             .where(eq(bookStoresTable.id, storeId));
-          console.log(`Indexing completed for store ${storeId}`);
+          console.log(`Indexing completed for store ${storeId} (asset ${assetId})`);
         }
         return;
       }
@@ -147,7 +195,7 @@ async function pollIndexingStatus(storeId: number, operationName: string) {
       console.error(`Error checking indexing status:`, error);
     }
   }
-  
+
   console.log(`Indexing timed out for store ${storeId}`);
   await db
     .update(bookStoresTable)
@@ -155,18 +203,16 @@ async function pollIndexingStatus(storeId: number, operationName: string) {
     .where(eq(bookStoresTable.id, storeId));
 }
 
-import { desc } from "drizzle-orm";
-
 async function main() {
   console.log("Starting textbook processing job...");
-  
+
   while (true) {
     try {
       await processPendingAssets();
     } catch (error) {
       console.error("Error in processing loop:", error);
     }
-    
+
     await new Promise(resolve => setTimeout(resolve, 5000));
   }
 }

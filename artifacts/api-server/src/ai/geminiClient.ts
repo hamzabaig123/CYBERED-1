@@ -532,12 +532,12 @@ function parseRubricEvaluation(
 
   const criteria = Array.isArray(parsed?.criteria) && parsed.criteria.length > 0
     ? parsed.criteria.map((c) => ({
-        criterion: c.criterion ?? "Unknown",
-        marks: c.marks ?? 0,
-        awarded: Math.max(0, Math.min(c.awarded ?? 0, c.marks ?? 0)),
-        met: c.met === true,
-        comment: c.comment ?? "",
-      }))
+      criterion: c.criterion ?? "Unknown",
+      marks: c.marks ?? 0,
+      awarded: Math.max(0, Math.min(c.awarded ?? 0, c.marks ?? 0)),
+      met: c.met === true,
+      comment: c.comment ?? "",
+    }))
     : (rubric ?? []).map((c) => ({ criterion: c.criterion, marks: c.marks, awarded: 0, met: false, comment: "" }));
 
   const realTotal = criteria.reduce((a, c) => a + c.marks, 0) || totalMarks;
@@ -557,7 +557,7 @@ function parseExplanationResponse(response: unknown): ExplainResponse {
   const r = response as { text?: string; groundingMetadata?: { groundingChunks?: Array<{ web?: { title?: string; uri?: string } }>; groundingSupports?: Array<{ segment?: { text?: string }; groundingChunkIndexes?: number[] }> } };
   const text = r.text || "";
   const citations: Citation[] = [];
-  
+
   if (r.groundingMetadata?.groundingChunks && r.groundingMetadata?.groundingSupports) {
     for (const support of r.groundingMetadata.groundingSupports) {
       if (support.groundingChunkIndexes && support.segment?.text) {
@@ -583,7 +583,7 @@ function parseExplanationResponse(response: unknown): ExplainResponse {
 function parseVerificationResponse(response: unknown): VerificationResponse {
   const r = response as { text?: string; groundingMetadata?: { groundingChunks?: Array<{ web?: { title?: string; uri?: string } }>; groundingSupports?: Array<{ segment?: { text?: string }; groundingChunkIndexes?: number[] }> } };
   const text = r.text || "";
-  
+
   let aiAnswer = text;
   let sourcePage: number | null = null;
   let sourceFilename: string | null = null;
@@ -637,7 +637,7 @@ function parseGeneratedQuestions(response: unknown): GeneratedQuestion[] {
 function parseGradingResponse(response: unknown, maxMarks: number): GradingSuggestion {
   const r = response as { text?: string; groundingMetadata?: { groundingChunks?: Array<{ web?: { title?: string; uri?: string } }>; groundingSupports?: Array<{ segment?: { text?: string }; groundingChunkIndexes?: number[] }> } };
   const text = r.text || "";
-  
+
   let marksAwarded = 0;
   const marksMatch = text.match(/(\d+)\s*\/\s*\d+/);
   if (marksMatch) {
@@ -688,7 +688,7 @@ function parseChatResponse(response: unknown): ChatResponse {
   const r = response as { text?: string; groundingMetadata?: { groundingChunks?: Array<{ web?: { title?: string; uri?: string } }>; groundingSupports?: Array<{ segment?: { text?: string }; groundingChunkIndexes?: number[] }> } };
   const text = r.text || "";
   const citations: Citation[] = [];
-  
+
   if (r.groundingMetadata?.groundingChunks && r.groundingMetadata?.groundingSupports) {
     for (const support of r.groundingMetadata.groundingSupports) {
       if (support.groundingChunkIndexes && support.segment?.text) {
@@ -788,7 +788,7 @@ export async function explainFromBookRAG(
   const lang = languageInstruction(opts.language);
 
   // Step 1: Retrieve relevant chunks
-  const chunks = await searchTextbookChunks(questionText, client, {
+  const chunks = await searchTextbookChunks(questionText, client as any, {
     subjectId,
     topK: 5,
     minScore: 0.3,
@@ -823,7 +823,7 @@ Instructions:
 Explanation:`;
 
   const response = await client.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-3-flash-preview",
     contents: prompt,
   });
 
@@ -858,7 +858,7 @@ export async function chatWithBookRAG(
   }
 
   // Step 1: Retrieve relevant chunks
-  const chunks = await searchTextbookChunks(lastUserMessage.content, client, {
+  const chunks = await searchTextbookChunks(lastUserMessage.content, client as any, {
     subjectId,
     topK: 5,
     minScore: 0.3,
@@ -897,7 +897,7 @@ Instructions:
 Answer:`;
 
   const response = await client.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-3-flash-preview",
     contents: prompt,
   });
 
@@ -934,7 +934,7 @@ export async function* streamChatWithBookRAG(
   }
 
   // Retrieve relevant chunks
-  const chunks = await searchTextbookChunks(lastUserMessage.content, client, {
+  const chunks = await searchTextbookChunks(lastUserMessage.content, client as any, {
     subjectId,
     topK: 5,
     minScore: 0.3,
@@ -965,7 +965,7 @@ ${context}
 Answer (cite pages with [Page N]):`;
 
   const stream = await client.models.generateContentStream({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-3-flash-preview",
     contents: prompt,
   });
 
@@ -997,7 +997,7 @@ export async function* streamExplainFromBookRAG(
   const lang = languageInstruction(opts.language);
 
   // Retrieve relevant chunks
-  const chunks = await searchTextbookChunks(questionText, client, {
+  const chunks = await searchTextbookChunks(questionText, client as any, {
     subjectId,
     topK: 5,
     minScore: 0.3,
@@ -1024,7 +1024,7 @@ ${context}
 Explanation:`;
 
   const stream = await client.models.generateContentStream({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-3-flash-preview",
     contents: prompt,
   });
 
@@ -1058,7 +1058,7 @@ export async function generateQuestionsRAG(
   const lang = languageInstruction(opts.language);
 
   // Retrieve relevant content for the topic
-  const chunks = await searchTextbookChunks(topicText, client, {
+  const chunks = await searchTextbookChunks(topicText, client as any, {
     subjectId,
     topK: 10,
     minScore: 0.3,
@@ -1091,7 +1091,7 @@ Return as JSON array with this format:
 Generate questions:`;
 
   const response = await client.models.generateContent({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-3-flash-preview",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
