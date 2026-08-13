@@ -129,7 +129,10 @@ async function indexTextbookToGemini(assetId: number) {
     .from(bookStoresTable)
     .where(eq(bookStoresTable.subjectId, asset.subjectId));
 
-  if (!currentStore || currentStore.status === "ready") {
+  if (
+    !currentStore ||
+    (currentStore.status === "ready" && (currentStore.indexedPages ?? 0) > 0)
+  ) {
     return;
   }
 
@@ -141,6 +144,27 @@ async function indexTextbookToGemini(assetId: number) {
   try {
     const storage = getStorage();
     const pdfBytes = await storage.getObject(asset.storageKey);
+
+    if (!pdfBytes || pdfBytes.length === 0) {
+      throw new Error(`Stored PDF is empty (${pdfBytes ? "0 bytes" : "null"}): ${asset.storageKey}`);
+    }
+
+    const header = pdfBytes.subarray(0, Math.min(5, pdfBytes.length));
+    const pdfMagic = [0x25, 0x50, 0x44, 0x46]; // "%PDF"
+    const looksLikePdf =
+      header.length >= 4 &&
+      header[0] === pdfMagic[0] &&
+      header[1] === pdfMagic[1] &&
+      header[2] === pdfMagic[2] &&
+      header[3] === pdfMagic[3];
+
+    if (!looksLikePdf) {
+      throw new Error(
+        `Stored object is not a valid PDF (magic bytes mismatch, got ${
+          Array.from(header).map(b => "0x" + b.toString(16).padStart(2, "0")).join(" ")
+        }): ${asset.storageKey}`
+      );
+    }
 
     const operationName = await uploadToFileSearchStore(
       currentStore.geminiStoreName,

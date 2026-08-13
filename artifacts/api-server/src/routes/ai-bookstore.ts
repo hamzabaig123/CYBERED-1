@@ -130,6 +130,13 @@ router.post("/subjects/:subjectId/book-store/index", requireEditor, async (req, 
     return;
   }
 
+  if (!body.data.textbookContent.trim()) {
+    res.status(400).json({
+      error: "Textbook content is empty. For full PDFs, use the file upload queue (UPLOAD & QUEUE) instead of this excerpt endpoint.",
+    });
+    return;
+  }
+
   // In a real implementation, you would download the file from storage
   // For now, we'll simulate with the provided text content
   const fileBytes = new TextEncoder().encode(body.data.textbookContent);

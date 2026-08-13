@@ -748,6 +748,10 @@ function BookStoreIndexTab(props: {
 
   const handleIndex = () => {
     if (!bookTitle.trim() || !licenseConfirmed) return;
+    if (uploadTab === "paste" && !excerptText.trim()) {
+      toast({ title: "Empty excerpt", description: "Paste some text before indexing.", variant: "destructive" });
+      return;
+    }
     const content = uploadTab === "paste" ? excerptText : "";
     indexBook(
       { subjectId, data: { bookTitle: bookTitle.trim(), fileName: selectedFile?.name || `${bookTitle.replace(/\s+/g, "_")}.pdf`, textbookContent: content, licenseConfirmed } },
@@ -986,16 +990,6 @@ function BookStoreIndexTab(props: {
                 <><Sparkles className="mr-2 h-3 w-3" /> INDEX EXCERPT</>
               )}
             </Button>
-            {uploadTab === "file" && store && effectiveStatus !== "not_created" && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleIndex}
-                disabled={!selectedFile || !bookTitle.trim() || !licenseConfirmed || indexing}
-              >
-                INDEX NOW
-              </Button>
-            )}
           </div>
         </div>
       </div>

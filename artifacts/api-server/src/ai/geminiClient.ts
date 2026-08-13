@@ -131,13 +131,28 @@ export async function uploadToFileSearchStore(
   fileBytes: Uint8Array,
   displayName: string
 ): Promise<string> {
+  if (!fileBytes || fileBytes.byteLength === 0) {
+    throw new Error(
+      `Cannot index an empty file into store '${fileSearchStoreName}' (displayName='${displayName}'). ` +
+      `For full PDFs, upload via the file queue so the worker reads the stored bytes; for excerpts, pass non-empty textbookContent.`
+    );
+  }
+
   const client = getGeminiClient();
   const operation = await client.fileSearchStores.uploadToFileSearchStore({
     file: new Blob([Buffer.from(fileBytes)], { type: "application/pdf" }),
     fileSearchStoreName,
     config: { displayName, mimeType: "application/pdf" },
   });
-  return operation.name ?? "";
+
+  if (!operation.name) {
+    throw new Error(
+      `Gemini uploadToFileSearchStore for '${fileSearchStoreName}' (displayName='${displayName}', ` +
+      `${fileBytes.byteLength} bytes) did not return a long-running operation name.`
+    );
+  }
+
+  return operation.name;
 }
 
 interface FileSearchOperationLike {

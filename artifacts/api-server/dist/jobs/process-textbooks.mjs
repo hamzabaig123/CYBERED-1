@@ -87457,13 +87457,23 @@ async function createBookStore(subjectName) {
   return store.name ?? "";
 }
 async function uploadToFileSearchStore(fileSearchStoreName, fileBytes, displayName) {
+  if (!fileBytes || fileBytes.byteLength === 0) {
+    throw new Error(
+      `Cannot index an empty file into store '${fileSearchStoreName}' (displayName='${displayName}'). For full PDFs, upload via the file queue so the worker reads the stored bytes; for excerpts, pass non-empty textbookContent.`
+    );
+  }
   const client2 = getGeminiClient();
   const operation2 = await client2.fileSearchStores.uploadToFileSearchStore({
     file: new Blob([Buffer.from(fileBytes)], { type: "application/pdf" }),
     fileSearchStoreName,
     config: { displayName, mimeType: "application/pdf" }
   });
-  return operation2.name ?? "";
+  if (!operation2.name) {
+    throw new Error(
+      `Gemini uploadToFileSearchStore for '${fileSearchStoreName}' (displayName='${displayName}', ${fileBytes.byteLength} bytes) did not return a long-running operation name.`
+    );
+  }
+  return operation2.name;
 }
 async function checkIndexingStatus(operationName) {
   const client2 = getGeminiClient();
@@ -87557,13 +87567,24 @@ async function indexTextbookToGemini(assetId) {
     }
   }
   const [currentStore] = await db.select().from(bookStoresTable).where(eq(bookStoresTable.subjectId, asset.subjectId));
-  if (!currentStore || currentStore.status === "ready") {
+  if (!currentStore || currentStore.status === "ready" && (currentStore.indexedPages ?? 0) > 0) {
     return;
   }
   await db.update(bookStoresTable).set({ status: "pending", textbookTitle: asset.originalFilename.replace(/\.pdf$/i, "") }).where(eq(bookStoresTable.id, currentStore.id));
   try {
     const storage = getStorage();
     const pdfBytes = await storage.getObject(asset.storageKey);
+    if (!pdfBytes || pdfBytes.length === 0) {
+      throw new Error(`Stored PDF is empty (${pdfBytes ? "0 bytes" : "null"}): ${asset.storageKey}`);
+    }
+    const header = pdfBytes.subarray(0, Math.min(5, pdfBytes.length));
+    const pdfMagic = [37, 80, 68, 70];
+    const looksLikePdf = header.length >= 4 && header[0] === pdfMagic[0] && header[1] === pdfMagic[1] && header[2] === pdfMagic[2] && header[3] === pdfMagic[3];
+    if (!looksLikePdf) {
+      throw new Error(
+        `Stored object is not a valid PDF (magic bytes mismatch, got ${Array.from(header).map((b5) => "0x" + b5.toString(16).padStart(2, "0")).join(" ")}): ${asset.storageKey}`
+      );
+    }
     const operationName = await uploadToFileSearchStore(
       currentStore.geminiStoreName,
       pdfBytes,
