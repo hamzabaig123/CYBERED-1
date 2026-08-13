@@ -3,9 +3,23 @@ import { db, fileAssetsTable, bookStoresTable, subjectsTable } from "@workspace/
 import { processFileAsset } from "@workspace/textbooks";
 import { createBookStore, uploadToFileSearchStore, checkIndexingStatus } from "../ai/geminiClient";
 import { getStorage } from "@workspace/textbooks";
+import { splitPdfIntoPageAlignedParts, cleanupTmp, type PdfPartInfo } from "../pdf/splitPdfIntoParts";
 
 const MAX_RETRIES = 3;
 const BASE_BACKOFF_MS = 5000;
+
+// Gemini File Search per-document limit is exactly 100 MiB = 104,857,600 bytes.
+// Use an 85 MiB soft target so pdf-lib structural overhead + HTTP framing
+// overhead cannot drift us over the hard ceiling.  NEVER raise MAX above 100MiB.
+const GEMINI_MAX_DOCUMENT_BYTES = 100 * 1024 * 1024;
+const GEMINI_TARGET_PART_BYTES = 85 * 1024 * 1024;
+
+// Per-part poll limits. For N parts we allow (N * perPartAttempts) with a shared
+// overall ceiling so 3 parts × 30 attempts × 10s = 15 minutes of poll time.
+const POLL_PART_ATTEMPTS = 30;
+const POLL_INTERVAL_MS = 10_000;
+const POLL_TOTAL_ATTEMPTS_CEILING = 90;
+
 const retryTracker = new Map<number, { retries: number; lastError: string }>();
 
 function backoffMs(retries: number): number {
@@ -76,6 +90,212 @@ async function processPendingAssets() {
       }
     }
   }
+}
+
+interface PartIndexHandle {
+  part: PdfPartInfo;
+  operationName: string;
+  displayName: string;
+}
+
+async function indexOversizedPdfAsParts(opts: {
+  assetId: number;
+  assetOriginalFilename: string;
+  pdfBytes: Uint8Array;
+  storeId: number;
+  geminiStoreName: string;
+}) {
+  const { assetId, assetOriginalFilename, pdfBytes, storeId, geminiStoreName } = opts;
+  const baseName = assetOriginalFilename.replace(/\.pdf$/i, "");
+
+  console.log(
+    `Asset ${assetId}: PDF is ${pdfBytes.length} bytes (${(pdfBytes.length / 1024 / 1024).toFixed(1)} MiB) > ` +
+    `${GEMINI_MAX_DOCUMENT_BYTES / 1024 / 1024} MiB limit — splitting into page-aligned parts (target ${GEMINI_TARGET_PART_BYTES / 1024 / 1024} MiB).`
+  );
+
+  const parts = await splitPdfIntoPageAlignedParts(pdfBytes, {
+    targetBytes: GEMINI_TARGET_PART_BYTES,
+    maxBytes: GEMINI_MAX_DOCUMENT_BYTES,
+    displayName: assetOriginalFilename,
+  });
+
+  console.log(`Asset ${assetId}: split complete — ${parts.length} part(s) produced`);
+  for (const p of parts) {
+    const sizeMiB = (p.sizeBytes / 1024 / 1024).toFixed(1);
+    console.log(
+      `  Part ${p.partNumber}/${parts.length}: pages ${p.firstPage}–${p.lastPage} (${p.lastPage - p.firstPage + 1} pages), ` +
+      `${sizeMiB} MiB — ${p.sizeBytes > GEMINI_MAX_DOCUMENT_BYTES ? "⚠️ OVER HARD LIMIT" : "✅ within limit"}`
+    );
+  }
+
+  const overLimit = parts.find(p => p.sizeBytes > GEMINI_MAX_DOCUMENT_BYTES);
+  if (overLimit) {
+    cleanupTmp(parts.map(p => p.tmpPath));
+    throw new Error(
+      `Split produced a part (${overLimit.partNumber}/${parts.length}, pages ${overLimit.firstPage}–${overLimit.lastPage}) ` +
+      `of ${overLimit.sizeBytes} bytes (> ${GEMINI_MAX_DOCUMENT_BYTES} hard limit). ` +
+      `This usually means a single scanned image page already exceeds the limit. Recompress the PDF and re-upload.`
+    );
+  }
+
+  // Upload all parts sequentially (low concurrency = safer for large payloads
+  // and keeps Gemini API rate-friendly). Each upload returns an LRO name.
+  const handles: PartIndexHandle[] = [];
+  try {
+    for (const part of parts) {
+      const displayName = `${baseName} — pages ${part.firstPage}-${part.lastPage}.pdf`;
+      console.log(
+        `  Uploading part ${part.partNumber}/${parts.length} to store '${geminiStoreName}' as '${displayName}'...`
+      );
+      const operationName = await uploadToFileSearchStore(
+        geminiStoreName,
+        part.bytes,
+        displayName
+      );
+      handles.push({ part, operationName, displayName });
+      console.log(
+        `  Part ${part.partNumber}/${parts.length} accepted — LRO=${operationName}`
+      );
+    }
+  } catch (uploadErr) {
+    cleanupTmp(parts.map(p => p.tmpPath));
+    throw uploadErr;
+  }
+
+  // Free part buffers (they're persisted to tmp already, but we also keep the
+  // Uint8Array reference). We don't need the bytes anymore after upload.
+  cleanupTmp(parts.map(p => p.tmpPath));
+
+  // Aggregate poll — store is `ready` only when ALL parts reach a terminal state.
+  pollMultiPartIndexingStatus({
+    storeId,
+    assetId,
+    handles,
+    totalSourcePages: parts[parts.length - 1]?.lastPage ?? 0,
+  }).catch(err => {
+    console.error(`Background multi-part indexing poll failed for store ${storeId}:`, err);
+  });
+}
+
+interface MultiPartPollCtx {
+  storeId: number;
+  assetId: number;
+  handles: PartIndexHandle[];
+  totalSourcePages: number;
+}
+
+async function pollMultiPartIndexingStatus(ctx: MultiPartPollCtx) {
+  const { storeId, assetId, handles, totalSourcePages } = ctx;
+
+  const partStates = handles.map(h => ({
+    ...h,
+    attempts: 0,
+    done: false,
+    error: null as string | null,
+  }));
+
+  const overallCeiling = Math.min(
+    POLL_TOTAL_ATTEMPTS_CEILING,
+    Math.max(POLL_PART_ATTEMPTS, handles.length * POLL_PART_ATTEMPTS)
+  );
+
+  let totalAttempts = 0;
+
+  while (totalAttempts < overallCeiling) {
+    totalAttempts += 1;
+    await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
+
+    let anyRunning = false;
+    let anyError = false;
+
+    for (const ps of partStates) {
+      if (ps.done) continue;
+      ps.attempts += 1;
+      anyRunning = true;
+
+      try {
+        const status = await checkIndexingStatus(ps.operationName);
+        if (status.done) {
+          ps.done = true;
+          if (status.error) {
+            ps.error = status.error;
+            anyError = true;
+            console.error(
+              `Store ${storeId} part ${ps.part.partNumber}/${handles.length} failed: ${status.error}`
+            );
+          } else {
+            console.log(
+              `Store ${storeId} part ${ps.part.partNumber}/${handles.length} ` +
+              `(${ps.part.firstPage}–${ps.part.lastPage}) ready`
+            );
+          }
+        }
+      } catch (pollErr) {
+        // Per-attempt poll failures are non-fatal — keep trying until attempts run out.
+        console.error(
+          `Store ${storeId} poll error on part ${ps.part.partNumber} (attempt ${ps.attempts}):`,
+          pollErr instanceof Error ? pollErr.message : String(pollErr)
+        );
+      }
+    }
+
+    if (!anyRunning) {
+      // Terminal. Evaluate the aggregate rule exactly as specified.
+      const aggregateFailed = partStates.some(p => p.error !== null);
+      const aggregateDone = partStates.every(p => p.done && !p.error);
+
+      if (aggregateFailed) {
+        const firstErr = partStates.find(p => p.error)?.error ?? "Unknown part error";
+        const failedList = partStates
+          .filter(p => p.error)
+          .map(p => `part ${p.part.partNumber}(p${p.part.firstPage}-p${p.part.lastPage})`)
+          .join(", ");
+        await db
+          .update(bookStoresTable)
+          .set({
+            status: "error",
+            errorMessage: `Multi-part indexing failed: ${firstErr}. Failed parts: ${failedList}`,
+          })
+          .where(eq(bookStoresTable.id, storeId));
+        console.error(`Store ${storeId} → error (parts failed: ${failedList})`);
+        return;
+      }
+
+      if (aggregateDone) {
+        // indexedPages = sum of successful page ranges = full book pages, capped
+        // at actual source page count (should match unless a page range bug).
+        const pagesSum = partStates.reduce((sum, p) => sum + (p.part.lastPage - p.part.firstPage + 1), 0);
+        const indexedPages = Math.min(pagesSum, totalSourcePages || pagesSum);
+        await db
+          .update(bookStoresTable)
+          .set({
+            status: "ready",
+            indexedPages,
+            errorMessage: null,
+          })
+          .where(eq(bookStoresTable.id, storeId));
+        console.log(
+          `Store ${storeId} → ready. ${handles.length} part(s), ${indexedPages} pages. ` +
+          `Query a late page to confirm page-range citations map correctly.`
+        );
+        return;
+      }
+    }
+  }
+
+  // Timed out overall.
+  const pendingParts = partStates
+    .filter(p => !p.done)
+    .map(p => `part ${p.part.partNumber}(p${p.part.firstPage}-p${p.part.lastPage},${p.attempts} polls)`)
+    .join(", ");
+  console.error(`Indexing timed out for store ${storeId} — still pending: ${pendingParts}`);
+  await db
+    .update(bookStoresTable)
+    .set({
+      status: "error",
+      errorMessage: `Multi-part indexing timed out. Pending parts: ${pendingParts}`,
+    })
+    .where(eq(bookStoresTable.id, storeId));
 }
 
 async function indexTextbookToGemini(assetId: number) {
@@ -160,12 +380,24 @@ async function indexTextbookToGemini(assetId: number) {
 
     if (!looksLikePdf) {
       throw new Error(
-        `Stored object is not a valid PDF (magic bytes mismatch, got ${
-          Array.from(header).map(b => "0x" + b.toString(16).padStart(2, "0")).join(" ")
+        `Stored object is not a valid PDF (magic bytes mismatch, got ${Array.from(header).map(b => "0x" + b.toString(16).padStart(2, "0")).join(" ")
         }): ${asset.storageKey}`
       );
     }
 
+    // === Size preflight: split oversized PDFs BEFORE touching Gemini ===
+    if (pdfBytes.length > GEMINI_MAX_DOCUMENT_BYTES) {
+      await indexOversizedPdfAsParts({
+        assetId,
+        assetOriginalFilename: asset.originalFilename,
+        pdfBytes,
+        storeId: currentStore.id,
+        geminiStoreName: currentStore.geminiStoreName,
+      });
+      return;
+    }
+
+    // === Regular path — single document under the limit ===
     const operationName = await uploadToFileSearchStore(
       currentStore.geminiStoreName,
       pdfBytes,
@@ -175,7 +407,7 @@ async function indexTextbookToGemini(assetId: number) {
     console.log(`Started indexing for store ${currentStore.id}, operation: ${operationName}`);
 
     // Fire-and-forget indexing status polling (non-blocking)
-    pollIndexingStatus(currentStore.id, operationName, asset.id).catch(err => {
+    pollSinglePartIndexingStatus(currentStore.id, operationName, asset.id).catch(err => {
       console.error(`Background indexing poll failed for store ${currentStore.id}:`, err);
     });
   } catch (error) {
@@ -187,9 +419,11 @@ async function indexTextbookToGemini(assetId: number) {
   }
 }
 
-async function pollIndexingStatus(storeId: number, operationName: string, assetId: number) {
-  const maxAttempts = 30;
-  const intervalMs = 10000;
+// Preserved for the single-part (under size limit) path — keeps the original,
+// well-tested poll logic. Renamed from pollIndexingStatus for clarity.
+async function pollSinglePartIndexingStatus(storeId: number, operationName: string, assetId: number) {
+  const maxAttempts = POLL_PART_ATTEMPTS;
+  const intervalMs = POLL_INTERVAL_MS;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     await new Promise(resolve => setTimeout(resolve, intervalMs));

@@ -778,7 +778,7 @@ function BookStoreIndexTab(props: {
         return;
       }
       if (file.size > 200 * 1024 * 1024) {
-        toast({ title: "File too large", description: "Maximum file size is 200MB.", variant: "destructive" });
+        toast({ title: "File too large", description: "Maximum file size is 200MB — files above 100MB are split automatically before indexing.", variant: "destructive" });
         return;
       }
       setSelectedFile(file);
@@ -917,7 +917,7 @@ function BookStoreIndexTab(props: {
                           {selectedFile.name} · {formatBytes(selectedFile.size)}
                         </span>
                       ) : (
-                        <span className="font-mono text-[10px] text-muted-foreground">Click to select PDF (max 200MB)</span>
+                        <span className="font-mono text-[10px] text-muted-foreground">Click to select PDF (max 200MB · >100MB split automatically)</span>
                       )}
                     </label>
                   </div>

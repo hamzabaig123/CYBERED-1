@@ -197,8 +197,8 @@ export default function BookLibraryPage() {
         toast({ title: "Invalid file type", description: "Please select a PDF file.", variant: "destructive" });
         return;
       }
-      if (file.size > 100 * 1024 * 1024) {
-        toast({ title: "File too large", description: "Maximum file size is 100MB.", variant: "destructive" });
+      if (file.size > 200 * 1024 * 1024) {
+        toast({ title: "File too large", description: "Maximum file size is 200MB — files above 100MB are split automatically before indexing.", variant: "destructive" });
         return;
       }
       setSelectedFile(file);
