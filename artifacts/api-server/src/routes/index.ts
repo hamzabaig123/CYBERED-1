@@ -24,8 +24,10 @@ import aiEvaluateRouter from "./ai-evaluator";
 import aiSummarizerRouter from "./ai-summary";
 import textbooksRouter from "./textbooks";
 import filesRouter from "./files";
+import ragRouter from "./rag";
 
 const router: IRouter = Router();
+
 
 router.use(healthRouter);
 router.use(authRouter);
@@ -52,5 +54,6 @@ router.use(aiEvaluateRouter);
 router.use(aiSummarizerRouter);
 router.use(textbooksRouter);
 router.use(filesRouter);
+router.use("/api/rag", ragRouter);
 
 export default router;

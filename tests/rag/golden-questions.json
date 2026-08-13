@@ -1,0 +1,22 @@
+[
+  {
+    "id": "phys-1",
+    "question": "Explain Newton's first law of motion.",
+    "class": 11,
+    "subject": "Physics",
+    "chapter": "Motion and Force",
+    "expected_pages": [25, 26],
+    "expected_source": "Physics XI STBB",
+    "answer_type": "explanation"
+  },
+  {
+    "id": "phys-2",
+    "question": "Derive the equation v = u + at.",
+    "class": 11,
+    "subject": "Physics",
+    "chapter": "Motion and Force",
+    "expected_pages": [28],
+    "expected_source": "Physics XI STBB",
+    "answer_type": "derivation"
+  }
+]
