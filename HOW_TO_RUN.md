@@ -50,6 +50,11 @@ NODE_ENV=development
 
 ## Step 4: Run the Full Stack
 
+> ✅ **Only 2 terminals needed** — the PDF/textbook processing worker now runs
+> **in-process** inside the API server. Uploaded PDFs automatically move `pending →
+> processing → done` within ~5–15s, and Gemini File Search indexing kicks off
+> immediately after. No third terminal, no manual worker command.
+
 ### Terminal 1 — Start the Frontend (port 5000)
 
 ```powershell
@@ -59,7 +64,7 @@ npx pnpm --filter "@workspace/cybered" dev
 
 Open: http://localhost:5000
 
-### Terminal 2 — Start the Backend API (port 3000)
+### Terminal 2 — Start the Backend API + Worker (port 3000)
 
 ```powershell
 cd d:\CYBERED\artifacts\api-server
@@ -69,7 +74,8 @@ node start.mjs
 This will:
 1. Push the database schema (create tables)
 2. Build the API server
-3. Start it on port 3000
+3. Start the API on port 3000
+4. **Start the textbook/PDF processing worker in the same process** (polls DB every 5s)
 
 ---
 

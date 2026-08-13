@@ -26,8 +26,6 @@ app.use(
   }),
 );
 app.use(cors());
-// Skip JSON body parsing for the direct-upload endpoint — it receives raw binary
-app.use("/api/files/direct-upload", express.raw({ type: "*/*", limit: "300mb", inflate: true, verify: (req, _res, buf) => { (req as any).rawBody = buf; } }));
 app.use(express.json({ limit: "300mb" }));
 app.use(express.urlencoded({ extended: true, limit: "300mb" }));
 
