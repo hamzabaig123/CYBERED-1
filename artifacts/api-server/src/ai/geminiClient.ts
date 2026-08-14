@@ -1,5 +1,37 @@
 import { GoogleGenAI } from "@google/genai";
 
+export interface NormalizedGeminiError {
+  provider: "gemini";
+  operation: string;
+  status: number | null;
+  code: string | null;
+  message: string;
+  retryable: boolean;
+  details: any;
+}
+
+export function normalizeGeminiError(error: any, operationName: string): NormalizedGeminiError {
+  const status = error?.status ?? error?.code ?? null;
+  const message = error?.message || String(error);
+  
+  let retryable = false;
+  if (status === 429 || status === 500 || status === 502 || status === 503 || status === 504) {
+    retryable = true;
+  } else if (message.toLowerCase().includes("timeout") || message.toLowerCase().includes("network") || message.toLowerCase().includes("econnreset")) {
+    retryable = true;
+  }
+
+  return {
+    provider: "gemini",
+    operation: operationName,
+    status,
+    code: error?.code?.toString() ?? null,
+    message,
+    retryable,
+    details: error
+  };
+}
+
 let client: GoogleGenAI | null = null;
 
 export function getGeminiClient(): GoogleGenAI {

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db, fileAssetsTable, bookStoresTable, subjectsTable } from "@workspace/db";
 import { processFileAsset } from "@workspace/textbooks";
-import { createBookStore, uploadToFileSearchStore, checkIndexingStatus } from "../ai/geminiClient";
+import { createBookStore, uploadToFileSearchStore, checkIndexingStatus, normalizeGeminiError } from "../ai/geminiClient";
 import { getStorage } from "@workspace/textbooks";
 import { splitPdfIntoPageAlignedParts, cleanupTmp, type PdfPartInfo } from "../pdf/splitPdfIntoParts";
 
@@ -339,8 +339,10 @@ async function indexTextbookToGemini(assetId: number) {
         });
       console.log(`Created book store for subject ${asset.subjectId}: ${geminiStoreName}`);
     } catch (error) {
-      console.error(`Failed to create book store:`, error);
-      return;
+      const normErr = normalizeGeminiError(error, "createBookStore");
+      const errMsg = `Gemini Error [${normErr.status || 'N/A'}]: ${normErr.message}`;
+      console.error(`Failed to create book store:`, errMsg);
+      throw new Error(`Failed to create book store: ${errMsg}`);
     }
   }
 
@@ -411,11 +413,14 @@ async function indexTextbookToGemini(assetId: number) {
       console.error(`Background indexing poll failed for store ${currentStore.id}:`, err);
     });
   } catch (error) {
-    console.error(`Failed to start indexing:`, error);
+    const normErr = normalizeGeminiError(error, "indexTextbookToGemini");
+    const errMsg = `Gemini Error [${normErr.status || 'N/A'}]: ${normErr.message}`;
+    console.error(`Failed to start indexing:`, errMsg);
     await db
       .update(bookStoresTable)
-      .set({ status: "error", errorMessage: error instanceof Error ? error.message : "Unknown error" })
+      .set({ status: "error", errorMessage: errMsg })
       .where(eq(bookStoresTable.id, currentStore.id));
+    throw new Error(`Failed to start indexing: ${errMsg}`);
   }
 }
 

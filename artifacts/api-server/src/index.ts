@@ -13,6 +13,18 @@ if (!rawPort) {
 
 const port = Number(rawPort);
 
+const requiredEnvVars = ["GEMINI_API_KEY", "DATABASE_URL"];
+const missingVars = requiredEnvVars.filter((env) => !process.env[env]);
+if (missingVars.length > 0) {
+  logger.error(`❌ AI Engine cannot start`);
+  logger.error(`❌ Missing required environment variables: ${missingVars.join(", ")}`);
+  process.exit(1);
+} else {
+  logger.info(`GEMINI_API_KEY: configured`);
+  logger.info(`DATABASE_URL: configured`);
+  logger.info(`Storage: configured`);
+}
+
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
