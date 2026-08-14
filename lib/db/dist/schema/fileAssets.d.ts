@@ -267,12 +267,13 @@ export declare const fileAssetsTable: import("drizzle-orm/pg-core").PgTableWithC
 }>;
 export declare const insertFileAssetSchema: z.ZodObject<{
     subjectId: z.ZodInt;
+    storageKey: z.ZodString;
+    mimeType: z.ZodString;
+    pageCount: z.ZodOptional<z.ZodNullable<z.ZodInt>>;
     errorMessage: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     isTextbook: z.ZodOptional<z.ZodBoolean>;
-    storageKey: z.ZodString;
     originalFilename: z.ZodString;
     sizeBytes: z.ZodInt;
-    mimeType: z.ZodString;
     virusScanStatus: z.ZodOptional<z.ZodEnum<{
         pending: "pending";
         error: "error";
@@ -286,7 +287,6 @@ export declare const insertFileAssetSchema: z.ZodObject<{
         processing: "processing";
         done: "done";
     }>>;
-    pageCount: z.ZodOptional<z.ZodNullable<z.ZodInt>>;
     fullTextKey: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     textPreview: z.ZodOptional<z.ZodNullable<z.ZodString>>;
 }, {

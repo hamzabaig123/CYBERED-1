@@ -1,7 +1,9 @@
 import { pgTable, text, serial, timestamp, boolean, integer, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
-import { sectionsTable } from "./curriculum";
+import { sectionsTable, topicsTable } from "./curriculum";
+
+void topicsTable; // used in dynamic reference below
 
 export const questionTypeValues = ["mcq", "short", "long"] as const;
 export const referenceTypeValues = ["board_paper", "coaching_paper", "other"] as const;
@@ -11,7 +13,7 @@ export const questionStatusValues = ["solved", "wrong", "bookmarked"] as const;
 export const questionsTable = pgTable("questions", {
   id: serial("id").primaryKey(),
   sectionId: integer("section_id").notNull().references(() => sectionsTable.id),
-  topicId: integer("topic_id").references(() => import("./curriculum").topicsTable.id),
+  topicId: integer("topic_id").references(() => topicsTable.id),
   questionType: text("question_type").notNull().default("mcq"),
   questionText: text("question_text").notNull(),
   optionA: text("option_a"),

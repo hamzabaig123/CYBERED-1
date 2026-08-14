@@ -1,25 +1,43 @@
-import { sql } from "drizzle-orm";
-import { chunks } from "@workspace/db/schema";
+import { sql, type SQL } from "drizzle-orm";
+import { ragChunksTable } from "@workspace/db/schema";
 
 export interface SearchFilters {
-  documentIds?: string[];
-  metadata?: Record<string, any>;
+  subjectId?: number;
+  classId?: number;
+  fileAssetId?: number;
+  topicId?: number;
+  chapterId?: number;
 }
 
-export function buildFilters(filters: SearchFilters) {
-  const conditions = [];
+export function buildFilters(filters: SearchFilters): SQL | undefined {
+  const conditions: SQL[] = [];
 
-  if (filters.documentIds && filters.documentIds.length > 0) {
-    conditions.push(sql`${chunks.documentId} IN ${filters.documentIds}`);
+  if (filters.subjectId !== undefined) {
+    conditions.push(sql`${ragChunksTable.subjectId} = ${filters.subjectId}`);
   }
 
-  if (filters.metadata) {
-    for (const [key, value] of Object.entries(filters.metadata)) {
-      conditions.push(sql`${chunks.metadata}->>${key} = ${value}`);
-    }
+  if (filters.classId !== undefined) {
+    conditions.push(sql`${ragChunksTable.classId} = ${filters.classId}`);
+  }
+
+  if (filters.fileAssetId !== undefined) {
+    conditions.push(sql`${ragChunksTable.fileAssetId} = ${filters.fileAssetId}`);
+  }
+
+  if (filters.topicId !== undefined) {
+    conditions.push(sql`${ragChunksTable.topicId} = ${filters.topicId}`);
+  }
+
+  if (filters.chapterId !== undefined) {
+    conditions.push(sql`${ragChunksTable.chapterId} = ${filters.chapterId}`);
   }
 
   if (conditions.length === 0) return undefined;
-  
-  return sql.join(conditions, sql` AND `);
+
+  let result: SQL = conditions[0]!;
+  for (let i = 1; i < conditions.length; i++) {
+    result = sql`${result} AND ${conditions[i]}`;
+  }
+
+  return result;
 }

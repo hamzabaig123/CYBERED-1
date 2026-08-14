@@ -714,12 +714,12 @@ export declare const aiChatMessagesTable: import("drizzle-orm/pg-core").PgTableW
 }>;
 export declare const insertBookStoreSchema: z.ZodObject<{
     subjectId: z.ZodInt;
-    geminiStoreName: z.ZodString;
     status: z.ZodOptional<z.ZodEnum<{
         pending: "pending";
         ready: "ready";
         error: "error";
     }>>;
+    geminiStoreName: z.ZodString;
     indexedPages: z.ZodOptional<z.ZodInt>;
     textbookTitle: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     errorMessage: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -730,18 +730,18 @@ export declare const insertBookStoreSchema: z.ZodObject<{
 export type InsertBookStore = z.infer<typeof insertBookStoreSchema>;
 export type BookStoreRow = typeof bookStoresTable.$inferSelect;
 export declare const insertAIVerificationSchema: z.ZodObject<{
-    status: z.ZodOptional<z.ZodEnum<{
-        pending: "pending";
-        accepted: "accepted";
-        kept_mine: "kept_mine";
-        dismissed: "dismissed";
-    }>>;
     questionType: z.ZodEnum<{
         mcq: "mcq";
         short: "short";
         long: "long";
     }>;
     questionId: z.ZodInt;
+    status: z.ZodOptional<z.ZodEnum<{
+        pending: "pending";
+        accepted: "accepted";
+        kept_mine: "kept_mine";
+        dismissed: "dismissed";
+    }>>;
     aiAnswer: z.ZodString;
     sourcePage: z.ZodOptional<z.ZodNullable<z.ZodInt>>;
     sourceFilename: z.ZodOptional<z.ZodNullable<z.ZodString>>;
@@ -786,8 +786,8 @@ export declare const insertAIChatMessageSchema: z.ZodObject<{
         user: "user";
         assistant: "assistant";
     }>;
-    sessionId: z.ZodInt;
     content: z.ZodString;
+    sessionId: z.ZodInt;
     citationsJson: z.ZodOptional<z.ZodNullable<z.ZodType<{
         page: number;
         filename: string;

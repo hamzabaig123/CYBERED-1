@@ -3,6 +3,8 @@ import { lexicalSearch } from "./lexical-search";
 import { reciprocalRankFusion } from "./rrf";
 import { buildFilters, SearchFilters } from "./filters";
 
+export type { SearchResult } from "./vector-search";
+
 export async function hybridSearch(
   query: string,
   embedding: number[],

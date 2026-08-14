@@ -15,8 +15,8 @@ export function reciprocalRankFusion(
   list1.forEach((item, index) => {
     const rank = index + 1;
     const score = 1 / (k + rank);
-    scores.set(item.id, {
-      id: item.id,
+    scores.set(item.chunkId.toString(), {
+      id: item.chunkId.toString(),
       score: score,
       originalResult: item,
     });
@@ -26,11 +26,12 @@ export function reciprocalRankFusion(
   list2.forEach((item, index) => {
     const rank = index + 1;
     const score = 1 / (k + rank);
-    if (scores.has(item.id)) {
-      scores.get(item.id)!.score += score;
+    const key = item.chunkId.toString();
+    if (scores.has(key)) {
+      scores.get(key)!.score += score;
     } else {
-      scores.set(item.id, {
-        id: item.id,
+      scores.set(key, {
+        id: key,
         score: score,
         originalResult: item,
       });

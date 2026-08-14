@@ -1,6 +1,11 @@
 import { pgTable, text, serial, timestamp, boolean, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
+import { questionsTable } from "./questions";
+import { usersTable } from "./users";
+
+void questionsTable; // used in dynamic references below
+void usersTable;
 
 // ── Classes ───────────────────────────────────────────────────────────────────
 export const classesTable = pgTable("classes", {
@@ -104,7 +109,7 @@ export type TopicRow = typeof topicsTable.$inferSelect;
 // ── MCQ Options ───────────────────────────────────────────────────────────────
 export const mcqOptionsTable = pgTable("mcq_options", {
   id: serial("id").primaryKey(),
-  questionId: integer("question_id").notNull().references(() => import("./questions").questionsTable.id, { onDelete: "cascade" }),
+  questionId: integer("question_id").notNull().references(() => questionsTable.id, { onDelete: "cascade" }),
   optionKey: text("option_key").notNull(), // 'A', 'B', 'C', 'D', 'E'
   optionText: text("option_text").notNull(),
   isCorrect: boolean("is_correct").notNull().default(false),
@@ -121,7 +126,7 @@ export const sourceTypeValues = ["textbook", "board_paper", "past_paper", "coach
 
 export const questionSourcesTable = pgTable("question_sources", {
   id: serial("id").primaryKey(),
-  questionId: integer("question_id").notNull().references(() => import("./questions").questionsTable.id, { onDelete: "cascade" }),
+  questionId: integer("question_id").notNull().references(() => questionsTable.id, { onDelete: "cascade" }),
   sourceType: text("source_type").notNull(), // textbook | board_paper | past_paper | coaching | teacher_created | ai_generated
   sourceName: text("source_name"), // e.g., "Sindh Board", "Physics XI Textbook"
   sourceYear: integer("source_year"),
@@ -148,7 +153,7 @@ export const notesTable = pgTable("notes", {
   tags: text("tags").array().notNull().default([]),
   isAiGenerated: boolean("is_ai_generated").notNull().default(false),
   isArchived: boolean("is_archived").notNull().default(false),
-  createdBy: integer("created_by").references(() => import("./users").usersTable.id, { onDelete: "set null" }),
+  createdBy: integer("created_by").references(() => usersTable.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
@@ -170,7 +175,7 @@ export const documentsTable = pgTable("documents", {
   pageCount: integer("page_count"),
   isProcessed: boolean("is_processed").notNull().default(false),
   isArchived: boolean("is_archived").notNull().default(false),
-  uploadedBy: integer("uploaded_by").references(() => import("./users").usersTable.id, { onDelete: "set null" }),
+  uploadedBy: integer("uploaded_by").references(() => usersTable.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });

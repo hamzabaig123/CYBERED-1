@@ -144,8 +144,8 @@ export declare const userQuestionStateTable: import("drizzle-orm/pg-core").PgTab
 }>;
 export declare const insertUserQuestionStateSchema: z.ZodObject<{
     questionType: z.ZodString;
-    userId: z.ZodInt;
     questionId: z.ZodInt;
+    userId: z.ZodInt;
     status: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     lastAttemptedAt: z.ZodOptional<z.ZodNullable<z.ZodDate>>;
 }, {

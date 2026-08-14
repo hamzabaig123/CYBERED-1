@@ -1,4 +1,4 @@
-﻿import { Router, type IRouter } from "express";
+import { Router, type IRouter } from "express";
 import { db, aiChatSessionsTable, aiChatMessagesTable, bookStoresTable, subjectsTable } from "@workspace/db";
 import { eq, and, desc, asc, sql } from "drizzle-orm";
 import {
@@ -10,7 +10,7 @@ import {
   ListAIChatSessionsQueryParams as ListAIChatMessagesQueryParams,
 } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
-import { chatWithBook, streamChatWithBook } from "../ai/geminiClient";
+import { chatWithBook, streamChatWithBook, getGeminiClient } from "../ai/geminiClient";
 import { writeAudit } from "../lib/audit";
 
 const router: IRouter = Router();
@@ -147,7 +147,7 @@ router.post("/ai/chat/sessions/:sessionId/messages", requireAuth, async (req, re
     return;
   }
 
-const body = SendAIChatMessageBody.safeParse(req.body);
+  const body = SendAIChatMessageBody.safeParse(req.body);
   if (!body.success) {
     res.status(400).json({ error: body.error.message });
     return;
@@ -196,11 +196,32 @@ const body = SendAIChatMessageBody.safeParse(req.body);
     .orderBy(asc(aiChatMessagesTable.createdAt))
     .limit(20); // Limit history to last 20 messages
 
-try {
-    // Call AI with conversation history
+  try {
+    // 1. Run RAG Pipeline (pgvector retrieval + Gemini generation)
+    const { runRagPipeline } = await import("@workspace/textbooks/rag/rag-pipeline");
+    
+    // Build chat history messages
     const messages = history.map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
-    messages.push({ role: "user", content: body.data.content });
+    
+    // 2. Call AI with conversation history + RAG context
+    // We pass subjectId to filter context
+    const ragResult = await runRagPipeline({
+      query: body.data.content,
+      embedding: [], // Embedding will be generated inside the pipeline using geminiClient
+      subjectId: session.subjectId,
+      limit: 10,
+      geminiClient: getGeminiClient(), // Gemini client for both embedding + generation
+    });
+    
+    // If we have context, inject it into the user prompt
+    let finalPrompt = body.data.content;
+    if (ragResult.contextUsed) {
+      finalPrompt = `[Retrieved Context]\n${ragResult.contextUsed}\n\n[User Query]\n${body.data.content}`;
+    }
+    
+    messages.push({ role: "user", content: finalPrompt });
 
+    // 3. Fallback to Gemini File Search (still passes geminiStoreName)
     const result = await chatWithBook(store.geminiStoreName, messages, { mode, language });
 
     // Save assistant response
@@ -228,7 +249,7 @@ try {
         citations: result.citations,
       },
     });
-} catch (error) {
+  } catch (error) {
     console.error("Error in chat:", error);
     res.status(500).json({ error: "Failed to get AI response" });
   }
@@ -289,8 +310,6 @@ router.post("/ai/chat/sessions/:sessionId/messages/stream", requireAuth, async (
     .orderBy(asc(aiChatMessagesTable.createdAt))
     .limit(20);
 
-  const messages = history.map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
-
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
@@ -299,9 +318,33 @@ router.post("/ai/chat/sessions/:sessionId/messages/stream", requireAuth, async (
   const writeEvent = (data: Record<string, unknown>) => res.write(`data: ${JSON.stringify(data)}\n\n`);
 
   try {
+    // 1. Run RAG Pipeline (pgvector retrieval + Gemini generation)
+    const { runRagPipeline } = await import("@workspace/textbooks/rag/rag-pipeline");
+    
+    // Build chat history messages
+    const messages = history.map(m => ({ role: m.role as "user" | "assistant", content: m.content }));
+    
+    // Run RAG pipeline for context enhancement
+    const ragResult = await runRagPipeline({
+      query: body.data.content,
+      embedding: [], // Embedding will be generated inside the pipeline using geminiClient
+      subjectId: session.subjectId,
+      limit: 10,
+      geminiClient: getGeminiClient(),
+    });
+    
+    // If we have context, inject it into the user prompt
+    let finalPrompt = body.data.content;
+    if (ragResult.contextUsed) {
+      finalPrompt = `[Retrieved Context]\n${ragResult.contextUsed}\n\n[User Query]\n${body.data.content}`;
+    }
+    
+    messages.push({ role: "user", content: finalPrompt });
+
     writeEvent({ type: "meta", userMessageId: userMessage.id });
 
     let accumulated = "";
+    // 3. Fallback to Gemini File Search (still passes geminiStoreName)
     for await (const chunk of streamChatWithBook(store.geminiStoreName, messages, { mode, language })) {
       if (chunk.type === "text") {
         accumulated += chunk.text;

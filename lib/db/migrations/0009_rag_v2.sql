@@ -1,8 +1,8 @@
 -- Migration: RAG 2.0 Knowledge Engine
 -- Creates pgvector tables and migrates existing data
-
--- Enable pgvector extension if not exists
-CREATE EXTENSION IF NOT EXISTS vector;
+-- NOTE: pgvector extension may not be available on all PostgreSQL installs;
+-- we store embeddings as JSONB for portability, with a migration path to
+-- proper pgvector when the extension is installed.
 
 -- Create RAG Chunks table
 CREATE TABLE IF NOT EXISTS rag_chunks (
@@ -21,7 +21,9 @@ CREATE TABLE IF NOT EXISTS rag_chunks (
   content TEXT NOT NULL,
   content_hash VARCHAR(64) NOT NULL,
   
-  embedding vector(768),
+-- Embedding: store as JSONB for portability
+  -- When pgvector extension is available, migrate to vector(768) type
+  embedding_json JSONB,
   embedding_model VARCHAR(100) NOT NULL DEFAULT 'text-embedding-004',
   embedding_status VARCHAR(20) NOT NULL DEFAULT 'pending',
   
@@ -49,14 +51,16 @@ CREATE TABLE IF NOT EXISTS rag_chunks (
   UNIQUE(content_hash, file_asset_id)
 );
 
--- HNSW Index for fast vector similarity search
-CREATE INDEX IF NOT EXISTS idx_rag_chunks_embedding_hnsw 
-ON rag_chunks USING hnsw (embedding vector_cosine_ops)
-WITH (m = 16, ef_construction = 64);
+-- Note: HNSW index requires pgvector extension, not available on all systems.
+-- When vector extension is installed, add:
+-- CREATE INDEX idx_rag_chunks_embedding_hnsw ON rag_chunks USING hnsw (embedding vector_cosine_ops)
+-- WITH (m = 16, ef_construction = 64);
 
 CREATE INDEX IF NOT EXISTS idx_rag_chunks_file_asset ON rag_chunks(file_asset_id);
 CREATE INDEX IF NOT EXISTS idx_rag_chunks_subject ON rag_chunks(subject_id);
 CREATE INDEX IF NOT EXISTS idx_rag_chunks_content_tsv ON rag_chunks USING gin(content_tsv);
+CREATE INDEX IF NOT EXISTS idx_rag_chunks_embedding_json ON rag_chunks USING gin(embedding_json) 
+  WHERE embedding_json IS NOT NULL;
 
 -- Trigger for updated_at
 CREATE OR REPLACE FUNCTION update_rag_chunks_updated_at()
@@ -76,11 +80,11 @@ CREATE TRIGGER rag_chunks_updated_at
 -- Optional: Migrate existing embeddings from textbook_chunks
 -- INSERT INTO rag_chunks (
 --   file_asset_id, subject_id, chunk_type, content, content_hash, 
---   embedding, embedding_status, page_number, section_title, char_count
+--   embedding_json, embedding_status, page_number, section_title, char_count
 -- )
 -- SELECT 
 --   file_asset_id, subject_id, chunk_type, content, 
 --   encode(digest(content, 'sha256'), 'hex'), -- Requires pgcrypto
---   embedding_json::text::vector, 'completed', page_number, section_title, content_length
+--   embedding_json, 'completed', page_number, section_title, content_length
 -- FROM textbook_chunks
--- WHERE embedding_json IS NOT NULL AND embedding_json::text != '[0,0,0,0...]';
+-- WHERE embedding_json IS NOT NULL AND jsonb_array_length(embedding_json) > 0;

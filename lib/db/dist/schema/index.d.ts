@@ -1,6 +1,5 @@
 export * from "./users";
 export * from "./curriculum";
-export { topicsTable, insertTopicSchema, type InsertTopic, type TopicRow } from "./topics";
 export * from "./questions";
 export * from "./tests";
 export * from "./audit";
@@ -10,4 +9,5 @@ export * from "./userQuestionState";
 export * from "./learning";
 export * from "./ai";
 export * from "./fileAssets";
+export * from "./rag";
 //# sourceMappingURL=index.d.ts.map

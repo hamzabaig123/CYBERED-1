@@ -917,7 +917,7 @@ function BookStoreIndexTab(props: {
                           {selectedFile.name} · {formatBytes(selectedFile.size)}
                         </span>
                       ) : (
-                        <span className="font-mono text-[10px] text-muted-foreground">Click to select PDF (max 200MB · >100MB split automatically)</span>
+                        <span className="text-xs leading-[18px] text-muted-foreground">Click to select PDF (max 200MB · &gt;100MB split automatically)</span>
                       )}
                     </label>
                   </div>

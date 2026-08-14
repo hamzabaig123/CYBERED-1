@@ -1036,8 +1036,8 @@ export declare const attemptAnswersTable: import("drizzle-orm/pg-core").PgTableW
     dialect: "pg";
 }>;
 export declare const insertTestSchema: z.ZodObject<{
-    title: z.ZodString;
     mode: z.ZodOptional<z.ZodString>;
+    title: z.ZodString;
     timeLimitMinutes: z.ZodOptional<z.ZodNullable<z.ZodInt>>;
     totalMarks: z.ZodOptional<z.ZodInt>;
     questionCount: z.ZodOptional<z.ZodInt>;

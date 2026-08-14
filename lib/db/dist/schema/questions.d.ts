@@ -41,6 +41,23 @@ export declare const questionsTable: import("drizzle-orm/pg-core").PgTableWithCo
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        topicId: import("drizzle-orm/pg-core").PgColumn<{
+            name: "topic_id";
+            tableName: "questions";
+            dataType: "number";
+            columnType: "PgInteger";
+            data: number;
+            driverParam: string | number;
+            notNull: false;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: undefined;
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         questionType: import("drizzle-orm/pg-core").PgColumn<{
             name: "question_type";
             tableName: "questions";
@@ -440,6 +457,7 @@ export declare const questionsTable: import("drizzle-orm/pg-core").PgTableWithCo
 export declare const insertQuestionSchema: z.ZodObject<{
     isArchived: z.ZodOptional<z.ZodBoolean>;
     sectionId: z.ZodInt;
+    topicId: z.ZodOptional<z.ZodNullable<z.ZodInt>>;
     questionType: z.ZodOptional<z.ZodString>;
     questionText: z.ZodString;
     optionA: z.ZodOptional<z.ZodNullable<z.ZodString>>;

@@ -3,27 +3,6 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { fileAssetsTable } from "./fileAssets";
 import { classesTable, subjectsTable, chaptersTable, topicsTable } from "./curriculum";
-import { customType } from "drizzle-orm/pg-core";
-
-// Define the vector custom type since pgvector is not natively typed in basic Drizzle
-const vector = customType<{ data: number[] }>({
-  dataType() {
-    return "vector(768)";
-  },
-  toDriver(value: number[]): string {
-    return JSON.stringify(value);
-  },
-  fromDriver(value: string | number[]): number[] {
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value) as number[];
-      } catch {
-        return [];
-      }
-    }
-    return value;
-  },
-});
 
 export const ragChunksTable = pgTable("rag_chunks", {
   id: serial("id").primaryKey(),
@@ -44,8 +23,8 @@ export const ragChunksTable = pgTable("rag_chunks", {
   content: text("content").notNull(),
   contentHash: varchar("content_hash", { length: 64 }).notNull(), // SHA256
   
-  // Embedding
-  embedding: vector("embedding"),
+  // Embedding (stored as JSONB array for portability; migrate to vector when pgvector is available)
+  embeddingJson: jsonb("embedding_json"),
   embeddingModel: varchar("embedding_model", { length: 100 }).notNull().default("text-embedding-004"),
   embeddingStatus: varchar("embedding_status", { length: 20 }).notNull().default("pending"),
   

@@ -500,8 +500,8 @@ export declare const insertStudySessionSchema: z.ZodObject<{
     in: {};
 }>;
 export declare const insertRevisionScheduleSchema: z.ZodObject<{
-    questionId: z.ZodInt;
     questionType: z.ZodOptional<z.ZodString>;
+    questionId: z.ZodInt;
     userId: z.ZodInt;
     dueAt: z.ZodDate;
     intervalDays: z.ZodOptional<z.ZodInt>;
